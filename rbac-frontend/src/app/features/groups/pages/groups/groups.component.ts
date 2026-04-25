@@ -1,4 +1,5 @@
 import {
+  ChangeDetectorRef,
   Component,
   DoCheck,
   OnDestroy,
@@ -71,6 +72,7 @@ export class GroupsComponent
     private dialogService: DialogService,
     private optionService: OptionService,
     private loadMaskService: LoadingMaskService,
+    private cd: ChangeDetectorRef, // 注入這個
     private messageService: SystemMessageService,
   ) {
     super();
@@ -203,6 +205,7 @@ export class GroupsComponent
         },
       });
 
+    // 取得 Table Field View 配置
     this.getFieldViewCustomisation();
   }
 
@@ -240,15 +243,6 @@ export class GroupsComponent
     }
   }
 
-  /**
-   * 清除表單資料
-   */
-  override clear() {
-    this.formGroup.reset();
-    this.tableData = [];
-    this.minGivenIndex = -1;
-  }
-
   ngOnDestroy() {}
 
   // 提交資料
@@ -257,6 +251,25 @@ export class GroupsComponent
     if (this.formGroup.invalid || !this.submitted) {
       return;
     }
+
+    // 2. [核心邏輯] 檢查 tableData 每一筆資料是否填寫完整
+    const invalidRows = this.tableData.filter(
+      (row) =>
+        !row.service ||
+        !row.type ||
+        !row.name ||
+        !row.code ||
+        !row.description ||
+        !row.activeFlag, // 根據你的必填欄位調整
+    );
+
+    if (invalidRows.length > 0) {
+      this.messageService.error(
+        `有 ${invalidRows.length} 筆資料未填寫完整，請檢查所有分頁`,
+      );
+      return; // 攔截，不讓它送出
+    }
+
     const requestData: SaveGroup[] = this.tableData.map((data) => {
       return {
         id: data.id,
@@ -330,12 +343,21 @@ export class GroupsComponent
       .subscribe({
         next: (res) => {
           this.messageService.success('查詢成功');
-          this.tableData = res;
-          // 對所有資料進行編號
-          for (var i = 0; i < this.tableData.length; i++) {
-            this.tableData[i].givenIndex = i;
-          }
+          // this.tableData = res;
+          // // 對所有資料進行編號
+          // for (var i = 0; i < this.tableData.length; i++) {
+          //   this.tableData[i].givenIndex = i;
+          // }
+          // 使用展開運算子確保記憶體位址改變，觸發畫面更新
+          this.tableData = [...res].map((item, index) => ({
+            ...item,
+            givenIndex: index,
+          }));
           console.log(this.tableData);
+          // 資料進來後，重置分頁狀態就好
+          if (this.dataTable) {
+            this.dataTable.reset();
+          }
         },
         error: (error) => {
           this.messageService.error(error.message);
@@ -388,7 +410,6 @@ export class GroupsComponent
 
     // 計算目前「尚未提交到資料庫」的新資料數量 (通常 id 為空的)
     const newItemsCount = this.tableData.filter((d) => !d.id).length;
-
     if (newItemsCount >= 5) {
       this.messageService.warn(
         '一次最多只能新增 5 筆未儲存資料，請先提交後再繼續。',
@@ -577,5 +598,16 @@ export class GroupsComponent
         );
       });
     this.closePanel();
+  }
+
+  override clear() {
+    this.formGroup.reset();
+    this.tableData = [];
+
+    // 【關鍵】：清除時也要讓虛擬滾動歸零
+    if (this.dataTable) {
+      this.dataTable.scrollTo({ top: 0, behavior: 'auto' });
+      this.dataTable.editingRowKeys = {};
+    }
   }
 }

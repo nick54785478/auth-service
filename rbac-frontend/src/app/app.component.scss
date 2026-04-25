@@ -1,3 +1,10 @@
+/* 強制所有元素把 border 和 padding 算在設定的寬度內 */
+*,
+*:before,
+*:after {
+  box-sizing: border-box;
+}
+
 .hidden {
   display: none;
 }
@@ -28,6 +35,20 @@
 }
 
 .custom-spinner .p-progress-spinner-circle {
-  animation: p-progress-spinner-dash 1.5s ease-in-out infinite,
+  animation:
+    p-progress-spinner-dash 1.5s ease-in-out infinite,
     custom-progress-spinner-color 6s ease-in-out infinite;
+}
+
+/* 手機版全域空間微調 */
+@media screen and (max-width: 768px) {
+  body {
+    padding: 0.5rem; /* 縮小最外圍的留白 */
+    overflow-x: hidden; /* 在最外層攔截任何可能的橫向溢出 */
+  }
+
+  .card {
+    padding: 1rem; /* 原本是 2rem，在手機上太大了，改為 1rem */
+    margin-bottom: 0.5rem;
+  }
 }

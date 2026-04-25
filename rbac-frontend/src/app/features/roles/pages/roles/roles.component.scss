@@ -1,17 +1,47 @@
+/* ==========================================================================
+   1. 絕對防護罩 (強迫所有元素不准超出螢幕)
+   ========================================================================== */
+.main-wrapper {
+  display: block;
+  width: 100%;
+  max-width: 95vw; /* 絕對不可超過螢幕寬度 */
+  overflow-x: hidden; /* 砍掉外圍所有的橫向滾動條 */
+  box-sizing: border-box;
+}
+
+/* 修復 PrimeNG 表單與 Grid 預設的負邊距撐破行為 */
+:host ::ng-deep .main-wrapper .grid {
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  width: 100% !important;
+}
+
+/* ==========================================================================
+   2. 表格外層容器設定 (基礎與大螢幕 RWD)
+   ========================================================================== */
 .table-container {
   width: 100%;
-  max-width: 1200px;
-  /* 預設最大寬度 */
-  margin: 0 auto;
-  /* 讓表格置中 */
-  overflow-x: auto;
-  /* 超過範圍時出現滾動條 */
+  // max-width: 100%; /* 強制表格容器跟隨防護罩的寬度，不能自己變大 */
+  max-width: 1000px; /* 強制表格容器跟隨防護罩的寬度，不能自己變大 */
+  overflow-x: auto !important; /* 允許橫向滾動 */
+  -webkit-overflow-scrolling: touch;
+  box-sizing: border-box;
+}
+
+.form-container {
+  width: 100%;
+  max-width: 100%; /* 強制表格容器跟隨防護罩的寬度，不能自己變大 */
+  // max-width: 1000px; /* 強制表格容器跟隨防護罩的寬度，不能自己變大 */
+  overflow-x: auto !important; /* 允許橫向滾動 */
+  -webkit-overflow-scrolling: touch;
+  box-sizing: border-box;
 }
 
 /* 大螢幕 (超過 1600px) */
 @media (min-width: 1600px) {
   .table-container {
     max-width: 1400px;
+    margin: 0 auto;
   }
 }
 
@@ -19,42 +49,159 @@
 @media (max-width: 1600px) and (min-width: 1200px) {
   .table-container {
     max-width: 1100px;
+    margin: 0 auto;
   }
 }
 
-/* 小螢幕 (小於 1200px) */
-@media (max-width: 1200px) {
-  .table-container {
-    max-width: 100%;
-  }
-}
-
+/* ==========================================================================
+   3. 自訂輔助 Class
+   ========================================================================== */
 .readonly-field {
   pointer-events: none; /* 阻止所有滑鼠互動 */
   opacity: 1; /* 保持外觀正常，不要灰掉 */
 }
 
-:host ::ng-deep .p-card .p-card-subtitle {
-  font-weight: 600; /* 半粗體（建議） */
-  font-size: 1.2rem;
-  color: black !important;
-}
-
-:host ::ng-deep .p-datatable-tbody {
-  min-height: 300px;
-}
-
-/* 讓 cellEditor 內的輸入框寬度撐滿 td */
+/* ==========================================================================
+   4. PrimeNG 全域樣式覆蓋 (桌機/預設)
+   ========================================================================== */
 :host ::ng-deep {
+  /* Card 標題覆蓋 */
+  .p-card .p-card-subtitle {
+    font-weight: 600;
+    font-size: 1.2rem;
+    color: black !important;
+  }
+
+  /* 讓 cellEditor 內的輸入框寬度撐滿 td (桌機版最小寬度 150px) */
   .p-datatable-tbody > tr > td .p-cell-editor input,
   .p-datatable-tbody > tr > td .p-cell-editor .p-dropdown {
     width: 100%;
-    min-width: 150px; /* 設定最小寬度，防止編輯時變太小 */
+    min-width: 150px;
   }
 
   /* 針對說明文字較多的 TextArea */
   .p-datatable-tbody > tr > td .p-cell-editor textarea {
     width: 100%;
     min-width: 250px;
+  }
+}
+
+/* ==========================================================================
+   5. 行動裝置深度微調 (小於 768px 時觸發，權重最高)
+   ========================================================================== */
+@media screen and (max-width: 768px) {
+  :host ::ng-deep {
+    /* 👇 1. 萬物皆 Border-Box：強制所有元素的寬度計算都包含 padding 與 border 👇 */
+    *,
+    *:before,
+    *:after {
+      box-sizing: border-box !important;
+    }
+
+    /* 👇 2. 物理切除法：直接把卡片與面板超出的部分隱藏！(因為有 appendTo="body" 所以選單不會壞) 👇 */
+    .p-card,
+    .p-panel,
+    .p-card-body,
+    .p-panel-content {
+      max-width: 100% !important;
+      overflow-x: hidden !important;
+      padding: 0.5rem !important; /* 縮小手機版內距 */
+    }
+
+    /* 👇 3. 鎮壓 Grid 網格系統 👇 */
+    .grid {
+      margin-left: 0 !important;
+      margin-right: 0 !important;
+      width: 100% !important;
+      max-width: 100% !important;
+    }
+
+    .col-12 {
+      padding-left: 0 !important;
+      padding-right: 0 !important;
+      max-width: 100% !important;
+    }
+
+    /* 👇 4. 限制所有輸入元件與按鈕，絕對不准超越 100% 👇 */
+    .p-inputtext,
+    .p-dropdown,
+    p-button button,
+    .p-button {
+      width: 100% !important;
+      max-width: 100% !important;
+    }
+
+    /* 👇 5. 以下保留原本針對 Table 編輯框的縮小設定 👇 */
+    .p-datatable.p-datatable-sm .p-datatable-tbody > tr > td {
+      padding: 0.5rem 0.3rem;
+    }
+
+    .p-datatable-tbody > tr > td .p-cell-editor input,
+    .p-datatable-tbody > tr > td .p-cell-editor .p-dropdown,
+    .p-datatable-tbody > tr > td .p-cell-editor .p-autocomplete {
+      width: 100% !important;
+      min-width: 100px;
+    }
+
+    .p-datatable-tbody > tr > td .p-cell-editor textarea {
+      min-width: 150px;
+    }
+  }
+}
+/* 強制 p-table 元件本身不准超出父容器 */
+:host ::ng-deep p-table {
+  display: block; /* 讓自定義標籤變成區塊元素，這非常重要 */
+  width: 100%;
+  max-width: 100%;
+}
+
+/* 強制 PrimeNG 表格內部的滾動層遵守邊界，模擬 Virtual Scroll 的容器效果 */
+:host ::ng-deep .p-datatable-wrapper,
+:host ::ng-deep .p-datatable-scrollable-wrapper {
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow-x: auto !important;
+  box-sizing: border-box;
+}
+
+/* 強制鎖死 PrimeNG 表格的底層容器，不准撐破父層 */
+:host ::ng-deep .p-datatable {
+  max-width: 100% !important;
+}
+
+:host ::ng-deep .p-datatable-wrapper,
+:host ::ng-deep .p-datatable-scrollable-wrapper {
+  max-width: 100% !important;
+  width: 100% !important;
+  overflow-x: auto !important; /* 確保內容大於 1000px 時會出現自己的橫向滾動條 */
+  box-sizing: border-box;
+}
+
+/* ==========================================================================
+   6. 修正 Actions 欄位按鈕與圖示被拉寬/分散的問題
+   ========================================================================== */
+:host ::ng-deep .p-datatable-tbody > tr > td[alignFrozen="right"] {
+  /* 確保裝按鈕/圖示的 flex 容器【靠左對齊】，並保持一點小間距 */
+  .flex {
+    justify-content: flex-start !important; /* <--- 這裡改成 flex-start */
+    gap: 0.4rem !important;
+    width: 100% !important;
+  }
+
+  /* 給圓形按鈕豁免權，把寬度鎖回原本的小尺寸 */
+  .p-button {
+    width: 2.5rem !important;
+    min-width: 2.5rem !important;
+    height: 2.5rem !important;
+    flex: 0 0 auto !important;
+    padding: 0 !important;
+  }
+
+  /* 給編輯模式下的勾勾、叉叉圖示豁免權 */
+  i.pi {
+    flex: 0 0 auto !important;
+    width: auto !important;
+    margin: 0 !important;
+    padding: 0.5rem !important;
   }
 }
