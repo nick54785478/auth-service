@@ -90,7 +90,7 @@ export class SettingComponent
     private settingService: SettingService,
     public messageService: SystemMessageService,
     private customisationService: CustomisationService,
-    private storageService: StorageService
+    private storageService: StorageService,
   ) {
     super();
   }
@@ -134,13 +134,13 @@ export class SettingComponent
 
     this.cols = [
       // { field: 'service', header: '服務', width: '10rem' },
-      { field: 'dataType', header: '配置種類', width: '10rem' },
+      { field: 'dataType', header: '配置', width: '10rem' },
       { field: 'type', header: '類別', width: '10rem' },
       { field: 'name', header: '名稱', width: '10rem' },
       { field: 'code', header: '代碼', width: '10rem' },
       { field: 'value', header: '值', width: '10rem' },
       { field: 'description', header: '說明', width: '15rem' },
-      { field: 'priorityNo', header: '排序', width: '5rem' },
+      { field: 'priorityNo', header: '排序', width: '10rem' },
     ];
 
     // 初始化上方 Tab 按鈕
@@ -150,6 +150,14 @@ export class SettingComponent
         icon: 'pi pi-filter',
         command: () => {
           this.fieldPanel.toggle(event);
+        },
+        disabled: false,
+      },
+      {
+        label: '新增',
+        icon: 'pi pi-plus',
+        command: () => {
+          this.onAdd();
         },
         disabled: false,
       },
@@ -246,7 +254,7 @@ export class SettingComponent
         formData.dataType,
         formData.type,
         formData.name,
-        formData.activeFlag
+        formData.activeFlag,
       )
       .subscribe({
         next: (res) => {
@@ -319,7 +327,7 @@ export class SettingComponent
         finalize(() => {
           // 無論成功或失敗都會執行
           this.getFieldViewCustomisation();
-        })
+        }),
       )
       .subscribe({
         next: (res) => {
@@ -353,7 +361,7 @@ export class SettingComponent
         this.selectedFields = res;
         // 只保留在 viewCols 中的欄位
         this.filteredCols = this.cols.filter((col) =>
-          this.fieldViews.includes(col.field)
+          this.fieldViews.includes(col.field),
         );
       });
     this.closePanel();
