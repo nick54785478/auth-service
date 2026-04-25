@@ -33,8 +33,7 @@ public class RoleCommandService {
 	 * @return RoleInfoCreated
 	 */
 	public void create(CreateRoleCommand command) {
-		RoleInfo roleInfo = new RoleInfo();
-		roleInfo.create(command);
+		RoleInfo roleInfo = RoleInfo.create(command);
 		roleInfoRepository.save(roleInfo);
 	}
 
@@ -73,9 +72,7 @@ public class RoleCommandService {
 	 */
 	public void delete(List<Long> ids) {
 		List<RoleInfo> roles = roleInfoRepository.findByIdIn(ids);
-		roles.stream().forEach(role -> {
-			role.delete();
-		});
+		roles.stream().forEach(RoleInfo::delete);
 		roleInfoRepository.saveAll(roles);
 	}
 

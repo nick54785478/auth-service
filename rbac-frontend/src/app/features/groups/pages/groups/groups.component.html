@@ -127,15 +127,15 @@
       [rows]="10"
       [sortOrder]="-1"
       [scrollable]="true"
-      [scrollHeight]="'400px'"
+      [scrollHeight]="'600px'"
       virtualScroll="true"
       dataKey="givenIndex"
       editMode="row"
       [resizableColumns]="true"
       [frozenWidth]="'70px'"
       [tableStyle]="{
-        'table-layout': 'fixed',
-        width: '100%'
+        'min-width': '1200px',
+        width: '100%',
       }"
     >
       <!-- 標題 -->
@@ -180,7 +180,7 @@
                     #ctrl="ngModel"
                     [ngClass]="{
                       'ng-invalid': ctrl.invalid && ctrl.touched,
-                      'readonly-field': col.readOnly
+                      'readonly-field': col.readOnly,
                     }"
                     *ngSwitchCase="'inputText'"
                     pInputText
@@ -195,7 +195,7 @@
                     #ctrl="ngModel"
                     [ngClass]="{
                       'ng-invalid': ctrl.invalid && ctrl.touched,
-                      'readonly-field': col.readOnly
+                      'readonly-field': col.readOnly,
                     }"
                     *ngSwitchCase="'textArea'"
                     pInputTextarea
@@ -210,7 +210,7 @@
                     #ctrl="ngModel"
                     [ngClass]="{
                       'ng-invalid': ctrl.invalid && ctrl.touched,
-                      'readonly-field': col.readOnly
+                      'readonly-field': col.readOnly,
                     }"
                     required
                     *ngSwitchCase="'dropdown'"
@@ -229,7 +229,7 @@
                     #ctrl="ngModel"
                     [ngClass]="{
                       'ng-invalid': ctrl.invalid && ctrl.touched,
-                      'readonly-field': col.readOnly
+                      'readonly-field': col.readOnly,
                     }"
                     *ngSwitchCase="'autoComplete'"
                     [(ngModel)]="rowData[col.field]"
@@ -249,7 +249,7 @@
                     #ctrl="ngModel"
                     [ngClass]="{
                       'ng-invalid': ctrl.invalid && ctrl.touched,
-                      'readonly-field': col.readOnly
+                      'readonly-field': col.readOnly,
                     }"
                     *ngSwitchDefault
                     pInputText

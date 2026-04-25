@@ -16,6 +16,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,10 +28,10 @@ import lombok.ToString;
 @Entity
 @Getter
 @ToString
-@NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "function_info")
 @EntityListeners(AuditingEntityListener.class)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class FunctionInfo {
 
 	@Id
@@ -56,33 +57,37 @@ public class FunctionInfo {
 	private YesNo activeFlag = YesNo.Y; // 是否有效
 
 	/**
-	 * 建立一筆功能資料
+	 * 工廠方法: 建立一筆功能資料
 	 * 
-	 * @param command CreateFunctionCommand
+	 * @param command {@link CreateFunctionCommand}
 	 */
-	public void create(CreateFunctionCommand command) {
-		this.service = command.getService();
-		this.type = command.getType();
-		this.name = command.getName();
-		this.actionType = ActionType.fromLabel(command.getActionType());
-		this.code = command.getCode();
-		this.description = command.getDescription();
-		this.activeFlag = YesNo.Y;
+	public static FunctionInfo create(CreateFunctionCommand command) {
+		FunctionInfo functionInfo = new FunctionInfo();
+		functionInfo.service = command.getService();
+		functionInfo.type = command.getType();
+		functionInfo.name = command.getName();
+		functionInfo.actionType = ActionType.fromLabel(command.getActionType());
+		functionInfo.code = command.getCode();
+		functionInfo.description = command.getDescription();
+		functionInfo.activeFlag = YesNo.Y;
+		return functionInfo;
 	}
 
 	/**
-	 * 新增一筆功能資料
+	 * 工廠方法: 新增一筆功能資料
 	 * 
 	 * @param command CreateOrUpdateFunctionCommand
 	 */
-	public void create(CreateOrUpdateFunctionCommand command) {
-		this.service = command.getService();
-		this.code = command.getCode();
-		this.name = command.getName();
-		this.description = command.getDescription();
-		this.actionType = ActionType.fromLabel(command.getActionType());
-		this.type = command.getType();
-		this.activeFlag = YesNo.Y;
+	public static FunctionInfo create(CreateOrUpdateFunctionCommand command) {
+		FunctionInfo functionInfo = new FunctionInfo();
+		functionInfo.service = command.getService();
+		functionInfo.code = command.getCode();
+		functionInfo.name = command.getName();
+		functionInfo.description = command.getDescription();
+		functionInfo.actionType = ActionType.fromLabel(command.getActionType());
+		functionInfo.type = command.getType();
+		functionInfo.activeFlag = YesNo.Y;
+		return functionInfo;
 	}
 
 	/**

@@ -31,6 +31,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -42,10 +43,10 @@ import lombok.ToString;
 @Entity
 @Getter
 @ToString
-@NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "user_info")
 @EntityListeners(AuditingEntityListener.class)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class UserInfo {
 
 	@Id
@@ -84,14 +85,6 @@ public class UserInfo {
 	private YesNo activeFlag = YesNo.Y; // 是否有效
 
 	/**
-	 * Constructor
-	 */
-	public UserInfo(String username, String password) {
-		this.username = username;
-		this.password = password;
-	}
-
-	/**
 	 * 設置 Refresh Token
 	 */
 	public void updateRefreshToken(String token) {
@@ -99,19 +92,21 @@ public class UserInfo {
 	}
 
 	/**
-	 * 新增使用者資料
+	 * 工廠方法: 新增使用者資料
 	 * 
 	 * @param command
 	 */
-	public void create(CreateUserCommand command) {
-		this.name = command.getName();
-		this.username = command.getUsername();
-		this.password = PasswordUtil.encode(command.getPassword());
-		this.birthday = command.getBirthday();
-		this.nationalIdNo = command.getNationalId();
-		this.email = command.getEmail();
-		this.address = command.getAddress();
-		this.activeFlag = YesNo.Y;
+	public static UserInfo create(CreateUserCommand command) {
+		UserInfo userInfo = new UserInfo();
+		userInfo.name = command.getName();
+		userInfo.username = command.getUsername();
+		userInfo.password = PasswordUtil.encode(command.getPassword());
+		userInfo.birthday = command.getBirthday();
+		userInfo.nationalIdNo = command.getNationalId();
+		userInfo.email = command.getEmail();
+		userInfo.address = command.getAddress();
+		userInfo.activeFlag = YesNo.Y;
+		return userInfo;
 	}
 
 	/**

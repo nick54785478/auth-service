@@ -43,7 +43,7 @@ export abstract class BaseInlineEditeTableCompoent {
   /**
    * AutoComplete 資料
    */
-  protected  autoCompleteList: any[] = [];
+  protected autoCompleteList: any[] = [];
 
   /**
    * 表格資料
@@ -125,6 +125,13 @@ export abstract class BaseInlineEditeTableCompoent {
   constructor() {}
 
   /**
+   * 初始化前端表格的 index 值
+   */
+  protected initTableIndex() {
+    this.minGivenIndex = -1;
+  }
+
+  /**
    * 根據 ID 清單刪除資料
    *@param rowData
    */
@@ -187,8 +194,7 @@ export abstract class BaseInlineEditeTableCompoent {
    * 檢查 Column 資料欄位(必填)是否為空
    * @param selectedData
    */
-  checkRowData(selectedData?: any): void {
-  }
+  checkRowData(selectedData?: any): void {}
 
   /**
    * 取得Inline Edit Table 的下拉選單資料

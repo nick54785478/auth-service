@@ -64,47 +64,11 @@ export class FunctionsComponent
     private loadingMaskService: LoadingMaskService,
     private optionService: OptionService,
     private functionService: FunctionsService,
-    private messageService: SystemMessageService
+    private messageService: SystemMessageService,
   ) {
     super();
   }
   ngOnInit(): void {
-    // 初始化上方 Tab 按鈕
-    this.detailTabs = [
-      {
-        label: '欄位',
-        icon: 'pi pi-filter',
-        command: () => {
-          this.fieldPanel.toggle(event);
-        },
-        disabled: false,
-      },
-      {
-        label: '新增',
-        icon: 'pi pi-plus',
-        command: () => {
-          this.addNewRow();
-        },
-        disabled: false,
-      },
-      {
-        label: '提交',
-        icon: 'pi pi-save',
-        command: () => {
-          this.submit();
-        },
-        disabled: false,
-      },
-      {
-        label: '放棄',
-        icon: 'pi pi-times',
-        command: () => {
-          this.cancelAll();
-        },
-        disabled: false,
-      },
-    ];
-
     // 初始化表單
     this.formGroup = new FormGroup({
       service: new FormControl('', Validators.required), // 種類
@@ -114,8 +78,12 @@ export class FunctionsComponent
       activeFlag: new FormControl(''), // 是否生效
     });
 
+    // 1. 初始化表格上方 Tab 按鈕
+    this.initTabs();
+
     // 監聽 service 變更，變更後要更新 Type 的下拉選單資料
     this.formGroup.get('service')?.valueChanges.subscribe((serviceValue) => {
+      this.refreshTabs(serviceValue);
       const control = this.formGroup.get('type');
       if (serviceValue) {
         control?.enable(); // 選擇 service -> 啟用 type
@@ -205,15 +173,15 @@ export class FunctionsComponent
     forkJoin({
       activeFlags: this.optionService.getSettingTypes(
         'AUTH_SERVICE',
-        SettingType.YES_NO
+        SettingType.YES_NO,
       ),
       actionTypes: this.optionService.getSettingTypes(
         'AUTH_SERVICE',
-        SettingType.ACTION_TYPE
+        SettingType.ACTION_TYPE,
       ),
       services: this.optionService.getSettingTypes(
         'AUTH_SERVICE',
-        SettingType.SERVICE
+        SettingType.SERVICE,
       ),
     }).subscribe({
       next: (res) => {
@@ -231,6 +199,59 @@ export class FunctionsComponent
   }
 
   ngOnDestroy() {}
+
+  /**
+   * 表格上方按鈕初始化
+   * */
+  initTabs() {
+    this.detailTabs = [
+      {
+        label: '欄位',
+        icon: 'pi pi-filter',
+        command: () => {
+          this.fieldPanel.toggle(event);
+        },
+        disabled: false,
+      },
+      {
+        label: '新增',
+        icon: 'pi pi-plus',
+        command: () => {
+          this.addNewRow();
+        },
+        disabled: !this.formGroup?.value?.service,
+      },
+      {
+        label: '提交',
+        icon: 'pi pi-save',
+        command: () => {
+          this.submit();
+        },
+        disabled: false,
+      },
+      {
+        label: '放棄',
+        icon: 'pi pi-times',
+        command: () => {
+          this.cancelAll();
+        },
+        disabled: false,
+      },
+    ];
+  }
+
+  /**
+   * 刷新 Tab 狀態
+   * */
+  refreshTabs(serviceValue: any) {
+    // 找到「新增」按鈕 (索引為 1)
+    if (this.detailTabs && this.detailTabs[1]) {
+      this.detailTabs[1].disabled = !serviceValue;
+
+      // 重要：PrimeNG 的 MenuItem 通常需要重新賦值（改變引用）才會觸發畫面更新
+      this.detailTabs = [...this.detailTabs];
+    }
+  }
 
   /**
    * 清除表單資料
@@ -270,7 +291,7 @@ export class FunctionsComponent
           this.loadingMaskService.hide();
           // 無論成功或失敗都會執行
           this.query();
-        })
+        }),
       )
       .subscribe({
         next: (res) => {
@@ -294,7 +315,10 @@ export class FunctionsComponent
     if (this.formGroup.invalid) {
       return;
     }
+
     this.loadingMaskService.show();
+    // 初始化前端表格的 index 值
+    this.initTableIndex();
     // 查詢前先取消所有
     this.cancelAll();
     let formData = this.formGroup.value;
@@ -303,14 +327,14 @@ export class FunctionsComponent
         formData.service,
         formData.type,
         formData.name,
-        formData.activeFlag
+        formData.activeFlag,
       )
       .pipe(
         finalize(() => {
           this.submitted = false;
           // 無論成功或失敗都會執行
           this.loadingMaskService.hide();
-        })
+        }),
       )
       .subscribe({
         next: (res) => {
@@ -380,7 +404,22 @@ export class FunctionsComponent
    * 新增一筆空的 row 資料
    * */
   addNewRow(): void {
+    // 未進行查詢，不予新增 ( tableData 為空且 service 尚未填寫資料)
+    if (this.tableData.length === 0 && !this.formGroup?.value?.service) {
+      console.log('尚未查詢資料');
+      return;
+    }
+    // 計算目前「尚未提交到資料庫」的新資料數量 (通常 id 為空的)
+    const newItemsCount = this.tableData.filter((d) => !d.id).length;
+
+    if (newItemsCount >= 5) {
+      this.messageService.warn(
+        '一次最多只能新增 5 筆未儲存資料，請先提交後再繼續。',
+      );
+      return;
+    }
     this.mode = 'add';
+
     this.newRow = {
       id: null,
       service: this.formGroup.get('service')?.value
@@ -403,7 +442,9 @@ export class FunctionsComponent
     });
   }
 
-  // 刪除幾列資料
+  /**
+   *  刪除幾列資料
+   * */
   override delete(ids: number[], event?: Event) {
     this.functionService
       .delete(ids)
@@ -411,7 +452,7 @@ export class FunctionsComponent
         finalize(() => {
           // 無論成功或失敗都會執行
           this.query();
-        })
+        }),
       )
       .subscribe({
         next: (res) => {
@@ -427,7 +468,9 @@ export class FunctionsComponent
       });
   }
 
-  // 檢查 row 資料是否有未填欄位
+  /**
+   * 檢查 row 資料是否有未填欄位
+   * */
   override checkRowData(selectedData: any): void {
     if (
       !selectedData.service ||
@@ -514,7 +557,7 @@ export class FunctionsComponent
         finalize(() => {
           // 無論成功或失敗都會執行
           this.getFieldViewCustomisation();
-        })
+        }),
       )
       .subscribe({
         next: (res) => {
@@ -549,7 +592,7 @@ export class FunctionsComponent
         this.selectedFields = res;
         // 只保留在 viewCols 中的欄位
         this.filteredCols = this.cols.filter((col) =>
-          this.fieldViews.includes(col.field)
+          this.fieldViews.includes(col.field),
         );
       });
     this.closePanel();

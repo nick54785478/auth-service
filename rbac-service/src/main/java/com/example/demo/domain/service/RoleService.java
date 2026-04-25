@@ -54,9 +54,7 @@ public class RoleService {
 				return role;
 			} else {
 				// 新增
-				RoleInfo role = new RoleInfo();
-				role.create(command);
-				return role;
+				return RoleInfo.create(command);
 			}
 		}).collect(Collectors.toList());
 

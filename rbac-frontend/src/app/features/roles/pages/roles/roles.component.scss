@@ -8,21 +8,21 @@
   /* 超過範圍時出現滾動條 */
 }
 
-/* 📌 大螢幕 (超過 1600px) */
+/* 大螢幕 (超過 1600px) */
 @media (min-width: 1600px) {
   .table-container {
     max-width: 1400px;
   }
 }
 
-/* 📌 中等螢幕 (1200px - 1600px) */
+/* 中等螢幕 (1200px - 1600px) */
 @media (max-width: 1600px) and (min-width: 1200px) {
   .table-container {
     max-width: 1100px;
   }
 }
 
-/* 📌 小螢幕 (小於 1200px) */
+/* 小螢幕 (小於 1200px) */
 @media (max-width: 1200px) {
   .table-container {
     max-width: 100%;
@@ -38,4 +38,23 @@
   font-weight: 600; /* 半粗體（建議） */
   font-size: 1.2rem;
   color: black !important;
+}
+
+:host ::ng-deep .p-datatable-tbody {
+  min-height: 300px;
+}
+
+/* 讓 cellEditor 內的輸入框寬度撐滿 td */
+:host ::ng-deep {
+  .p-datatable-tbody > tr > td .p-cell-editor input,
+  .p-datatable-tbody > tr > td .p-cell-editor .p-dropdown {
+    width: 100%;
+    min-width: 150px; /* 設定最小寬度，防止編輯時變太小 */
+  }
+
+  /* 針對說明文字較多的 TextArea */
+  .p-datatable-tbody > tr > td .p-cell-editor textarea {
+    width: 100%;
+    min-width: 250px;
+  }
 }

@@ -34,8 +34,7 @@ public class UserCommandService {
 		if (!userService.checkIsRegistered(command)) {
 			throw new ValidationException("VALIDATION_FAILED", "該使用者相關資訊已註冊");
 		}
-		UserInfo userInfo = new UserInfo();
-		userInfo.create(command);
+		UserInfo userInfo = UserInfo.create(command);
 		userRepository.save(userInfo);
 	}
 

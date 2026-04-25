@@ -22,7 +22,7 @@ export class SystemMessageService {
       SystemMessageSeverity.INFO,
       'Info',
       detail,
-      sticky ? sticky : false
+      sticky ? sticky : false,
     );
   }
 
@@ -38,7 +38,7 @@ export class SystemMessageService {
       SystemMessageSeverity.SUCCESS,
       'Success',
       detail,
-      sticky ? sticky : false
+      sticky ? sticky : false,
     );
   }
 
@@ -54,7 +54,23 @@ export class SystemMessageService {
       SystemMessageSeverity.ERROR,
       'Error',
       detail,
-      sticky ? sticky : false
+      sticky ? sticky : false,
+    );
+  }
+
+  /**
+   * 顯示 Warn (橘色) 訊息。
+   *
+   * @param summary 訊息標題
+   * @param detail 訊息說明
+   * @param sticky 是否持續顯示不會自動消失
+   */
+  warn(detail: string, sticky?: boolean) {
+    this.addSingle(
+      SystemMessageSeverity.WARN,
+      'Warn',
+      detail,
+      sticky ? sticky : false,
     );
   }
 
@@ -70,7 +86,7 @@ export class SystemMessageService {
     severity: SystemMessageSeverity,
     summary: string,
     detail: string,
-    sticky?: boolean
+    sticky?: boolean,
   ) {
     this.messageService.add({
       severity: severity,

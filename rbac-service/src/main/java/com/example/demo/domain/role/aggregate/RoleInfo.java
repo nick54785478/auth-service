@@ -27,6 +27,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -38,21 +39,21 @@ import lombok.ToString;
 @Getter
 @Entity
 @ToString
-@NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "role_info")
 @EntityListeners(AuditingEntityListener.class)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class RoleInfo {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	private String service;
+	private String service; // 服務
 
 	private String code; // 角色 Code
 
-	private String name;
+	private String name; // 角色名稱
 
 	private String type; // 權限種類
 
@@ -71,27 +72,31 @@ public class RoleInfo {
 	 * 
 	 * @param command
 	 */
-	public void create(CreateRoleCommand command) {
-		this.code = command.getCode();
-		this.service = command.getService();
-		this.name = command.getName();
-		this.description = command.getDescription();
-		this.type = command.getType();
-		this.activeFlag = YesNo.Y;
+	public static RoleInfo create(CreateRoleCommand command) {
+		RoleInfo roleInfo = new RoleInfo();
+		roleInfo.code = command.getCode();
+		roleInfo.service = command.getService();
+		roleInfo.name = command.getName();
+		roleInfo.description = command.getDescription();
+		roleInfo.type = command.getType();
+		roleInfo.activeFlag = YesNo.Y;
+		return roleInfo;
 	}
 
 	/**
-	 * 新增一筆角色資料
+	 * 新增/更新一筆角色資料
 	 * 
-	 * @param command
+	 * @param command {@link CreateOrUpdateRoleCommand}
 	 */
-	public void create(CreateOrUpdateRoleCommand command) {
-		this.service = command.getService();
-		this.code = command.getCode();
-		this.name = command.getName();
-		this.description = command.getDescription();
-		this.type = command.getType();
-		this.activeFlag = YesNo.Y;
+	public static RoleInfo create(CreateOrUpdateRoleCommand command) {
+		RoleInfo roleInfo = new RoleInfo();
+		roleInfo.service = command.getService();
+		roleInfo.code = command.getCode();
+		roleInfo.name = command.getName();
+		roleInfo.description = command.getDescription();
+		roleInfo.type = command.getType();
+		roleInfo.activeFlag = YesNo.Y;
+		return roleInfo;
 	}
 
 	/**

@@ -30,8 +30,7 @@ public class FunctionCommandService {
 	 * @return FunctionCreated
 	 */
 	public void create(CreateFunctionCommand command) {
-		FunctionInfo function = new FunctionInfo();
-		function.create(command);
+		FunctionInfo function = FunctionInfo.create(command);
 		functionRepository.save(function);
 	}
 

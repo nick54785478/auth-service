@@ -43,13 +43,10 @@ public class FunctionService {
 				return function;
 			} else {
 				// 新增
-				FunctionInfo function = new FunctionInfo();
-				function.create(command);
-				return function;
+				return FunctionInfo.create(command);
 			}
 		}).collect(Collectors.toList());
 		functionRepository.saveAll(functionList);
 	}
-
 
 }

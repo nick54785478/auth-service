@@ -29,7 +29,6 @@ import { StorageService } from '../../../../core/services/storage.service';
 import { CustomisationService } from '../../../../shared/services/customisation.service';
 import { SystemStorageKey } from '../../../../core/enums/system-storage.enum';
 import { UpdateCustomisation } from '../../../../shared/models/update-customisation-request.model';
-import { map } from 'rxjs/internal/operators/map';
 
 @Component({
   selector: 'app-groups',
@@ -88,41 +87,6 @@ export class GroupsComponent
           this.messageService.error(error);
         },
       });
-    // 初始化上方 Tab 按鈕
-    this.detailTabs = [
-      {
-        label: '欄位',
-        icon: 'pi pi-filter',
-        command: () => {
-          this.fieldPanel.toggle(event);
-        },
-        disabled: false,
-      },
-      {
-        label: '新增',
-        icon: 'pi pi-plus',
-        command: () => {
-          this.addNewRow();
-        },
-        disabled: false,
-      },
-      {
-        label: '提交',
-        icon: 'pi pi-save',
-        command: () => {
-          this.submit();
-        },
-        disabled: false,
-      },
-      {
-        label: '放棄',
-        icon: 'pi pi-times',
-        command: () => {
-          this.cancelAll();
-        },
-        disabled: false,
-      },
-    ];
 
     // 初始化表單
     this.formGroup = new FormGroup({
@@ -132,8 +96,14 @@ export class GroupsComponent
       activeFlag: new FormControl(''), // 是否生效
     });
 
-    // 監聽 service 變更，變更後要更新 Type 的下拉選單資料
+    // 初始化上方 Tab 按鈕
+    this.initTabs();
+
+    // 監聽 service 變更，變更後動作
     this.formGroup.get('service')?.valueChanges.subscribe((serviceValue) => {
+      // 刷新 Tab 狀態
+      this.refreshTabs(serviceValue);
+      // 要更新 Type 的下拉選單資料
       const control = this.formGroup.get('type');
       if (serviceValue) {
         control?.enable(); // 選擇 service -> 啟用 type
@@ -237,6 +207,40 @@ export class GroupsComponent
   }
 
   /**
+   * 表格上方按鈕初始化
+   * */
+  initTabs() {
+    this.detailTabs = [
+      {
+        label: '欄位',
+        icon: 'pi pi-filter',
+        command: () => this.fieldPanel.toggle(event),
+      },
+      {
+        label: '新增',
+        icon: 'pi pi-plus',
+        disabled: !this.formGroup?.value?.service, // 初始狀態
+        command: () => this.addNewRow(),
+      },
+      { label: '提交', icon: 'pi pi-save', command: () => this.submit() },
+      { label: '放棄', icon: 'pi pi-times', command: () => this.cancelAll() },
+    ];
+  }
+
+  /**
+   * 刷新 Tab 狀態
+   * */
+  refreshTabs(serviceValue: any) {
+    // 找到「新增」按鈕 (索引為 1)
+    if (this.detailTabs && this.detailTabs[1]) {
+      this.detailTabs[1].disabled = !serviceValue;
+
+      // 重要：PrimeNG 的 MenuItem 通常需要重新賦值（改變引用）才會觸發畫面更新
+      this.detailTabs = [...this.detailTabs];
+    }
+  }
+
+  /**
    * 清除表單資料
    */
   override clear() {
@@ -302,6 +306,10 @@ export class GroupsComponent
     if (this.formGroup.invalid || !this.submitted) {
       return;
     }
+
+    // 初始化前端表格的 index 值
+    this.initTableIndex();
+
     // 查詢前先取消所有
     this.cancelAll();
     let formData = this.formGroup.value;
@@ -375,7 +383,21 @@ export class GroupsComponent
    * 新增一筆空的 row 資料
    * */
   addNewRow(): void {
+    console.log(this.fields);
+    console.log(this.tableData);
+
+    // 計算目前「尚未提交到資料庫」的新資料數量 (通常 id 為空的)
+    const newItemsCount = this.tableData.filter((d) => !d.id).length;
+
+    if (newItemsCount >= 5) {
+      this.messageService.warn(
+        '一次最多只能新增 5 筆未儲存資料，請先提交後再繼續。',
+      );
+      return;
+    }
+
     this.mode = 'add';
+
     this.newRow = {
       id: null,
       service: this.formGroup.get('service')?.value

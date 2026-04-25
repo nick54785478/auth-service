@@ -1,16 +1,5 @@
-import {
-  Component,
-  DoCheck,
-  OnDestroy,
-  OnInit,
-  ViewChild,
-} from '@angular/core';
-import {
-  FormControl,
-  FormGroup,
-  FormsModule,
-  Validators,
-} from '@angular/forms';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Option } from '../../../../shared/models/option.model';
 import { CommonModule } from '@angular/common';
 import { SharedModule } from '../../../../shared/shared.module';
@@ -35,6 +24,7 @@ import { StorageService } from '../../../../core/services/storage.service';
 import { OverlayPanel } from 'primeng/overlaypanel';
 import { SystemStorageKey } from '../../../../core/enums/system-storage.enum';
 import { UpdateCustomisation } from '../../../../shared/models/update-customisation-request.model';
+import { Table } from 'primeng/table';
 
 @Component({
   selector: 'app-roles',
@@ -63,6 +53,7 @@ export class RolesComponent
 
   // 控制 OverlayPanel
   @ViewChild('fieldPanel') fieldPanel!: OverlayPanel;
+  @ViewChild('dt') table!: Table;
 
   // Field 顯示設定清單
   fields: any[] = [];
@@ -83,41 +74,6 @@ export class RolesComponent
     super();
   }
   ngOnInit(): void {
-    // 初始化上方 Tab 按鈕
-    this.detailTabs = [
-      {
-        label: '欄位',
-        icon: 'pi pi-filter',
-        command: () => {
-          this.fieldPanel.toggle(event);
-        },
-        disabled: false,
-      },
-      {
-        label: '新增',
-        icon: 'pi pi-plus',
-        command: () => {
-          this.addNewRow();
-        },
-        disabled: false,
-      },
-      {
-        label: '提交',
-        icon: 'pi pi-save',
-        command: () => {
-          this.submit();
-        },
-        disabled: false,
-      },
-      {
-        label: '放棄',
-        icon: 'pi pi-times',
-        command: () => {
-          this.cancelAll();
-        },
-        disabled: false,
-      },
-    ];
     // 初始化表單
     this.formGroup = new FormGroup({
       service: new FormControl('', Validators.required),
@@ -126,8 +82,14 @@ export class RolesComponent
       activeFlag: new FormControl(''), // 是否生效
     });
 
-    // 監聽 service 變更，變更後要更新 Type 的下拉選單資料
+    // 初始化上方 Tab 按鈕
+    this.initTabs();
+
+    // 監聽 service 變更，
     this.formGroup.get('service')?.valueChanges.subscribe((serviceValue) => {
+      // 刷新 Tab 狀態
+      this.refreshTabs(serviceValue);
+      // 變更後要更新 Type 的下拉選單資料
       const control = this.formGroup.get('type');
       if (serviceValue) {
         control?.enable(); // 選擇 service -> 啟用 type
@@ -234,6 +196,61 @@ export class RolesComponent
     this.getFieldViewCustomisation();
   }
 
+  ngOnDestroy() {}
+
+  /**
+   * 表格上方按鈕初始化
+   * */
+  initTabs() {
+    this.detailTabs = [
+      {
+        label: '欄位',
+        icon: 'pi pi-filter',
+        command: () => {
+          this.fieldPanel.toggle(event);
+        },
+        disabled: false,
+      },
+      {
+        label: '新增',
+        icon: 'pi pi-plus',
+        command: () => {
+          this.addNewRow();
+        },
+        disabled: !this.formGroup?.value?.service,
+      },
+      {
+        label: '提交',
+        icon: 'pi pi-save',
+        command: () => {
+          this.submit();
+        },
+        disabled: false,
+      },
+      {
+        label: '放棄',
+        icon: 'pi pi-times',
+        command: () => {
+          this.cancelAll();
+        },
+        disabled: false,
+      },
+    ];
+  }
+
+  /**
+   * 刷新 Tab 狀態
+   * */
+  refreshTabs(serviceValue: any) {
+    // 找到「新增」按鈕 (索引為 1)
+    if (this.detailTabs && this.detailTabs[1]) {
+      this.detailTabs[1].disabled = !serviceValue;
+
+      // 重要：PrimeNG 的 MenuItem 通常需要重新賦值（改變引用）才會觸發畫面更新
+      this.detailTabs = [...this.detailTabs];
+    }
+  }
+
   /**
    * 清除表單資料
    */
@@ -241,16 +258,41 @@ export class RolesComponent
     this.formGroup.reset();
     this.tableData = [];
     this.minGivenIndex = -1;
-  }
 
-  ngOnDestroy() {}
+    if (this.table) {
+      this.table.editingRowKeys = {}; // 清除所有編輯中的行狀態
+      this.table.reset(); // 重置分頁、排序等狀態
+    }
+
+    // 別忘了刷新你的 Tab 按鈕狀態，因為 service 被清空了
+    this.refreshTabs(null);
+  }
 
   // 提交資料
   override submit() {
     this.submitted = true;
 
+    // 執行基礎檢核
     if (this.formGroup.invalid || !this.submitted || this.mode) {
       return;
+    }
+
+    // 檢查 tableData 每一筆資料是否填寫完整
+    const invalidRows = this.tableData.filter(
+      (row) =>
+        !row.service ||
+        !row.type ||
+        !row.name ||
+        !row.code ||
+        !row.description ||
+        !row.activeFlag, // 根據必填欄位調整
+    );
+
+    if (invalidRows.length > 0) {
+      this.messageService.error(
+        `有 ${invalidRows.length} 筆資料未填寫完整，請檢查所有分頁`,
+      );
+      return; // 攔截，不讓它送出
     }
 
     console.log(this.tableData);
@@ -320,6 +362,11 @@ export class RolesComponent
       return;
     }
 
+    // 建議在查詢前先完整清空表格狀態
+    if (this.table) this.table.editingRowKeys = {};
+    // 初始化前端表格的 index 值
+    this.initTableIndex();
+
     this.loadingMaskService.show();
     // 查詢前先取消所有
     this.cancelAll();
@@ -341,12 +388,16 @@ export class RolesComponent
       .subscribe({
         next: (res) => {
           this.messageService.success('查詢成功');
-          this.tableData = res;
-          // 對所有資料進行編號
-          for (var i = 0; i < this.tableData.length; i++) {
-            this.tableData[i].givenIndex = i;
-          }
+          // 確保 res 存在，避免 map 報錯
+          const data = res || [];
+          this.tableData = data.map((item, index) => ({
+            ...item,
+            givenIndex: index, // 直接在賦值前處理好 index
+          }));
 
+          if (this.table) {
+            this.table.reset(); // 回到第一頁
+          }
           console.log(this.tableData);
         },
         error: (error) => {
@@ -396,6 +447,17 @@ export class RolesComponent
    * */
   addNewRow(): void {
     this.mode = 'add';
+
+    // 計算目前「尚未提交到資料庫」的新資料數量 (通常 id 為空的)
+    const newItemsCount = this.tableData.filter((d) => !d.id).length;
+
+    if (newItemsCount >= 5) {
+      this.messageService.warn(
+        '一次最多只能新增 5 筆未儲存資料，請先提交後再繼續。',
+      );
+      return;
+    }
+
     this.newRow = {
       id: null,
       service: this.formGroup.get('service')?.value
