@@ -78,18 +78,6 @@ export class GroupsComponent
     super();
   }
   ngOnInit(): void {
-    // 取得下拉式選單資料
-    this.optionService
-      .getSettingTypes('AUTH_SERVICE', SettingType.GROUP)
-      .subscribe({
-        next: (res) => {
-          this.types = res;
-        },
-        error: (error) => {
-          this.messageService.error(error);
-        },
-      });
-
     // 初始化表單
     this.formGroup = new FormGroup({
       service: new FormControl('', Validators.required),
@@ -109,16 +97,14 @@ export class GroupsComponent
       const control = this.formGroup.get('type');
       if (serviceValue) {
         control?.enable(); // 選擇 service -> 啟用 type
-        this.optionService
-          .getSettingTypes(serviceValue, SettingType.GROUP)
-          .subscribe({
-            next: (res) => {
-              this.types = res;
-            },
-            error: (error) => {
-              this.messageService.error('取得資料發生錯誤', error.message);
-            },
-          });
+        this.optionService.getGroupDropdownOptions(serviceValue).subscribe({
+          next: (res) => {
+            this.types = res;
+          },
+          error: (error) => {
+            this.messageService.error('取得資料發生錯誤', error.message);
+          },
+        });
       } else {
         control?.reset(); // 清空角色
         control?.disable(); // 禁用 type
@@ -194,6 +180,7 @@ export class GroupsComponent
           console.error('Failed to load dropdown data:', err);
         },
       });
+    // 初始化 Service 下拉選單
     this.optionService
       .getSettingTypes('AUTH_SERVICE', SettingType.SERVICE)
       .subscribe({

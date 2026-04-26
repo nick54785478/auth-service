@@ -9,6 +9,8 @@ import com.example.demo.application.shared.dto.GroupOptionQueried;
 import com.example.demo.application.shared.dto.OptionQueried;
 import com.example.demo.application.shared.dto.RoleOptionQueried;
 import com.example.demo.application.shared.dto.UserOptionQueried;
+import com.example.demo.domain.group.aggregate.GroupInfo;
+import com.example.demo.domain.role.aggregate.RoleInfo;
 import com.example.demo.infra.repository.GroupInfoRepository;
 import com.example.demo.infra.repository.RoleInfoRepository;
 import com.example.demo.infra.repository.SettingRepository;
@@ -36,7 +38,7 @@ public class OptionQueryService {
 	 */
 	public List<OptionQueried> getSettingTypes(String service, String type) {
 		return settingRepository.findByServiceAndDataTypeAndActiveFlag(service, type, YesNo.Y).stream().map(setting -> {
-			return new OptionQueried(setting.getId(), setting.getType(), setting.getType());
+			return new OptionQueried(setting.getId(), setting.getName(), setting.getCode());
 		}).collect(Collectors.toList());
 	}
 
@@ -63,6 +65,18 @@ public class OptionQueryService {
 		return BaseDataTransformer.transformData(roleInfoRepository.findAllWithSpecification(service, str),
 				RoleOptionQueried.class);
 	}
+	
+	/**
+	 * 查詢角色資料 (DropDown)
+	 * 
+	 * @param service 服務
+	 * @return List<OptionQueried>
+	 */
+	public List<OptionQueried> getRoleOptions(String service) {
+		List<RoleInfo> roles = roleInfoRepository.findByServiceAndActiveFlag(service, YesNo.Y);
+		return roles.stream().map(RoleInfo::getType).distinct().map(type -> new OptionQueried(type, type))
+				.collect(Collectors.toList());
+	}
 
 	/**
 	 * 查詢群組資料 (AutoComplete)
@@ -74,5 +88,17 @@ public class OptionQueryService {
 	public List<GroupOptionQueried> getGroupOptions(String service, String str) {
 		return BaseDataTransformer.transformData(groupInfoRepository.findAllWithSpecification(service, str),
 				GroupOptionQueried.class);
+	}
+
+	/**
+	 * 查詢群組資料 (DropDown)
+	 * 
+	 * @param service 服務
+	 * @return List<OptionQueried>
+	 */
+	public List<OptionQueried> getGroupOptions(String service) {
+		List<GroupInfo> groups = groupInfoRepository.findByServiceAndActiveFlag(service, YesNo.Y);
+		return groups.stream().map(GroupInfo::getType).distinct().map(type -> new OptionQueried(type, type))
+				.collect(Collectors.toList());
 	}
 }

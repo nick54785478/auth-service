@@ -8,6 +8,7 @@ import { userInfo } from 'os';
 import { UserInfoOption } from '../models/userinfo-option.model';
 import { RoleInfoOption } from '../models/role-info-option.model';
 import { GroupInfoOption } from '../models/group-info-option.model';
+import { OptionGottenResource } from '../models/option-gotten.model';
 
 @Injectable({
   providedIn: 'root',
@@ -25,7 +26,7 @@ export class OptionService {
     return this.http.get<Option[]>('/data-type.json').pipe(
       map((response) => {
         return response;
-      })
+      }),
     );
   }
 
@@ -51,10 +52,10 @@ export class OptionService {
     let params = new HttpParams()
       .set('type', type ? type : '')
       .set('service', service ? service : '');
-    return this.http.get<Option[]>(url, { params }).pipe(
+    return this.http.get<OptionGottenResource>(url, { params }).pipe(
       map((response) => {
-        return response;
-      })
+        return response?.data;
+      }),
     );
   }
 
@@ -69,7 +70,7 @@ export class OptionService {
     return this.http.get<UserInfoOption[]>(url, { params }).pipe(
       map((response) => {
         return response;
-      })
+      }),
     );
   }
 
@@ -80,7 +81,7 @@ export class OptionService {
    */
   public getRoleOptions(
     service: string,
-    queryStr: string
+    queryStr: string,
   ): Observable<RoleInfoOption[]> {
     const url = this.baseApiUrl + '/options/roles';
     let params = new HttpParams()
@@ -89,18 +90,18 @@ export class OptionService {
     return this.http.get<RoleInfoOption[]>(url, { params }).pipe(
       map((response) => {
         return response;
-      })
+      }),
     );
   }
 
   /**
-   * 取得 RoleInfo AutoComplete 資料
+   * 取得 Group AutoComplete 資料
    * @param queryStr
    * @returns
    */
   public getGroupOptions(
     service: string,
-    queryStr: string
+    queryStr: string,
   ): Observable<GroupInfoOption[]> {
     const url = this.baseApiUrl + '/options/groups';
     let params = new HttpParams()
@@ -109,7 +110,37 @@ export class OptionService {
     return this.http.get<GroupInfoOption[]>(url, { params }).pipe(
       map((response) => {
         return response;
-      })
+      }),
+    );
+  }
+
+  /**
+   * 取得 GroupInfo Dropdown 資料
+   * @param service 服務
+   * @returns
+   */
+  public getGroupDropdownOptions(service: string): Observable<Option[]> {
+    const url = this.baseApiUrl + '/options/groups/types';
+    let params = new HttpParams().set('service', service ? service : '');
+    return this.http.get<OptionGottenResource>(url, { params }).pipe(
+      map((response) => {
+        return response?.data;
+      }),
+    );
+  }
+
+  /**
+   * 取得 RoleInfo Dropdown 資料
+   * @param service 服務
+   * @returns
+   */
+  public getRoleDropdownOptions(service: string): Observable<Option[]> {
+    const url = this.baseApiUrl + '/options/roles/types';
+    let params = new HttpParams().set('service', service ? service : '');
+    return this.http.get<OptionGottenResource>(url, { params }).pipe(
+      map((response) => {
+        return response?.data;
+      }),
     );
   }
 }

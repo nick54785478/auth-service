@@ -9,23 +9,26 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class OptionQueried {
 
-	  private Long id;
+	private Long id;
 
-	  private String label;
+	private String label;
 
-	  private String value;
+	private String value;
 
-	  private String labelTw;
+	private String labelTw;
 
-	  private String labelCn;
-	 
-	  private String labelUs;
+	private String labelCn;
+
+	private String labelUs;
 
 	public OptionQueried(Long id, String label, String value) {
 		this.id = id;
 		this.label = label;
 		this.value = value;
 	}
-	  
-	  
+
+	public OptionQueried(String label, String value) {
+		this.label = label;
+		this.value = value;
+	}
 }

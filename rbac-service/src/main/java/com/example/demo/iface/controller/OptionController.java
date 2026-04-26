@@ -10,7 +10,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.application.service.OptionQueryService;
+import com.example.demo.application.shared.dto.OptionQueried;
 import com.example.demo.iface.dto.out.GroupOptionQueriedResource;
+import com.example.demo.iface.dto.out.OptionGottenResource;
 import com.example.demo.iface.dto.out.OptionQueriedResource;
 import com.example.demo.iface.dto.out.RoleOptionQueriedResource;
 import com.example.demo.iface.dto.out.UserOptionQueriedResource;
@@ -29,12 +31,12 @@ public class OptionController {
 	 * 查詢相關的設定 (下拉式選單)
 	 * 
 	 * @param type 設定種類
-	 * @return ResponseEntity<List<OptionQueriedResource>>
+	 * @return ResponseEntity<OptionGottenResource>
 	 */
 	@GetMapping("/query")
-	public ResponseEntity<List<OptionQueriedResource>> query(@RequestParam String service, @RequestParam String type) {
-		return new ResponseEntity<>(BaseDataTransformer.transformData(optionQueryService.getSettingTypes(service, type),
-				OptionQueriedResource.class), HttpStatus.OK);
+	public ResponseEntity<OptionGottenResource> query(@RequestParam String service, @RequestParam String type) {
+		List<OptionQueried> data = optionQueryService.getSettingTypes(service, type);
+		return new ResponseEntity<>(new OptionGottenResource("200", "查詢成功", data), HttpStatus.OK);
 	}
 
 	/**
@@ -62,7 +64,19 @@ public class OptionController {
 	}
 
 	/**
-	 * 查詢角色相關的 AutoComplete 資料
+	 * 查詢角色種類 (下拉式選單)
+	 * 
+	 * @param service 服務
+	 */
+	@GetMapping("/roles/types")
+	public ResponseEntity<List<OptionQueriedResource>> getRoleTypeOptions(@RequestParam String service) {
+		List<OptionQueried> data = optionQueryService.getRoleOptions(service);
+		return new ResponseEntity<>(BaseDataTransformer.transformData(data, OptionQueriedResource.class),
+				HttpStatus.OK);
+	}
+
+	/**
+	 * 查詢群組相關的 AutoComplete 資料
 	 * 
 	 * @param service 服務
 	 * @param str     群組相關字串 return ResponseEntity<List<GroupOptionQueriedResource>>
@@ -72,6 +86,17 @@ public class OptionController {
 			@RequestParam("queryStr") String str) {
 		return new ResponseEntity<>(BaseDataTransformer.transformData(optionQueryService.getGroupOptions(service, str),
 				GroupOptionQueriedResource.class), HttpStatus.OK);
+	}
+
+	/**
+	 * 查詢群組種類 (下拉式選單)
+	 * 
+	 * @param service 服務
+	 */
+	@GetMapping("/groups/types")
+	public ResponseEntity<OptionGottenResource> getGroupTypeOptions(@RequestParam String service) {
+		List<OptionQueried> data = optionQueryService.getGroupOptions(service);
+		return new ResponseEntity<>(new OptionGottenResource("200", "查詢成功", data), HttpStatus.OK);
 	}
 
 }

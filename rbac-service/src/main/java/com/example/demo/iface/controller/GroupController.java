@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.application.service.GroupCommandService;
 import com.example.demo.application.service.GroupQueryService;
+import com.example.demo.application.shared.dto.GroupInfoQueried;
 import com.example.demo.domain.group.command.CreateGroupCommand;
 import com.example.demo.domain.group.command.CreateOrUpdateGroupCommand;
 import com.example.demo.iface.dto.in.CreateGroupResource;
@@ -22,8 +23,8 @@ import com.example.demo.iface.dto.in.CreateOrUpdateGroupResource;
 import com.example.demo.iface.dto.out.GroupCreatedOrUpdatedResource;
 import com.example.demo.iface.dto.out.GroupCreatedResource;
 import com.example.demo.iface.dto.out.GroupDeletedResource;
-import com.example.demo.iface.dto.out.GroupInfoQueriedResource;
 import com.example.demo.iface.dto.out.GroupRolesQueriedResource;
+import com.example.demo.iface.dto.out.GroupsSummaryGottenResource;
 import com.example.demo.util.BaseDataTransformer;
 
 import lombok.AllArgsConstructor;
@@ -75,14 +76,12 @@ public class GroupController {
 	 * @param activeFlag 是否生效
 	 * @return ResponseEntity<List<GroupInfoQueriedResource>>
 	 */
-	@GetMapping("/query")
-	public ResponseEntity<List<GroupInfoQueriedResource>> query(@RequestParam String service,
+	@GetMapping("/summary")
+	public ResponseEntity<GroupsSummaryGottenResource> summary(@RequestParam String service,
 			@RequestParam(required = false) String type, @RequestParam(required = false) String name,
 			@RequestParam(required = false) String activeFlag) {
-		return new ResponseEntity<>(
-				BaseDataTransformer.transformData(groupQueryService.query(service, type, name, activeFlag),
-						GroupInfoQueriedResource.class),
-				HttpStatus.OK);
+		List<GroupInfoQueried> data = groupQueryService.summary(service, type, name, activeFlag);
+		return new ResponseEntity<>(new GroupsSummaryGottenResource("200", "查詢成功", data), HttpStatus.OK);
 	}
 
 	/**

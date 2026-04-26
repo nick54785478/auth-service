@@ -1,15 +1,4 @@
 package com.example.demo.iface.dto.out;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class GroupCreatedResource {
-
-	private String code;
-	
-	private String message;
+public record GroupCreatedResource(String code, String message) {
 }

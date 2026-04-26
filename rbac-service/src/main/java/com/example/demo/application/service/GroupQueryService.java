@@ -3,15 +3,16 @@ package com.example.demo.application.service;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo.application.shared.dto.GroupInfoQueried;
 import com.example.demo.domain.group.aggregate.GroupInfo;
 import com.example.demo.domain.service.GroupService;
 import com.example.demo.domain.shared.summary.GroupInfoQueriedSummary;
 import com.example.demo.infra.repository.GroupInfoRepository;
+import com.example.demo.infra.spec.GetGroupsSpecification;
 import com.example.demo.util.BaseDataTransformer;
 
-import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -32,9 +33,10 @@ public class GroupQueryService {
 	 * @param activeFlag 是否生效
 	 * @return List<GroupInfoQueried>
 	 */
-	@Transactional
-	public List<GroupInfoQueried> query(String service, String type, String name, String activeFlag) {
-		List<GroupInfo> groups = groupInfoRepository.findAllWithSpecification(service, type, name, activeFlag);
+	@Transactional(readOnly = true)
+	public List<GroupInfoQueried> summary(String service, String type, String name, String activeFlag) {
+		GetGroupsSpecification specification = new GetGroupsSpecification(service, type, name, activeFlag);
+		List<GroupInfo> groups = groupInfoRepository.findAll(specification.toSpecification());
 		log.info("groups: {}", groups);
 		return BaseDataTransformer.transformData(groups, GroupInfoQueried.class);
 	}

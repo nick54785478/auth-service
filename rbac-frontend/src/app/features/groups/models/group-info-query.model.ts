@@ -10,3 +10,9 @@ export class GroupInfoQueried {
   activeFlag?: string;
   givenIndex?: number; // 前端自定義，只有被新增的資料才會被賦予
 }
+
+export class GroupsSummaryQueriedResource {
+  code!: string;
+  message!: string;
+  data: GroupInfoQueried[] = [];
+}

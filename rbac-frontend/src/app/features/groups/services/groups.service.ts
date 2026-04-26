@@ -5,7 +5,11 @@ import { Observable } from 'rxjs/internal/Observable';
 import { BaseResponse } from '../../../shared/models/base-response.model';
 import { GroupQueried } from '../models/group-query.model';
 import { SaveGroup } from '../models/save-groups-request.model';
-import { GroupInfoQueried } from '../models/group-info-query.model';
+import { map } from 'rxjs/internal/operators/map';
+import {
+  GroupInfoQueried,
+  GroupsSummaryQueriedResource,
+} from '../models/group-info-query.model';
 
 @Injectable({
   providedIn: 'root',
@@ -28,13 +32,17 @@ export class GroupsService {
     name?: string,
     activeFlag?: string,
   ): Observable<GroupInfoQueried[]> {
-    const url = this.baseApiUrl + '/groups/query';
+    const url = this.baseApiUrl + '/groups/summary';
     let params = new HttpParams()
       .set('service', service ? service : '')
       .set('type', type ? type : '')
       .set('name', name ? name : '')
       .set('activeFlag', activeFlag ? activeFlag : '');
-    return this.http.get<GroupInfoQueried[]>(url, { params });
+    return this.http.get<GroupsSummaryQueriedResource>(url, { params }).pipe(
+      map((res) => {
+        return res.data;
+      }),
+    );
   }
 
   /**
