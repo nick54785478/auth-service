@@ -13,7 +13,6 @@ import com.example.demo.application.service.OptionQueryService;
 import com.example.demo.application.shared.dto.OptionQueried;
 import com.example.demo.iface.dto.out.GroupOptionQueriedResource;
 import com.example.demo.iface.dto.out.OptionGottenResource;
-import com.example.demo.iface.dto.out.OptionQueriedResource;
 import com.example.demo.iface.dto.out.RoleOptionQueriedResource;
 import com.example.demo.iface.dto.out.UserOptionQueriedResource;
 import com.example.demo.util.BaseDataTransformer;
@@ -64,15 +63,14 @@ public class OptionController {
 	}
 
 	/**
-	 * 查詢角色種類 (下拉式選單)
+	 * 查詢角色種類 (DropDown 下拉式選單)
 	 * 
 	 * @param service 服務
 	 */
 	@GetMapping("/roles/types")
-	public ResponseEntity<List<OptionQueriedResource>> getRoleTypeOptions(@RequestParam String service) {
+	public ResponseEntity<OptionGottenResource> getRoleTypeOptions(@RequestParam String service) {
 		List<OptionQueried> data = optionQueryService.getRoleOptions(service);
-		return new ResponseEntity<>(BaseDataTransformer.transformData(data, OptionQueriedResource.class),
-				HttpStatus.OK);
+		return new ResponseEntity<>(new OptionGottenResource("200", "查詢成功", data), HttpStatus.OK);
 	}
 
 	/**
@@ -89,7 +87,7 @@ public class OptionController {
 	}
 
 	/**
-	 * 查詢群組種類 (下拉式選單)
+	 * 查詢群組種類 (DropDown 下拉式選單)
 	 * 
 	 * @param service 服務
 	 */
@@ -98,5 +96,17 @@ public class OptionController {
 		List<OptionQueried> data = optionQueryService.getGroupOptions(service);
 		return new ResponseEntity<>(new OptionGottenResource("200", "查詢成功", data), HttpStatus.OK);
 	}
+
+	/**
+	 * 查詢群組種類 (DropDown 下拉式選單)
+	 * 
+	 * @param service 服務
+	 */
+	@GetMapping("/functions/types")
+	public ResponseEntity<OptionGottenResource> getFunctionTypeOptions(@RequestParam String service) {
+		List<OptionQueried> data = optionQueryService.getFunctionOptions(service);
+		return new ResponseEntity<>(new OptionGottenResource("200", "查詢成功", data), HttpStatus.OK);
+	}
+
 
 }

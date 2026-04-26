@@ -143,4 +143,19 @@ export class OptionService {
       }),
     );
   }
+
+  /**
+   * 取得 FunctionInfo Dropdown 資料
+   * @param service 服務
+   * @returns
+   */
+  public getFunctionDropdownOptions(service: string): Observable<Option[]> {
+    const url = this.baseApiUrl + '/options/functions/types';
+    let params = new HttpParams().set('service', service ? service : '');
+    return this.http.get<OptionGottenResource>(url, { params }).pipe(
+      map((response) => {
+        return response?.data;
+      }),
+    );
+  }
 }

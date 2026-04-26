@@ -9,8 +9,10 @@ import com.example.demo.application.shared.dto.GroupOptionQueried;
 import com.example.demo.application.shared.dto.OptionQueried;
 import com.example.demo.application.shared.dto.RoleOptionQueried;
 import com.example.demo.application.shared.dto.UserOptionQueried;
+import com.example.demo.domain.function.aggregate.FunctionInfo;
 import com.example.demo.domain.group.aggregate.GroupInfo;
 import com.example.demo.domain.role.aggregate.RoleInfo;
+import com.example.demo.infra.repository.FunctionInfoRepository;
 import com.example.demo.infra.repository.GroupInfoRepository;
 import com.example.demo.infra.repository.RoleInfoRepository;
 import com.example.demo.infra.repository.SettingRepository;
@@ -28,6 +30,7 @@ public class OptionQueryService {
 	private SettingRepository settingRepository;
 	private UserInfoRepository userInfoRepository;
 	private GroupInfoRepository groupInfoRepository;
+	private FunctionInfoRepository functionInfoRepository;
 
 	/**
 	 * 查詢相關的設定
@@ -99,6 +102,18 @@ public class OptionQueryService {
 	public List<OptionQueried> getGroupOptions(String service) {
 		List<GroupInfo> groups = groupInfoRepository.findByServiceAndActiveFlag(service, YesNo.Y);
 		return groups.stream().map(GroupInfo::getType).distinct().map(type -> new OptionQueried(type, type))
+				.collect(Collectors.toList());
+	}
+	
+	/**
+	 * 查詢功能資料 (DropDown)
+	 * 
+	 * @param service 服務
+	 * @return List<OptionQueried>
+	 */
+	public List<OptionQueried> getFunctionOptions(String service) {
+		List<FunctionInfo> groups = functionInfoRepository.findByServiceAndActiveFlag(service, YesNo.Y);
+		return groups.stream().map(FunctionInfo::getType).distinct().map(type -> new OptionQueried(type, type))
 				.collect(Collectors.toList());
 	}
 }

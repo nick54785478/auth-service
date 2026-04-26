@@ -93,16 +93,14 @@ export class RolesComponent
       const control = this.formGroup.get('type');
       if (serviceValue) {
         control?.enable(); // 選擇 service -> 啟用 type
-        this.optionService
-          .getSettingTypes(serviceValue, SettingType.ROLE)
-          .subscribe({
-            next: (res) => {
-              this.types = res;
-            },
-            error: (error) => {
-              this.messageService.error('取得資料發生錯誤', error.message);
-            },
-          });
+        this.optionService.getRoleDropdownOptions(serviceValue).subscribe({
+          next: (res) => {
+            this.types = res;
+          },
+          error: (error) => {
+            this.messageService.error('取得資料發生錯誤', error.message);
+          },
+        });
       } else {
         control?.reset(); // 清空角色
         control?.disable(); // 禁用 role
