@@ -10,7 +10,7 @@ import { OptionService } from '../../../../shared/services/option.service';
 import { RoleInfoOption } from '../../../../shared/models/role-info-option.model';
 import { RoleService } from '../../services/role.service';
 import { RoleFunctionsService } from '../../services/role-functions.service';
-import { UpdateRoleFunction } from '../../models/update-role-function-request.model copy';
+import { UpdateRoleFunction } from '../../models/update-role-function-request.model';
 import { SystemMessageService } from '../../../../core/services/system-message.service';
 import { RoleQueried } from '../../models/role-query.model';
 import { BasePickListCompoent } from '../../../../shared/component/base/base-pickList.component';
@@ -50,7 +50,7 @@ export class RoleFunctionsComponent
     private optionService: OptionService,
     private systemMessageService: SystemMessageService,
     private loadMaskService: LoadingMaskService,
-    private messageService: SystemMessageService
+    private messageService: SystemMessageService,
   ) {
     super();
   }
@@ -164,7 +164,7 @@ export class RoleFunctionsComponent
           this.loadMaskService.hide();
           this.submitted = false;
           this.query();
-        })
+        }),
       )
       .subscribe({
         next: (res) => {
@@ -208,7 +208,7 @@ export class RoleFunctionsComponent
         finalize(() => {
           this.loadMaskService.hide();
           this.submitted = false;
-        })
+        }),
       )
       .subscribe((res) => {
         console.log(this.selected);
@@ -253,7 +253,7 @@ export class RoleFunctionsComponent
             return this.optionService.getRoleOptions(service, keyword);
           }), // 自動取消上一次未完成的請求
 
-          takeUntil(this._destroying$)
+          takeUntil(this._destroying$),
         )
         .subscribe((res) => {
           console.log(res);
@@ -279,7 +279,7 @@ export class RoleFunctionsComponent
       .pipe(
         finalize(() => {
           // 無論成功或失敗都會執行
-        })
+        }),
       )
       .subscribe((res) => {
         console.log(res);

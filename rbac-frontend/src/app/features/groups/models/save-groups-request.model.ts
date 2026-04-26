@@ -1,4 +1,4 @@
-export class SaveGroup {
+export class SaveGroupResource {
   id?: number;
   service!: string;
   code!: string; // 資料種類

@@ -8,7 +8,7 @@ import { LoadingMaskService } from '../../../../core/services/loading-mask.servi
 import { UsersService } from '../../services/users.service';
 import { finalize } from 'rxjs/internal/operators/finalize';
 import { UserRolesService } from '../../services/user-roles.service';
-import { UpdateUserRoles } from '../../models/update-user-roles-request.model';
+import { UpdateUserRolesResource } from '../../models/update-user-roles-request.model';
 import { Location } from '@angular/common';
 
 @Component({
@@ -30,7 +30,7 @@ export class UserRolesComponent extends BasePickListCompoent implements OnInit {
     private userRoleService: UserRolesService,
     private dialogConfig: DynamicDialogConfig,
     private messageService: SystemMessageService,
-    public ref: DynamicDialogRef
+    public ref: DynamicDialogRef,
   ) {
     super();
   }
@@ -127,7 +127,7 @@ export class UserRolesComponent extends BasePickListCompoent implements OnInit {
         finalize(() => {
           this.loadMaskService.hide();
           this.submitted = false;
-        })
+        }),
       )
       .subscribe((res) => {
         console.log(res);
@@ -152,7 +152,7 @@ export class UserRolesComponent extends BasePickListCompoent implements OnInit {
           .filter((id): id is number => id !== undefined) // 過濾 undefined 值
       : [];
 
-    let requestData: UpdateUserRoles = {
+    let requestData: UpdateUserRolesResource = {
       username: this.username,
       service: this.service,
       roleIds: roleIds,
@@ -168,7 +168,7 @@ export class UserRolesComponent extends BasePickListCompoent implements OnInit {
           this.submitted = false;
           this.query();
           this.queryOthers();
-        })
+        }),
       )
       .subscribe({
         next: (res) => {

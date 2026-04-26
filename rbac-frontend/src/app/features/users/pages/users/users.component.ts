@@ -70,7 +70,7 @@ export class UsersComponent
     private userService: UsersService,
     private dynamicDialogRef: DynamicDialogRef,
     public dialogService: DialogService,
-    private optionService: OptionService
+    private optionService: OptionService,
   ) {
     super();
   }
@@ -337,13 +337,13 @@ export class UsersComponent
     let service = this.formGroup.value.service;
     this.loadingMaskService.show();
     this.userService
-      .query(userInfo.username, service)
+      .getUserDetail(userInfo.username, service)
       .pipe(
         finalize(() => {
           // 無論成功或失敗都會執行
           this.loadingMaskService.hide();
           this.submitted = false;
-        })
+        }),
       )
       .subscribe({
         next: (res) => {
@@ -372,7 +372,7 @@ export class UsersComponent
           switchMap((keyword) => {
             return this.optionService.getUserOptions(keyword);
           }), // 自動取消上一次未完成的請求
-          takeUntil(this._destroying$)
+          takeUntil(this._destroying$),
         )
         .subscribe((res) => {
           this.userinfos = res.map((item: any) => ({

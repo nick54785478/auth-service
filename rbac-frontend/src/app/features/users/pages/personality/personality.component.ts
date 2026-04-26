@@ -8,9 +8,9 @@ import { UserGroupQueried } from '../../models/user-group-query.model';
 import { UserDetailQueried } from '../../models/user-detail-query.model';
 import { BaseFormCompoent } from '../../../../shared/component/base/base-form.component';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { UpdateUserInfo } from '../../models/update-user-request.model';
 import { finalize } from 'rxjs';
 import { LoadingMaskService } from '../../../../core/services/loading-mask.service';
+import { UpdateUserInfoResource } from '../../models/update-user-request.model';
 
 @Component({
   selector: 'app-personality',
@@ -38,7 +38,7 @@ export class PersonalityComponent
   constructor(
     private userService: UsersService,
     private messageService: SystemMessageService,
-    private loadingMaskService: LoadingMaskService
+    private loadingMaskService: LoadingMaskService,
   ) {
     super();
 
@@ -178,7 +178,7 @@ export class PersonalityComponent
       return;
     }
 
-    let request: UpdateUserInfo = {
+    let request: UpdateUserInfoResource = {
       username: this.userInfo.username,
       name: this.userInfo.name,
       email: this.userInfo.email,
@@ -196,7 +196,7 @@ export class PersonalityComponent
           setTimeout(() => {
             location.reload();
           }, 500);
-        })
+        }),
       )
       .subscribe({
         next: (res) => {

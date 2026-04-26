@@ -9,7 +9,7 @@ import { RoleFunctionsService } from '../../../services/role-functions.service';
 import { finalize } from 'rxjs/internal/operators/finalize';
 import { RoleService } from '../../../services/role.service';
 import { LoadingMaskService } from '../../../../../core/services/loading-mask.service';
-import { UpdateRoleFunction } from '../../../models/update-role-function-request.model copy';
+import { UpdateRoleFunction } from '../../../models/update-role-function-request.model';
 import { FormGroup } from '@angular/forms';
 
 @Component({
@@ -30,7 +30,7 @@ export class FunctionsConfigComponent
     private roleFunctionsService: RoleFunctionsService,
     private roleService: RoleService,
     private loadMaskService: LoadingMaskService,
-    private messageService: SystemMessageService
+    private messageService: SystemMessageService,
   ) {
     super();
   }
@@ -85,7 +85,7 @@ export class FunctionsConfigComponent
         finalize(() => {
           this.loadMaskService.hide();
           this.submitted = false;
-        })
+        }),
       )
       .subscribe({
         next: (res) => {
@@ -126,7 +126,7 @@ export class FunctionsConfigComponent
         finalize(() => {
           // 無論成功或失敗都會執行
           this.submitted = false;
-        })
+        }),
       )
       .subscribe((res) => {
         console.log(res);
@@ -159,7 +159,7 @@ export class FunctionsConfigComponent
         finalize(() => {
           this.loadMaskService.hide();
           this.submitted = false;
-        })
+        }),
       )
       .subscribe((res) => {
         console.log(res);

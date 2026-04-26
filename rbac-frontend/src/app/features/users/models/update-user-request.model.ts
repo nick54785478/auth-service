@@ -1,13 +1,13 @@
-export class UpdateUserInfo {
+export class UpdateUserInfoResource {
   username?: string;
-  
+
   name?: string;
 
-	email?: string;
+  email?: string;
 
-	birthday?: string;
-	
-	nationalId?: string;
-  
-	address?: string;
+  birthday?: string;
+
+  nationalId?: string;
+
+  address?: string;
 }

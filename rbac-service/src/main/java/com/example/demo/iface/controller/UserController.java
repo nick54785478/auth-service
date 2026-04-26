@@ -17,10 +17,11 @@ import com.example.demo.application.service.UserCommandService;
 import com.example.demo.application.service.UserQueryService;
 import com.example.demo.application.shared.dto.UserGroupQueried;
 import com.example.demo.application.shared.dto.UserRoleQueried;
+import com.example.demo.domain.shared.summary.UserInfoDetailsQueriedSummary;
 import com.example.demo.domain.user.command.CreateUserCommand;
 import com.example.demo.domain.user.command.UpdateUserCommand;
+import com.example.demo.iface.dto.out.UserDetailsGottenResource;
 import com.example.demo.iface.dto.out.UserGroupDetailsQueriedResource;
-import com.example.demo.iface.dto.out.UserInfoDetailsQueriedResource;
 import com.example.demo.iface.dto.out.UserInfoQueriedResource;
 import com.example.demo.iface.dto.out.UserRoleQueriedResource;
 import com.example.demo.iface.dto.request.CreateUserResource;
@@ -99,15 +100,13 @@ public class UserController {
 	 * 
 	 * @param username 使用者名稱
 	 * @param service  服務
-	 * @return ResponseEntity<UserInfoDetailQueriedResource>
+	 * @return ResponseEntity<UserDetailsGottenResource>
 	 */
 	@GetMapping("/{username}/details")
-	public ResponseEntity<UserInfoDetailsQueriedResource> queryUserDetails(@PathVariable String username,
+	public ResponseEntity<UserDetailsGottenResource> queryUserDetails(@PathVariable String username,
 			@RequestParam(defaultValue = "AUTH_SERVICE") String service) {
-		return new ResponseEntity<>(
-				BaseDataTransformer.transformData(userQueryService.getUserDetails(username, service),
-						UserInfoDetailsQueriedResource.class),
-				HttpStatus.OK);
+		UserInfoDetailsQueriedSummary data = userQueryService.getUserDetails(username, service);
+		return new ResponseEntity<>(new UserDetailsGottenResource("200", "查詢成功", data), HttpStatus.OK);
 	}
 
 	/**

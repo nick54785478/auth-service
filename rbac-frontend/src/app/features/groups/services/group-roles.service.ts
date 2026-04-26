@@ -5,6 +5,8 @@ import { Observable } from 'rxjs/internal/Observable';
 import { UpdateGroupRoles } from '../models/update-group-roles-request.model';
 import { BaseResponse } from '../../../shared/models/base-response.model';
 import { GroupRoleQueried } from '../models/group-role-query.model';
+import { GroupRolesGottenResource } from '../models/group-roles-gotten-response.model';
+import { map } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -23,7 +25,11 @@ export class GroupRolesService {
   queryOthers(id: number, service: string): Observable<GroupRoleQueried[]> {
     const url = this.baseApiUrl + '/groups/roles/' + id + '/others';
     let params = new HttpParams().set('service', service ? service : '');
-    return this.http.get<GroupRoleQueried[]>(url, { params });
+    return this.http.get<GroupRolesGottenResource>(url, { params }).pipe(
+      map((res) => {
+        return res?.data;
+      }),
+    );
   }
 
   /**

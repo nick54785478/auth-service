@@ -17,7 +17,7 @@ import { Option } from '../../../../shared/models/option.model';
 import { CommonModule } from '@angular/common';
 import { SharedModule } from '../../../../shared/shared.module';
 import { CoreModule } from '../../../../core/core.module';
-import { SaveGroup } from '../../models/save-groups-request.model';
+import { SaveGroupResource } from '../../models/save-groups-request.model';
 import { LoadingMaskService } from '../../../../core/services/loading-mask.service';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { DialogFormComponent } from '../../../../shared/component/dialog-form/dialog-form.component';
@@ -257,7 +257,7 @@ export class GroupsComponent
       return; // 攔截，不讓它送出
     }
 
-    const requestData: SaveGroup[] = this.tableData.map((data) => {
+    const requestData: SaveGroupResource[] = this.tableData.map((data) => {
       return {
         id: data.id,
         service: data.service,

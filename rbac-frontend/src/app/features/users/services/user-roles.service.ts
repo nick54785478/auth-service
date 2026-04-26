@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { environment } from '../../../../environments/environment';
 import { UserRoleQueried } from '../models/user-roles-query.model';
 import { Observable } from 'rxjs/internal/Observable';
-import { UpdateUserRoles } from '../models/update-user-roles-request.model';
+import { UpdateUserRolesResource } from '../models/update-user-roles-request.model';
 import { BaseResponse } from '../../../shared/models/base-response.model';
 
 @Injectable({
@@ -34,7 +34,7 @@ export class UserRolesService {
    */
   queryOthers(
     username: string,
-    service: string
+    service: string,
   ): Observable<UserRoleQueried[]> {
     const url = this.baseApiUrl + '/users/roles/' + username + '/others';
     let params = new HttpParams().set('service', service ? service : '');
@@ -45,7 +45,7 @@ export class UserRolesService {
    * 提交更新或新增角色資料
    * @param requestData
    */
-  update(requestData: UpdateUserRoles): Observable<BaseResponse> {
+  update(requestData: UpdateUserRolesResource): Observable<BaseResponse> {
     const url = this.baseApiUrl + '/users/roles/update';
     return this.http.post<BaseResponse>(url, requestData);
   }

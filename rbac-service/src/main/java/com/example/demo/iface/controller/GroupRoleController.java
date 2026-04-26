@@ -14,9 +14,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.application.service.GroupRoleCommandService;
 import com.example.demo.application.service.GroupRoleQueryService;
+import com.example.demo.application.shared.dto.GroupRoleQueried;
 import com.example.demo.domain.group.command.UpdateGroupRolesCommand;
-import com.example.demo.iface.dto.out.GroupRoleQueriedResource;
 import com.example.demo.iface.dto.request.UpdateGroupRolesResource;
+import com.example.demo.iface.dto.response.response.GroupRolesGottenResource;
 import com.example.demo.iface.dto.response.response.GroupRolesUpdatedResource;
 import com.example.demo.util.BaseDataTransformer;
 
@@ -38,10 +39,9 @@ public class GroupRoleController {
 	 * @return ResponseEntity<List<GroupRoleQueriedResource>>
 	 */
 	@GetMapping("/{id}/others")
-	public ResponseEntity<List<GroupRoleQueriedResource>> queryOthers(@PathVariable Long id,
-			@RequestParam String service) {
-		return new ResponseEntity<>(BaseDataTransformer.transformData(groupRoleQueryService.queryOthers(id, service),
-				GroupRoleQueriedResource.class), HttpStatus.OK);
+	public ResponseEntity<GroupRolesGottenResource> queryOthers(@PathVariable Long id, @RequestParam String service) {
+		List<GroupRoleQueried> data = groupRoleQueryService.queryOthers(id, service);
+		return new ResponseEntity<>(new GroupRolesGottenResource("200", "查詢成功", data), HttpStatus.OK);
 	}
 
 	/**

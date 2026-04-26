@@ -4,12 +4,10 @@ import { environment } from '../../../../environments/environment';
 import { Observable } from 'rxjs/internal/Observable';
 import { BaseResponse } from '../../../shared/models/base-response.model';
 import { GroupQueried } from '../models/group-query.model';
-import { SaveGroup } from '../models/save-groups-request.model';
+import { SaveGroupResource } from '../models/save-groups-request.model';
 import { map } from 'rxjs/internal/operators/map';
-import {
-  GroupInfoQueried,
-  GroupsSummaryQueriedResource,
-} from '../models/group-info-query.model';
+import { GroupInfoQueried } from '../models/group-info-query.model';
+import { GroupSummaryQueriedResource } from '../models/group-info-summary-gotten.model';
 
 @Injectable({
   providedIn: 'root',
@@ -38,7 +36,7 @@ export class GroupsService {
       .set('type', type ? type : '')
       .set('name', name ? name : '')
       .set('activeFlag', activeFlag ? activeFlag : '');
-    return this.http.get<GroupsSummaryQueriedResource>(url, { params }).pipe(
+    return this.http.get<GroupSummaryQueriedResource>(url, { params }).pipe(
       map((res) => {
         return res.data;
       }),
@@ -49,7 +47,7 @@ export class GroupsService {
    * 提交更新或新增群組資料
    * @param requestData
    */
-  submit(requestData: SaveGroup[]): Observable<BaseResponse> {
+  submit(requestData: SaveGroupResource[]): Observable<BaseResponse> {
     const url = this.baseApiUrl + '/groups/saveList';
     return this.http.post<BaseResponse>(url, requestData);
   }

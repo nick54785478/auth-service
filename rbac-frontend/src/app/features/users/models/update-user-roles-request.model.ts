@@ -1,4 +1,4 @@
-export class UpdateUserRoles {
+export class UpdateUserRolesResource {
   username?: string;
   service!: string;
   roleIds: number[] = [];

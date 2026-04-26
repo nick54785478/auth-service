@@ -9,6 +9,9 @@ import { UserInfoOption } from '../models/userinfo-option.model';
 import { RoleInfoOption } from '../models/role-info-option.model';
 import { GroupInfoOption } from '../models/group-info-option.model';
 import { OptionGottenResource } from '../models/option-gotten-resource.model';
+import { UserOptionGottenResource } from '../models/userinfo-option-gotten.model';
+import { GroupInfoOptionGottenResource } from '../models/group-info-option-gotten-resource.model';
+import { RoleInfoOptionGottenResource } from '../models/role-info-option-gotten-resource.model';
 
 @Injectable({
   providedIn: 'root',
@@ -67,9 +70,9 @@ export class OptionService {
   public getUserOptions(queryStr: string): Observable<UserInfoOption[]> {
     const url = this.baseApiUrl + '/options/getUserOptions';
     let params = new HttpParams().set('queryStr', queryStr ? queryStr : '');
-    return this.http.get<UserInfoOption[]>(url, { params }).pipe(
+    return this.http.get<UserOptionGottenResource>(url, { params }).pipe(
       map((response) => {
-        return response;
+        return response?.data;
       }),
     );
   }
@@ -87,9 +90,9 @@ export class OptionService {
     let params = new HttpParams()
       .set('service', service ? service : '')
       .set('queryStr', queryStr ? queryStr : '');
-    return this.http.get<RoleInfoOption[]>(url, { params }).pipe(
+    return this.http.get<RoleInfoOptionGottenResource>(url, { params }).pipe(
       map((response) => {
-        return response;
+        return response?.data;
       }),
     );
   }
@@ -107,9 +110,9 @@ export class OptionService {
     let params = new HttpParams()
       .set('service', service ? service : '')
       .set('queryStr', queryStr ? queryStr : '');
-    return this.http.get<GroupInfoOption[]>(url, { params }).pipe(
+    return this.http.get<GroupInfoOptionGottenResource>(url, { params }).pipe(
       map((response) => {
-        return response;
+        return response?.data;
       }),
     );
   }

@@ -3,7 +3,7 @@ import { RoleFunctionQueried } from '../models/role-function-query.model';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '../../../../environments/environment';
 import { Observable } from 'rxjs/internal/Observable';
-import { UpdateRoleFunction } from '../models/update-role-function-request.model copy';
+import { UpdateRoleFunction } from '../models/update-role-function-request.model';
 import { BaseResponse } from '../../../shared/models/base-response.model';
 
 @Injectable({
@@ -21,7 +21,7 @@ export class RoleFunctionsService {
    */
   getOtherFunctions(
     id: number,
-    service: string
+    service: string,
   ): Observable<RoleFunctionQueried[]> {
     const url = this.baseApiUrl + '/roles/functions/' + id + '/others';
     let params = new HttpParams().set('service', service ? service : '');
