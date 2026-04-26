@@ -41,8 +41,8 @@ public class UserGroupQueryService {
 	 * @return List<GroupRoleQueried> 群組角色清單
 	 */
 	@Transactional
-	public List<UserGroupQueried> queryOthers(String username, String service) {
-		List<GroupInfo> others = userGroupService.queryOthers(username, service);
+	public List<UserGroupQueried> getOtherUserGroups(String username, String service) {
+		List<GroupInfo> others = userGroupService.getOtherUserGroups(username, service);
 		return BaseDataTransformer.transformData(others, UserGroupQueried.class);
 	}
 }

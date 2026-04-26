@@ -249,7 +249,7 @@ export class SettingComponent
       return;
     }
     this.settingService
-      .query(
+      .summary(
         formData.service,
         formData.dataType,
         formData.type,

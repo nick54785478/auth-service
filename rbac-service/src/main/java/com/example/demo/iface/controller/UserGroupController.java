@@ -16,10 +16,9 @@ import com.example.demo.application.service.UserGroupCommandService;
 import com.example.demo.application.service.UserGroupQueryService;
 import com.example.demo.application.shared.dto.UserGroupQueried;
 import com.example.demo.domain.user.command.UpdateUserGroupsCommand;
-import com.example.demo.iface.dto.out.UserGroupDetailsQueriedResource;
-import com.example.demo.iface.dto.out.UserGroupQueriedResource;
-import com.example.demo.iface.dto.out.UserGroupUpdatedResource;
 import com.example.demo.iface.dto.request.UpdateUserGroupsResource;
+import com.example.demo.iface.dto.response.response.UserGroupUpdatedResource;
+import com.example.demo.iface.dto.response.response.UserGroupsGottenResource;
 import com.example.demo.util.BaseDataTransformer;
 
 import lombok.AllArgsConstructor;
@@ -54,11 +53,10 @@ public class UserGroupController {
 	 * @return ResponseEntity<List<UserGroupQueriedResource>>
 	 */
 	@GetMapping("/{username}")
-	public ResponseEntity<List<UserGroupQueriedResource>> queryRoles(@PathVariable String username,
+	public ResponseEntity<UserGroupsGottenResource> queryRoles(@PathVariable String username,
 			@RequestParam String service) {
-		List<UserGroupQueried> userGroups = userGroupQueryService.queryGroups(username, service);
-		return new ResponseEntity<>(BaseDataTransformer.transformData(userGroups, UserGroupQueriedResource.class),
-				HttpStatus.OK);
+		List<UserGroupQueried> data = userGroupQueryService.queryGroups(username, service);
+		return new ResponseEntity<>(new UserGroupsGottenResource("200", "查詢成功", data), HttpStatus.OK);
 	}
 
 	/**
@@ -69,12 +67,10 @@ public class UserGroupController {
 	 * @return ResponseEntity<List<UserGroupQueriedResource>>
 	 */
 	@GetMapping("/{usernmae}/others")
-	public ResponseEntity<List<UserGroupDetailsQueriedResource>> query(@PathVariable String usernmae,
+	public ResponseEntity<UserGroupsGottenResource> getOtherUserGroups(@PathVariable String usernmae,
 			@RequestParam String service) {
-		return new ResponseEntity<>(
-				BaseDataTransformer.transformData(userGroupQueryService.queryOthers(usernmae, service),
-						UserGroupDetailsQueriedResource.class),
-				HttpStatus.OK);
+		List<UserGroupQueried> data = userGroupQueryService.getOtherUserGroups(usernmae, service);
+		return new ResponseEntity<>(new UserGroupsGottenResource("200", "查詢成功", data), HttpStatus.OK);
 	}
 
 }

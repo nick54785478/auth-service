@@ -5,6 +5,8 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '../../../../environments/environment';
 import { UpdateUserGroups } from '../models/update-user-groups-request.model';
 import { BaseResponse } from '../../../shared/models/base-response.model';
+import { UserGroupGottenResource } from '../models/user-group-gotten-response.model';
+import { map } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -20,11 +22,13 @@ export class UserGroupsService {
    */
   queryOthers(
     username: string,
-    service: string
+    service: string,
   ): Observable<UserGroupQueried[]> {
     const url = this.baseApiUrl + '/users/groups/' + username + '/others';
     let params = new HttpParams().set('service', service ? service : '');
-    return this.http.get<UserGroupQueried[]>(url, { params });
+    return this.http
+      .get<UserGroupGottenResource>(url, { params })
+      .pipe(map((res) => res?.data));
   }
 
   /**
@@ -43,10 +47,12 @@ export class UserGroupsService {
    */
   queryGroups(
     username: string,
-    service: string
+    service: string,
   ): Observable<UserGroupQueried[]> {
     const url = this.baseApiUrl + '/users/groups/' + username;
     let params = new HttpParams().set('service', service ? service : '');
-    return this.http.get<UserGroupQueried[]>(url, { params });
+    return this.http
+      .get<UserGroupGottenResource>(url, { params })
+      .pipe(map((res) => res?.data));
   }
 }

@@ -7,7 +7,7 @@ import { map } from 'rxjs/internal/operators/map';
 import { StorageService } from '../../../core/services/storage.service';
 import { SystemStorageKey } from '../../../core/enums/system-storage.enum';
 import { UpdateUserInfoResource } from '../models/update-user-request.model';
-import { UserDetailGottenResource } from '../models/user-detail-queried-respeonse.model';
+import { UserDetailGottenResource } from '../models/user-detail-queried-response.model';
 
 @Injectable({
   providedIn: 'root',

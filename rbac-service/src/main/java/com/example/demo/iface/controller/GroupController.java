@@ -6,7 +6,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,7 +17,6 @@ import com.example.demo.application.service.GroupQueryService;
 import com.example.demo.application.shared.dto.GroupInfoQueried;
 import com.example.demo.domain.group.command.CreateGroupCommand;
 import com.example.demo.domain.group.command.CreateOrUpdateGroupCommand;
-import com.example.demo.iface.dto.out.GroupRolesQueriedResource;
 import com.example.demo.iface.dto.request.CreateGroupResource;
 import com.example.demo.iface.dto.request.CreateOrUpdateGroupResource;
 import com.example.demo.iface.dto.response.response.GroupCreatedOrUpdatedResource;
@@ -84,18 +82,18 @@ public class GroupController {
 		return new ResponseEntity<>(new GroupsSummaryGottenResource("200", "查詢成功", data), HttpStatus.OK);
 	}
 
-	/**
-	 * 透過 ID 查詢角色資料
-	 * 
-	 * @param type
-	 * @param name
-	 * @return ResponseEntity<GroupInfoQueriedResource>
-	 */
-	@GetMapping("/{id}")
-	public ResponseEntity<GroupRolesQueriedResource> getGroupInfo(@PathVariable Long id, @RequestParam String service) {
-		return new ResponseEntity<>(BaseDataTransformer.transformData(groupQueryService.getGroupInfo(id, service),
-				GroupRolesQueriedResource.class), HttpStatus.OK);
-	}
+//	/**
+//	 * 透過 ID 查詢角色資料
+//	 * 
+//	 * @param type
+//	 * @param name
+//	 * @return ResponseEntity<GroupInfoQueriedResource>
+//	 */
+//	@GetMapping("/{id}")
+//	public ResponseEntity<GroupRolesQueriedResource> getGroupInfo(@PathVariable Long id, @RequestParam String service) {
+//		return new ResponseEntity<>(BaseDataTransformer.transformData(groupQueryService.getGroupInfo(id, service),
+//				GroupRolesQueriedResource.class), HttpStatus.OK);
+//	}
 
 	/**
 	 * 刪除多筆群組資料

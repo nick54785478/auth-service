@@ -14,14 +14,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.application.service.FunctionCommandService;
 import com.example.demo.application.service.FunctionQueryService;
+import com.example.demo.application.shared.dto.FunctionInfoQueried;
 import com.example.demo.domain.function.command.CreateFunctionCommand;
 import com.example.demo.domain.function.command.CreateOrUpdateFunctionCommand;
-import com.example.demo.iface.dto.out.FunctionInfoQueriedResource;
 import com.example.demo.iface.dto.request.CreateFunctionResource;
 import com.example.demo.iface.dto.request.CreateOrUpdateFunctionResource;
 import com.example.demo.iface.dto.response.response.FunctionCreatedOrUpdatedResource;
 import com.example.demo.iface.dto.response.response.FunctionCreatedResource;
 import com.example.demo.iface.dto.response.response.FunctionDeletedResource;
+import com.example.demo.iface.dto.response.response.FunctionsSummaryGottenResource;
 import com.example.demo.util.BaseDataTransformer;
 
 import lombok.AllArgsConstructor;
@@ -77,18 +78,6 @@ public class FunctionController {
 	}
 
 	/**
-	 * 查詢角色功能資料
-	 * 
-	 * @param queryStr
-	 * @return ResponseEntity<List<FunctionInfoQueriedResource>>
-	 */
-	@GetMapping("/queryRoleFunc")
-	public ResponseEntity<List<FunctionInfoQueriedResource>> query(@RequestParam String queryStr) {
-		return new ResponseEntity<>(BaseDataTransformer.transformData(functionQueryService.query(queryStr),
-				FunctionInfoQueriedResource.class), HttpStatus.OK);
-	}
-
-	/**
 	 * 查詢功能資料
 	 * 
 	 * @param service
@@ -98,12 +87,11 @@ public class FunctionController {
 	 * @param actionFlag
 	 * @return ResponseEntity<List<RoleQueriedResource>>
 	 */
-	@GetMapping("/query")
-	public ResponseEntity<List<FunctionInfoQueriedResource>> query(@RequestParam String service,
+	@GetMapping("/summary")
+	public ResponseEntity<FunctionsSummaryGottenResource> summary(@RequestParam String service,
 			@RequestParam(required = false) String actionType, @RequestParam(required = false) String type,
 			@RequestParam(required = false) String name, @RequestParam(required = false) String activeFlag) {
-		return new ResponseEntity<>(BaseDataTransformer.transformData(
-				functionQueryService.query(service, actionType, type, name, activeFlag),
-				FunctionInfoQueriedResource.class), HttpStatus.OK);
+		List<FunctionInfoQueried> data = functionQueryService.summary(service, actionType, type, name, activeFlag);
+		return new ResponseEntity<>(new FunctionsSummaryGottenResource("200", "查詢成功", data), HttpStatus.OK);
 	}
 }

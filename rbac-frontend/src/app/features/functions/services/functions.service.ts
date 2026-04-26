@@ -5,6 +5,8 @@ import { Observable } from 'rxjs/internal/Observable';
 import { BaseResponse } from '../../../shared/models/base-response.model';
 import { FunctionQueried } from '../models/function-query.model';
 import { SaveFunction } from '../models/save-functions-request.model';
+import { FunctionsSummaryQueriedResource } from '../models/function-summary-queried.response.model';
+import { map } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -27,16 +29,20 @@ export class FunctionsService {
     type: string,
     name?: string,
     activeFlag?: string,
-    actionType?: string
+    actionType?: string,
   ): Observable<FunctionQueried[]> {
-    const url = this.baseApiUrl + '/functions/query';
+    const url = this.baseApiUrl + '/functions/summary';
     let params = new HttpParams()
       .set('service', service ? service : '')
       .set('actionType', actionType ? actionType : '')
       .set('type', type ? type : '')
       .set('name', name ? name : '')
       .set('activeFlag', activeFlag ? activeFlag : '');
-    return this.http.get<FunctionQueried[]>(url, { params });
+    return this.http.get<FunctionsSummaryQueriedResource>(url, { params }).pipe(
+      map((res) => {
+        return res?.data;
+      }),
+    );
   }
 
   /**

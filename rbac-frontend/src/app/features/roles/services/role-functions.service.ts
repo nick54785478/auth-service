@@ -5,6 +5,8 @@ import { environment } from '../../../../environments/environment';
 import { Observable } from 'rxjs/internal/Observable';
 import { UpdateRoleFunction } from '../models/update-role-function-request.model';
 import { BaseResponse } from '../../../shared/models/base-response.model';
+import { RoleFunctionGottenResource } from '../models/role-function-queried-response.model';
+import { map } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -19,13 +21,17 @@ export class RoleFunctionsService {
    * @param id
    * @param service
    */
-  getOtherFunctions(
+  getOtherRoleFunctions(
     id: number,
     service: string,
   ): Observable<RoleFunctionQueried[]> {
     const url = this.baseApiUrl + '/roles/functions/' + id + '/others';
     let params = new HttpParams().set('service', service ? service : '');
-    return this.http.get<RoleFunctionQueried[]>(url, { params });
+    return this.http.get<RoleFunctionGottenResource>(url, { params }).pipe(
+      map((res) => {
+        return res?.data;
+      }),
+    );
   }
 
   /**

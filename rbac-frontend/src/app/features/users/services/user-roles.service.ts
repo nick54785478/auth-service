@@ -5,6 +5,8 @@ import { UserRoleQueried } from '../models/user-roles-query.model';
 import { Observable } from 'rxjs/internal/Observable';
 import { UpdateUserRolesResource } from '../models/update-user-roles-request.model';
 import { BaseResponse } from '../../../shared/models/base-response.model';
+import { UserRoleGottenResource } from '../models/user-roles-gotten-response.model';
+import { map } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -23,7 +25,9 @@ export class UserRolesService {
   queryRoles(username: string, service: string): Observable<UserRoleQueried[]> {
     const url = this.baseApiUrl + '/users/roles/' + username;
     let params = new HttpParams().set('service', service ? service : '');
-    return this.http.get<UserRoleQueried[]>(url, { params });
+    return this.http
+      .get<UserRoleGottenResource>(url, { params })
+      .pipe(map((res) => res.data));
   }
 
   /**
@@ -38,7 +42,9 @@ export class UserRolesService {
   ): Observable<UserRoleQueried[]> {
     const url = this.baseApiUrl + '/users/roles/' + username + '/others';
     let params = new HttpParams().set('service', service ? service : '');
-    return this.http.get<UserRoleQueried[]>(url, { params });
+    return this.http
+      .get<UserRoleGottenResource>(url, { params })
+      .pipe(map((res) => res.data));
   }
 
   /**

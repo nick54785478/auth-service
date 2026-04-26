@@ -16,14 +16,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.application.service.SettingCommandService;
 import com.example.demo.application.service.SettingQueryService;
+import com.example.demo.application.shared.dto.SettingQueried;
 import com.example.demo.domain.setting.command.CreateSettingCommand;
 import com.example.demo.domain.setting.command.UpdateSettingCommand;
-import com.example.demo.iface.dto.out.SettingQueriedResource;
 import com.example.demo.iface.dto.request.CreateSettingResource;
 import com.example.demo.iface.dto.request.UpdateSettingResource;
 import com.example.demo.iface.dto.response.response.SettingCreatedResource;
 import com.example.demo.iface.dto.response.response.SettingDeletedResource;
 import com.example.demo.iface.dto.response.response.SettingUpdatedResource;
+import com.example.demo.iface.dto.response.response.SettingsSummaryGottenResource;
 import com.example.demo.util.BaseDataTransformer;
 
 import lombok.AllArgsConstructor;
@@ -63,13 +64,13 @@ public class SettingController {
 	 * @param activeFlag 是否生效
 	 * @return ResponseEntity<List<SettingQueriedResource>>
 	 */
-	@GetMapping("/query")
-	public ResponseEntity<List<SettingQueriedResource>> query(@RequestParam String service,
+	@GetMapping("/summary")
+	public ResponseEntity<SettingsSummaryGottenResource> summary(@RequestParam String service,
 			@RequestParam(required = false) String dataType, @RequestParam(required = false) String type,
 			@RequestParam(required = false) String name, @RequestParam(required = false) String activeFlag) {
+		List<SettingQueried> data = settingQueryService.summary(service, dataType, type, name, activeFlag);
 		return new ResponseEntity<>(
-				BaseDataTransformer.transformData(settingQueryService.query(service, dataType, type, name, activeFlag),
-						SettingQueriedResource.class),
+				new SettingsSummaryGottenResource("200", "查詢成功", data),
 				HttpStatus.OK);
 	}
 

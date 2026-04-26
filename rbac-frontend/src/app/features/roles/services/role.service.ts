@@ -25,9 +25,9 @@ export class RoleService {
     service: string,
     type: string,
     name?: string,
-    activeFlag?: string
+    activeFlag?: string,
   ): Observable<RoleQueried[]> {
-    const url = this.baseApiUrl + '/roles/query';
+    const url = this.baseApiUrl + '/roles/summary';
     let params = new HttpParams()
       .set('service', service ? service : '')
       .set('type', type ? type : '')

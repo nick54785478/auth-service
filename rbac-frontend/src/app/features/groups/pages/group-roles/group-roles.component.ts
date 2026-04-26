@@ -18,6 +18,7 @@ import { GroupInfoOption } from '../../../../shared/models/group-info-option.mod
 import { Option } from '../../../../shared/models/option.model';
 import { SettingType } from '../../../../core/enums/setting-type.enum';
 import { group } from 'node:console';
+import { of } from 'rxjs/internal/observable/of';
 
 @Component({
   selector: 'app-group-roles',
@@ -47,11 +48,10 @@ export class GroupRolesComponent
   readonly _destroying$ = new Subject<void>();
 
   constructor(
-    private groupService: GroupsService,
     private groupRolesService: GroupRolesService,
     private optionService: OptionService,
     private messageService: SystemMessageService,
-    private loadMaskService: LoadingMaskService
+    private loadMaskService: LoadingMaskService,
   ) {
     super();
   }
@@ -84,22 +84,54 @@ export class GroupRolesComponent
       ]),
     });
 
+    this.dataSubject$
+      .pipe(
+        takeUntil(this._destroying$),
+        debounceTime(300), // 防抖
+        switchMap((keyword) => {
+          // 【關鍵修復】：每次查詢時，動態去抓「目前最新」的 service 值
+          const currentService = this.formGroup.get('service')?.value;
+
+          // 如果沒有選 service，直接回傳空陣列中斷查詢
+          if (!currentService) {
+            return of([]);
+          }
+
+          return this.optionService.getGroupOptions(currentService, keyword);
+        }),
+      )
+      .subscribe((res) => {
+        // 收到結果，更新下拉選單
+        this.groupOptions = res.map((item: any) => ({
+          id: item.id,
+          code: item.code,
+          name: item.name,
+          displayName: `${item.code} (${item.name})`,
+        }));
+      });
+
     // 監聽 service 變更
     this.formGroup.get('service')?.valueChanges.subscribe((serviceValue) => {
-      const control = this.formGroup.get('group');
+      const groupControl = this.formGroup.get('group');
+
+      // 清空防護網
+      this.dataSubject$.next(''); // 發送空字串打斷舊 API
+      this.groupOptions = []; // 清空選項
+      this.queriedStr = ''; // 清空暫存字串
+      this.sourceList = [];
+      this.targetList = [];
+
       if (serviceValue) {
-        control?.enable(); // 選到 service -> 啟用 role
-        this.formGroup.patchValue({
-          group: '',
-        });
-        this.getGroupOptions(this.queriedStr, serviceValue);
-        this.groupOptions = []; // 清空群組下拉選單
+        groupControl?.enable();
+        groupControl?.setValue(null); // 徹底清空 AutoComplete 綁定
+        groupControl?.markAsUntouched();
+        groupControl?.markAsPristine();
+
+        // 直接透過 Subject 觸發空字串查詢，拉取新 Service 的預設群組
+        this.dataSubject$.next('');
       } else {
-        control?.reset(); // 清空角色
-        control?.disable(); // 禁用 role
-        // 清空查詢結果
-        this.sourceList = [];
-        this.targetList = [];
+        groupControl?.setValue(null);
+        groupControl?.disable();
       }
     });
 
@@ -164,7 +196,7 @@ export class GroupRolesComponent
           this.loadMaskService.hide();
           this.submitted = false;
           this.query();
-        })
+        }),
       )
       .subscribe({
         next: (res) => {
@@ -200,16 +232,16 @@ export class GroupRolesComponent
     }
 
     this.loadMaskService.show();
-    this.groupService
+    this.groupRolesService
       .queryByIdAndService(formData.group.id, formData.service)
       .pipe(
         finalize(() => {
           this.loadMaskService.hide();
           this.submitted = false;
-        })
+        }),
       )
       .subscribe((res) => {
-        let roleList = res.roles;
+        let roleList = res;
         if (roleList) {
           this.targetList = roleList.map((role: any) => ({
             id: role.id,
@@ -226,45 +258,26 @@ export class GroupRolesComponent
   }
 
   /**
-   * 查詢群組下拉式選單
+   * 查詢群組下拉式選單 (綁定在 AutoComplete 的 completeMethod)
    * @param event
    */
-  getGroupOptions(event: any, service: string) {
-    if (event.query.length < 2 || event.query === this.queriedStr) {
+  getGroupOptions(event: any) {
+    const query = event.query || '';
+
+    // 防呆：如果輸入長度是 1，不發請求 (0 是為了點擊下拉箭頭時載入全部)
+    if (query.length === 1) {
       return;
     }
-    // 查詢前先清空
-    this.queriedStr = event.query;
 
-    if (!this.dataSubject$.observed) {
-      // this.loadMaskService.show();
-      // 初始化 AutoComplete 的訂閱
-      this.dataSubject$
-        .pipe(
-          finalize(() => {
-            // 無論成功或失敗都會執行
-            // this.loadMaskService.hide();
-          }),
-          debounceTime(300), // 防抖，避免頻繁發請求
-          switchMap((keyword) => {
-            console.log(keyword);
-
-            return this.optionService.getGroupOptions(service, keyword);
-          }), // 自動取消上一次未完成的請求
-
-          takeUntil(this._destroying$)
-        )
-        .subscribe((res) => {
-          console.log(res);
-          this.groupOptions = res.map((item: any) => ({
-            id: item.id, // 保留 id
-            code: item.code, // 保留 name
-            name: item.name, // 保留 nameEn
-            displayName: `${item.code} (${item.name})`, // 生成 displayName
-          }));
-        });
+    // 避免重複查詢一樣的字串
+    if (query === this.queriedStr && query.length !== 0) {
+      return;
     }
-    this.dataSubject$.next(event.query);
+
+    this.queriedStr = query;
+
+    // 把字串丟進管線，讓 ngOnInit 裡面的 switchMap 去接手處理
+    this.dataSubject$.next(query);
   }
 
   /**
@@ -277,7 +290,7 @@ export class GroupRolesComponent
       .pipe(
         finalize(() => {
           // 無論成功或失敗都會執行
-        })
+        }),
       )
       .subscribe((res) => {
         console.log(res);

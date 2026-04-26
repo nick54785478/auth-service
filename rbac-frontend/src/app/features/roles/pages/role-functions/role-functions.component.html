@@ -33,9 +33,7 @@
           styleClass="w-full"
           inputStyleClass="w-full"
           [showEmptyMessage]="true"
-          (completeMethod)="
-            getRoleOptions($event, formControl('service').value)
-          "
+          (completeMethod)="getRoleOptions($event)"
           emptyMessage="查無資料"
           field="displayName"
         >
@@ -100,10 +98,10 @@
             <div class="flex-1 flex flex-col">
               <span
                 [ngClass]="{
-                        'text-surface-500': !selected,
-                        'dark:text-surface-400': !selected,
-                        'text-inherit': selected,
-                    }"
+                  'text-surface-500': !selected,
+                  'dark:text-surface-400': !selected,
+                  'text-inherit': selected,
+                }"
               >
                 {{ data.displayName }}</span
               >

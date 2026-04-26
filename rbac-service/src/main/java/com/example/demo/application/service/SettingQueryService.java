@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import com.example.demo.application.shared.dto.SettingQueried;
 import com.example.demo.domain.setting.aggregate.Setting;
 import com.example.demo.infra.repository.SettingRepository;
+import com.example.demo.infra.spec.GetSettingsSpecification;
 import com.example.demo.util.BaseDataTransformer;
 
 import lombok.AllArgsConstructor;
@@ -27,9 +28,10 @@ public class SettingQueryService {
 	 * @param activeFlag 是否生效
 	 * @return List<SettingQueried> 設定清單
 	 */
-	public List<SettingQueried> query(String service, String dataType, String type, String name, String activeFlag) {
-		List<Setting> settingList = settingRepository.findAllWithSpecification(service, dataType, type, name,
+	public List<SettingQueried> summary(String service, String dataType, String type, String name, String activeFlag) {
+		GetSettingsSpecification specifiaction = new GetSettingsSpecification(service, dataType, type, name,
 				activeFlag);
+		List<Setting> settingList = settingRepository.findAll(specifiaction.toSpecification());
 		return BaseDataTransformer.transformData(settingList, SettingQueried.class);
 	}
 

@@ -26,9 +26,9 @@ public class UserRoleQueryService {
 	 * @param username 使用者帳號
 	 * @return List<UserRoleQueried>
 	 */
-	@Transactional
-	public List<UserRoleQueried> queryRoles(String username, String service) {
-		List<RoleInfo> roles = userRoleService.queryRoles(username, service);
+	@Transactional(readOnly = true)
+	public List<UserRoleQueried> getUserRoles(String username, String service) {
+		List<RoleInfo> roles = userRoleService.getUserRoles(username, service);
 		log.debug("roles: {}", roles);
 		return BaseDataTransformer.transformData(roles, UserRoleQueried.class);
 	}
@@ -36,13 +36,13 @@ public class UserRoleQueryService {
 	/**
 	 * 查詢不屬於該使用者的其他角色
 	 * 
-	 * @param username
+	 * @param username 使用者名稱
 	 * @param service  服務
 	 * @return List<UserRoleGroupQueried>
 	 */
-	@Transactional
-	public List<UserRoleQueried> queryOthers(String username, String service) {
-		List<RoleInfo> others = userRoleService.queryOthers(username, service);
+	@Transactional(readOnly = true)
+	public List<UserRoleQueried> getOtherRoles(String username, String service) {
+		List<RoleInfo> others = userRoleService.getOtherRoles(username, service);
 		return BaseDataTransformer.transformData(others, UserRoleQueried.class);
 
 	}

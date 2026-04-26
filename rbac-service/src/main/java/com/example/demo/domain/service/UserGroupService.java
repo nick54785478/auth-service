@@ -33,7 +33,7 @@ public class UserGroupService {
 	 * @param service  服務
 	 * @return List<UserGroupQueried>
 	 */
-	public List<GroupInfo> queryOthers(String username, String service) {
+	public List<GroupInfo> getOtherUserGroups(String username, String service) {
 		UserInfo userInfo = userInfoRepository.findByUsername(username);
 
 		if (!Objects.isNull(userInfo)) {

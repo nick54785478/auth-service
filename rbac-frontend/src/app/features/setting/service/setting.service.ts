@@ -6,6 +6,8 @@ import { Observable } from 'rxjs/internal/Observable';
 import { SettingQueried } from '../models/setting-query.model';
 import { BaseResponse } from '../../../shared/models/base-response.model';
 import { UpdateSetting } from '../models/update-setting-request.model';
+import { map } from 'rxjs';
+import { SettingSummaryGottenResoruce } from '../models/setting-summary-gotten-response.model';
 
 @Injectable({
   providedIn: 'root',
@@ -41,21 +43,25 @@ export class SettingService {
    * @param type
    * @param name
    */
-  query(
+  summary(
     service: string,
     dataType: string,
     type: string,
     name: string,
-    activeFlag: string
+    activeFlag: string,
   ): Observable<SettingQueried[]> {
-    const url = this.baseApiUrl + '/settings/query';
+    const url = this.baseApiUrl + '/settings/summary';
     let params = new HttpParams()
       .set('service', service ? service : '')
       .set('dataType', dataType ? dataType : '')
       .set('type', type ? type : '')
       .set('name', name ? name : '')
       .set('activeFlag', activeFlag ? activeFlag : '');
-    return this.http.get<SettingQueried[]>(url, { params });
+    return this.http.get<SettingSummaryGottenResoruce>(url, { params }).pipe(
+      map((res) => {
+        return res?.data;
+      }),
+    );
   }
 
   /**

@@ -35,7 +35,7 @@ public class UserRoleService {
 	 * @return List<UserRoleGroupQueried>
 	 */
 	@Transactional
-	public List<RoleInfo> queryOthers(String username, String service) {
+	public List<RoleInfo> getOtherRoles(String username, String service) {
 		UserInfo userInfo = userInfoRepository.findByUsername(username);
 		if (!Objects.isNull(userInfo)) {
 			// 篩選出該使用者有的 角色 ID 清單
@@ -125,7 +125,7 @@ public class UserRoleService {
 	 * @param service  服務
 	 * @return List<UserRoleQueried>
 	 */
-	public List<RoleInfo> queryRoles(String username, String service) {
+	public List<RoleInfo> getUserRoles(String username, String service) {
 		UserInfo user = userInfoRepository.findByUsername(username);
 		// 取得該使用者的 RoleId 清單
 		List<Long> roleIds = user.getRoles().stream()

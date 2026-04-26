@@ -2,6 +2,7 @@ package com.example.demo.infra.repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.jpa.domain.Specification;
@@ -27,6 +28,8 @@ public interface GroupInfoRepository extends JpaRepository<GroupInfo, Long> {
 	List<GroupInfo> findByServiceAndActiveFlag(String service, YesNo activeFlag);
 
 	List<GroupInfo> findAll(Specification<GroupInfo> specification);
+	
+	Optional<GroupInfo> findByServiceAndCode(String service, String code);
 
 	default List<GroupInfo> findAllWithSpecification(String service, String type, String name, String activeFlag) {
 		Specification<GroupInfo> specification = ((root, query, cb) -> {

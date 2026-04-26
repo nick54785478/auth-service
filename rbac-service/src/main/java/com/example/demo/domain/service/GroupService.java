@@ -96,32 +96,6 @@ public class GroupService {
 	}
 
 	/**
-	 * 查詢群組角色
-	 * 
-	 * @param groupId
-	 * @return GroupRolesQueried
-	 */
-	@Transactional
-	public List<GroupRoleQueriedDetail> queryRoles(Long groupId) {
-		Optional<GroupInfo> opt = groupInfoRepository.findById(groupId);
-		if (opt.isEmpty()) {
-			return new ArrayList<>();
-		} else {
-			GroupInfo group = opt.get();
-			List<Long> roleIds = group.getRoles().stream().map(GroupRole::getRoleId).collect(Collectors.toList());
-			List<GroupRoleQueriedDetail> result = roleInfoRepository.findByIdIn(roleIds).stream().map(role -> {
-				GroupRoleQueriedDetail groupRoleQueried = new GroupRoleQueriedDetail();
-				groupRoleQueried.setId(role.getId());
-				groupRoleQueried.setName(role.getName());
-				groupRoleQueried.setCode(role.getCode());
-				groupRoleQueried.setDescription(role.getDescription());
-				return groupRoleQueried;
-			}).collect(Collectors.toList());
-			return result;
-		}
-	}
-
-	/**
 	 * 刪除多筆角色資料
 	 * 
 	 * @param ids 要被刪除的 id 清單

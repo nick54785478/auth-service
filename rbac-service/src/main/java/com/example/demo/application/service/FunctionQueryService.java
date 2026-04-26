@@ -3,10 +3,12 @@ package com.example.demo.application.service;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo.application.shared.dto.FunctionInfoQueried;
 import com.example.demo.domain.function.aggregate.FunctionInfo;
 import com.example.demo.infra.repository.FunctionInfoRepository;
+import com.example.demo.infra.spec.GetFunctionsSpecification;
 import com.example.demo.util.BaseDataTransformer;
 
 import lombok.AllArgsConstructor;
@@ -27,10 +29,13 @@ public class FunctionQueryService {
 	 * @param activeFlag 是否生效
 	 * @return List<GroupInfoQueried>
 	 */
-	public List<FunctionInfoQueried> query(String service, String actionType, String type, String name,
+	@Transactional(readOnly = true)
+	public List<FunctionInfoQueried> summary(String service, String actionType, String type, String name,
 			String activeFlag) {
-		List<FunctionInfo> functions = functionInfoRepository.findAllWithSpecification(service, actionType, type, name,
+
+		GetFunctionsSpecification specification = new GetFunctionsSpecification(service, actionType, type, name,
 				activeFlag);
+		List<FunctionInfo> functions = functionInfoRepository.findAll(specification.toSpecification());
 		return BaseDataTransformer.transformData(functions, FunctionInfoQueried.class);
 	}
 

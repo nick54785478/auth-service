@@ -32,27 +32,40 @@ public class GroupRoleController {
 	private GroupRoleCommandService groupRoleCommandService;
 
 	/**
-	 * 查詢不屬於該角色的功能資料
+	 * 查詢不屬於該角色的功能資料(特定 Service)
 	 * 
-	 * @param id      群組ID
-	 * @param service 服務
+	 * @param id      Group id
+	 * @param service Service
 	 * @return ResponseEntity<List<GroupRoleQueriedResource>>
 	 */
 	@GetMapping("/{id}/others")
-	public ResponseEntity<GroupRolesGottenResource> queryOthers(@PathVariable Long id, @RequestParam String service) {
-		List<GroupRoleQueried> data = groupRoleQueryService.queryOthers(id, service);
+	public ResponseEntity<GroupRolesGottenResource> getOtherGroupRoles(@PathVariable Long id,
+			@RequestParam String service) {
+		List<GroupRoleQueried> data = groupRoleQueryService.getOtherGroupRoles(id, service);
+		return new ResponseEntity<>(new GroupRolesGottenResource("200", "查詢成功", data), HttpStatus.OK);
+	}
+
+	/**
+	 * 透過群組 ID 查詢角色資料(特定 Service)
+	 * 
+	 * @param id      Group id
+	 * @param service Service
+	 * @return ResponseEntity<GroupInfoQueriedResource>
+	 */
+	@GetMapping("/{id}")
+	public ResponseEntity<GroupRolesGottenResource> getGroupRoles(@PathVariable Long id, @RequestParam String service) {
+		List<GroupRoleQueried> data = groupRoleQueryService.getGroupRoles(id, service);
 		return new ResponseEntity<>(new GroupRolesGottenResource("200", "查詢成功", data), HttpStatus.OK);
 	}
 
 	/**
 	 * 更新群組內的角色
 	 * 
-	 * @param resource
+	 * @param resource {@link UpdateGroupRolesResource}
 	 * @return ResponseEntity<GroupRolesUpdatedResource>
 	 */
 	@PostMapping("/update")
 	public ResponseEntity<GroupRolesUpdatedResource> update(@RequestBody UpdateGroupRolesResource resource) {
-
 		UpdateGroupRolesCommand command = BaseDataTransformer.transformData(resource, UpdateGroupRolesCommand.class);
 		groupRoleCommandService.update(command);
 		return new ResponseEntity<>(new GroupRolesUpdatedResource("200", "成功更新群組內角色權限"), HttpStatus.OK);

@@ -16,6 +16,7 @@ import { RoleQueried } from '../../models/role-query.model';
 import { BasePickListCompoent } from '../../../../shared/component/base/base-pickList.component';
 import { Option } from '../../../../shared/models/option.model';
 import { SettingType } from '../../../../core/enums/setting-type.enum';
+import { of } from 'rxjs/internal/observable/of';
 
 @Component({
   selector: 'app-role-function',
@@ -83,25 +84,76 @@ export class RoleFunctionsComponent
       service: new FormControl('', [Validators.required]),
     });
 
+    this.dataSubject$
+      .pipe(
+        takeUntil(this._destroying$),
+        debounceTime(300), // 防抖
+        switchMap((keyword) => {
+          // 【關鍵修復】：每次查詢時，動態去抓「目前最新」的 service 值
+          const currentService = this.formGroup.get('service')?.value;
+
+          // 如果沒有選 service，直接回傳空陣列中斷查詢
+          if (!currentService) {
+            return of([]);
+          }
+
+          return this.optionService.getRoleOptions(currentService, keyword);
+        }),
+      )
+      .subscribe((res) => {
+        // 收到結果，更新下拉選單
+        this.roleOptions = res.map((item: any) => ({
+          id: item.id,
+          code: item.code,
+          name: item.name,
+          displayName: `${item.code} (${item.name})`,
+        }));
+      });
+
     // 監聽 service 變更
     this.formGroup.get('service')?.valueChanges.subscribe((serviceValue) => {
       const roleControl = this.formGroup.get('role');
-      console.log(this.formGroup.value.service);
-      if (serviceValue) {
-        roleControl?.enable(); // 選到 service -> 啟用 role
-        this.formGroup.patchValue({
-          role: '',
-        });
-        this.getRoleOptions(this.queriedStr, serviceValue);
-      } else {
-        roleControl?.reset(); // 清空角色
-        roleControl?.disable(); // 禁用 role
-        this.roleOptions = [];
-      }
-      // 清空查詢結果
+
+      // 清空防護網
+      this.dataSubject$.next(''); // 發送空字串打斷舊 API
+      this.roleOptions = []; // 清空選項
+      this.queriedStr = ''; // 清空暫存字串
       this.sourceList = [];
       this.targetList = [];
+
+      if (serviceValue) {
+        roleControl?.enable();
+        roleControl?.setValue(null); // 徹底清空 AutoComplete 綁定
+        roleControl?.markAsUntouched();
+        roleControl?.markAsPristine();
+
+        // 直接透過 Subject 觸發空字串查詢，拉取新 Service 的預設群組
+        this.dataSubject$.next('');
+      } else {
+        roleControl?.setValue(null);
+        roleControl?.disable();
+      }
     });
+
+    // // 監聽 service 變更
+    // this.formGroup.get('service')?.valueChanges.subscribe((serviceValue) => {
+    //   const roleControl = this.formGroup.get('role');
+    //   console.log(this.formGroup.value.service);
+    //   if (serviceValue) {
+    //     roleControl?.enable(); // 選到 service -> 啟用 role
+    //     this.formGroup.patchValue({
+    //       role: '',
+    //     });
+    //     this.getRoleOptions(this.queriedStr, serviceValue);
+    //   } else {
+    //     roleControl?.reset(); // 清空角色
+    //     roleControl?.disable(); // 禁用 role
+    //     this.roleOptions = [];
+    //   }
+    //   // 清空查詢結果
+    //   this.sourceList = [];
+    //   this.targetList = [];
+    // });
 
     this.detailTabs = [
       {
@@ -229,43 +281,25 @@ export class RoleFunctionsComponent
   /**
    * 查詢角色下拉式選單
    * @param event
-   * @param service
    */
-  getRoleOptions(event: any, service: string) {
-    if (event.query.length < 2 || event.query === this.queriedStr) {
+  getRoleOptions(event: any) {
+    // 【安全取值】：不管 event 是 undefined 還是沒有 query 屬性，都預設給空字串
+    const query = event?.query ?? '';
+
+    // 如果輸入長度是 1，不發請求 (避免打一個字就瘋狂 call API)
+    if (query.length === 1) {
       return;
     }
-    this.queriedStr = event.query;
 
-    if (!this.dataSubject$.observed) {
-      // this.loadMaskService.show();
-      // 初始化 AutoComplete 的訂閱
-      this.dataSubject$
-        .pipe(
-          finalize(() => {
-            // 無論成功或失敗都會執行
-            // this.loadMaskService.hide();
-          }),
-          debounceTime(300), // 防抖，避免频繁發请求
-          switchMap((keyword) => {
-            console.log(keyword);
-
-            return this.optionService.getRoleOptions(service, keyword);
-          }), // 自動取消上一次未完成的請求
-
-          takeUntil(this._destroying$),
-        )
-        .subscribe((res) => {
-          console.log(res);
-          this.roleOptions = res.map((item: any) => ({
-            id: item.id, // 保留 id
-            code: item.code, // 保留 name
-            name: item.name, // 保留 nameEn
-            displayName: `${item.code} (${item.name})`, // 生成 displayName
-          }));
-        });
+    // 避免重複查詢一樣的字串
+    if (query === this.queriedStr && query.length !== 0) {
+      return;
     }
-    this.dataSubject$.next(event.query);
+
+    this.queriedStr = query;
+
+    // 把字串丟進管線，讓 ngOnInit 裡面的 switchMap 去打 API
+    this.dataSubject$.next(query);
   }
 
   /**
@@ -275,7 +309,7 @@ export class RoleFunctionsComponent
    */
   getOtherFunctions(id: number, service: string) {
     this.roleFunctionsService
-      .getOtherFunctions(id, service)
+      .getOtherRoleFunctions(id, service)
       .pipe(
         finalize(() => {
           // 無論成功或失敗都會執行

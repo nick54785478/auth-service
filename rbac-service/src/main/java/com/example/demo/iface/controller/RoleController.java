@@ -16,18 +16,18 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.application.service.RoleCommandService;
 import com.example.demo.application.service.RoleQueryService;
+import com.example.demo.application.shared.dto.RoleInfoQueried;
 import com.example.demo.domain.role.command.CreateOrUpdateRoleCommand;
 import com.example.demo.domain.role.command.CreateRoleCommand;
 import com.example.demo.domain.role.command.UpdateRoleCommand;
-import com.example.demo.iface.dto.out.RoleFunctionsQueriedResource;
-import com.example.demo.iface.dto.out.RoleInfoQueriedResource;
-import com.example.demo.iface.dto.out.RoleUpdatedResource;
 import com.example.demo.iface.dto.request.CreateOrUpdateRoleResource;
 import com.example.demo.iface.dto.request.CreateRoleResource;
 import com.example.demo.iface.dto.request.UpdateRoleResource;
 import com.example.demo.iface.dto.response.response.RoleCreatedOrUpdatedResource;
 import com.example.demo.iface.dto.response.response.RoleCreatedResource;
 import com.example.demo.iface.dto.response.response.RoleDeletedResource;
+import com.example.demo.iface.dto.response.response.RoleUpdatedResource;
+import com.example.demo.iface.dto.response.response.RolesSummaryGottenResource;
 import com.example.demo.util.BaseDataTransformer;
 
 import lombok.AllArgsConstructor;
@@ -96,19 +96,6 @@ public class RoleController {
 		return new ResponseEntity<>(new RoleDeletedResource("200", "成功刪除多筆角色資料"), HttpStatus.OK);
 	}
 
-	/**
-	 * 透過 ID 查詢角色資料及其相關功能權限
-	 * 
-	 * @param id      角色ID
-	 * @param service 服務
-	 * @return ResponseEntity<List<RoleQueriedResource>>
-	 */
-	@GetMapping("/{id}")
-	public ResponseEntity<RoleFunctionsQueriedResource> getRoleInfo(@PathVariable Long id,
-			@RequestParam String service) {
-		return new ResponseEntity<>(BaseDataTransformer.transformData(roleQueryService.getRoleInfo(id, service),
-				RoleFunctionsQueriedResource.class), HttpStatus.OK);
-	}
 
 	/**
 	 * 查詢角色資料
@@ -117,12 +104,12 @@ public class RoleController {
 	 * @param name
 	 * @return ResponseEntity<List<RoleQueriedResource>>
 	 */
-	@GetMapping("/query")
-	public ResponseEntity<List<RoleInfoQueriedResource>> query(@RequestParam String service,
+	@GetMapping("/summary")
+	public ResponseEntity<RolesSummaryGottenResource> summary(@RequestParam String service,
 			@RequestParam(required = false) String type, @RequestParam(required = false) String name,
 			@RequestParam(required = false) String activeFlag) {
-		return new ResponseEntity<>(BaseDataTransformer.transformData(
-				roleQueryService.query(service, type, name, activeFlag), RoleInfoQueriedResource.class), HttpStatus.OK);
+		List<RoleInfoQueried> data = roleQueryService.query(service, type, name, activeFlag);
+		return new ResponseEntity<>(new RolesSummaryGottenResource("200", "查詢成功", data), HttpStatus.OK);
 	}
 
 }

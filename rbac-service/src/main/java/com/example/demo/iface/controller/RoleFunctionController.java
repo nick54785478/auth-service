@@ -14,10 +14,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.application.service.RoleFunctionCommandService;
 import com.example.demo.application.service.RoleFunctionQueryService;
+import com.example.demo.application.shared.dto.RoleFunctionQueried;
 import com.example.demo.domain.role.command.UpdateRoleFunctionsCommand;
-import com.example.demo.iface.dto.out.RoleFunctionQueriedResource;
-import com.example.demo.iface.dto.out.RoleFunctionsUpdatedResource;
 import com.example.demo.iface.dto.request.UpdateRoleFunctionsResource;
+import com.example.demo.iface.dto.response.response.RoleFunctionsGottenResource;
+import com.example.demo.iface.dto.response.response.RoleFunctionsUpdatedResource;
 import com.example.demo.util.BaseDataTransformer;
 
 import lombok.AllArgsConstructor;
@@ -53,10 +54,10 @@ public class RoleFunctionController {
 	 * @return ResponseEntity<List<RoleQueriedResource>>
 	 */
 	@GetMapping("/{id}/others")
-	public ResponseEntity<List<RoleFunctionQueriedResource>> query(@PathVariable Long id,
+	public ResponseEntity<RoleFunctionsGottenResource> getOtherRoleFunctions(@PathVariable Long id,
 			@RequestParam String service) {
-		return new ResponseEntity<>(BaseDataTransformer.transformData(roleFunctionQueryService.queryOthers(id, service),
-				RoleFunctionQueriedResource.class), HttpStatus.OK);
+		List<RoleFunctionQueried> data = roleFunctionQueryService.getOtherRoleFunctions(id, service);
+		return new ResponseEntity<>(new RoleFunctionsGottenResource("200", "查詢成功", data), HttpStatus.OK);
 	}
 
 }

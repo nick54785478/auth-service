@@ -1,5 +1,6 @@
 package com.example.demo.domain.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -11,6 +12,7 @@ import com.example.demo.domain.group.aggregate.GroupInfo;
 import com.example.demo.domain.group.aggregate.entity.GroupRole;
 import com.example.demo.domain.group.command.UpdateGroupRolesCommand;
 import com.example.demo.domain.role.aggregate.RoleInfo;
+import com.example.demo.domain.shared.detail.GroupRoleQueriedDetail;
 import com.example.demo.infra.exception.ValidationException;
 import com.example.demo.infra.repository.GroupInfoRepository;
 import com.example.demo.infra.repository.RoleInfoRepository;
@@ -32,7 +34,7 @@ public class GroupRoleService {
 	 * @param service 服務
 	 * @return List<GroupRoleQueried>
 	 */
-	public List<RoleInfo> queryOthers(Long id, String service) {
+	public List<RoleInfo> getOtherGroupRoles(Long id, String service) {
 		Optional<GroupInfo> opt = groupInfoRepository.findById(id);
 		if (opt.isPresent()) {
 			GroupInfo group = opt.get();
@@ -42,8 +44,7 @@ public class GroupRoleService {
 
 			// 取得與該 Service 相關的角色資料
 			List<RoleInfo> roles = roleInfoRepository.findByServiceAndActiveFlag(service, YesNo.Y);
-			
-			
+
 			// 過濾出該群組所沒有的角色資料
 			List<RoleInfo> filtered = roles.stream().filter(e -> !existingIds.contains(e.getId()))
 					.collect(Collectors.toList());
@@ -59,9 +60,7 @@ public class GroupRoleService {
 
 			// 合併兩者
 			filtered.addAll(inactiveRelated);
-			
 			return filtered;
-					
 
 		} else {
 			throw new ValidationException("VALIDATION_FAILED", "該群組 ID 有誤，查詢失敗");
@@ -89,6 +88,32 @@ public class GroupRoleService {
 			group.updateRoles(groupRoles);
 			groupInfoRepository.save(group);
 		});
+	}
+
+	/**
+	 * 查詢群組角色
+	 * 
+	 * @param id      Group id
+	 * @param service 服務
+	 * @return GroupRolesQueried
+	 */
+	public List<GroupRoleQueriedDetail> getGroupRoles(Long id, String service) {
+		Optional<GroupInfo> opt = groupInfoRepository.findById(id);
+		if (opt.isEmpty()) {
+			return new ArrayList<>();
+		} else {
+			GroupInfo group = opt.get();
+			List<Long> roleIds = group.getRoles().stream().map(GroupRole::getRoleId).collect(Collectors.toList());
+			return roleInfoRepository.findByIdIn(roleIds).stream().filter(e -> service.equals(e.getService()))
+					.map(role -> {
+						GroupRoleQueriedDetail groupRoleQueried = new GroupRoleQueriedDetail();
+						groupRoleQueried.setId(role.getId());
+						groupRoleQueried.setName(role.getName());
+						groupRoleQueried.setCode(role.getCode());
+						groupRoleQueried.setDescription(role.getDescription());
+						return groupRoleQueried;
+					}).collect(Collectors.toList());
+		}
 	}
 
 }

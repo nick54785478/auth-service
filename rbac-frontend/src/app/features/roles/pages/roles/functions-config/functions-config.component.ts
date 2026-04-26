@@ -121,7 +121,7 @@ export class FunctionsConfigComponent
       return;
     }
     this.roleFunctionsService
-      .getOtherFunctions(id, service)
+      .getOtherRoleFunctions(id, service)
       .pipe(
         finalize(() => {
           // 無論成功或失敗都會執行

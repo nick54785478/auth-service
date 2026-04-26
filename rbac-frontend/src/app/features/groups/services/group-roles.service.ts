@@ -7,6 +7,8 @@ import { BaseResponse } from '../../../shared/models/base-response.model';
 import { GroupRoleQueried } from '../models/group-role-query.model';
 import { GroupRolesGottenResource } from '../models/group-roles-gotten-response.model';
 import { map } from 'rxjs';
+import { GroupQueried } from '../models/group-query.model';
+import { GroupRoleQueriedResource } from '../models/group-role-queried-response.model';
 
 @Injectable({
   providedIn: 'root',
@@ -39,5 +41,23 @@ export class GroupRolesService {
   update(requestData: UpdateGroupRoles): Observable<BaseResponse> {
     const url = this.baseApiUrl + '/groups/roles/update';
     return this.http.post<BaseResponse>(url, requestData);
+  }
+
+  /**
+   * 透過群組 ID 查詢群組角色資料 (By Service)
+   * @param id
+   * @param service
+   */
+  queryByIdAndService(
+    id: number,
+    service: string,
+  ): Observable<GroupRoleQueried[]> {
+    const url = this.baseApiUrl + '/groups/roles' + '/' + id;
+    let params = new HttpParams().set('service', service ? service : '');
+    return this.http.get<GroupRoleQueriedResource>(url, { params }).pipe(
+      map((res) => {
+        return res?.data;
+      }),
+    );
   }
 }

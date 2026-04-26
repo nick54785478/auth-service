@@ -24,7 +24,7 @@ public class RoleFunctionQueryService {
 	 * @param service 服務
 	 * @return List<RoleFunctionQueried> 角色功能清單
 	 */
-	public List<RoleFunctionQueried> queryOthers(Long id, String service) {
+	public List<RoleFunctionQueried> getOtherRoleFunctions(Long id, String service) {
 		List<FunctionInfo> others = roleFunctionService.queryOthers(id, service);
 		return BaseDataTransformer.transformData(others, RoleFunctionQueried.class);
 	}

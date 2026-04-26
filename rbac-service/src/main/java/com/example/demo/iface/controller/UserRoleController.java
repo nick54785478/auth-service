@@ -16,8 +16,8 @@ import com.example.demo.application.service.UserRoleCommandService;
 import com.example.demo.application.service.UserRoleQueryService;
 import com.example.demo.application.shared.dto.UserRoleQueried;
 import com.example.demo.domain.user.command.UpdateUserRolesCommand;
-import com.example.demo.iface.dto.out.UserRoleQueriedResource;
 import com.example.demo.iface.dto.request.UpdateUserRolesResource;
+import com.example.demo.iface.dto.response.response.UserRolesGottenResource;
 import com.example.demo.iface.dto.response.response.UserRolesUpdatedResource;
 import com.example.demo.util.BaseDataTransformer;
 
@@ -49,14 +49,13 @@ public class UserRoleController {
 	 * 查詢該使用者相關角色資訊
 	 * 
 	 * @param username
-	 * @return ResponseEntity<List<UserRoleQueriedResource>>
+	 * @return ResponseEntity<UserRolesGottenResource>
 	 */
 	@GetMapping("/{username}")
-	public ResponseEntity<List<UserRoleQueriedResource>> queryRoles(@PathVariable String username,
+	public ResponseEntity<UserRolesGottenResource> queryRoles(@PathVariable String username,
 			@RequestParam String service) {
-		List<UserRoleQueried> userRoles = userRoleQueryService.queryRoles(username, service);
-		return new ResponseEntity<>(BaseDataTransformer.transformData(userRoles, UserRoleQueriedResource.class),
-				HttpStatus.OK);
+		List<UserRoleQueried> data = userRoleQueryService.getUserRoles(username, service);
+		return new ResponseEntity<>(new UserRolesGottenResource("200", "查詢成功", data), HttpStatus.OK);
 	}
 
 	/**
@@ -64,13 +63,13 @@ public class UserRoleController {
 	 * 
 	 * @param username 使用者帳號
 	 * @param service  服務
-	 * @return ResponseEntity<List<RoleQueriedResource>>
+	 * @return ResponseEntity<UserRolesGottenResource>
 	 */
 	@GetMapping("/{username}/others")
-	public ResponseEntity<List<UserRoleQueriedResource>> queryOthers(@PathVariable String username,
+	public ResponseEntity<UserRolesGottenResource> queryOthers(@PathVariable String username,
 			@RequestParam String service) {
-		return new ResponseEntity<>(BaseDataTransformer.transformData(
-				userRoleQueryService.queryOthers(username, service), UserRoleQueriedResource.class), HttpStatus.OK);
+		List<UserRoleQueried> data = userRoleQueryService.getOtherRoles(username, service);
+		return new ResponseEntity<>(new UserRolesGottenResource("200", "查詢成功", data), HttpStatus.OK);
 	}
 
 }
