@@ -15,9 +15,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.demo.application.service.GroupRoleCommandService;
 import com.example.demo.application.service.GroupRoleQueryService;
 import com.example.demo.domain.group.command.UpdateGroupRolesCommand;
-import com.example.demo.iface.dto.in.UpdateGroupRolesResource;
 import com.example.demo.iface.dto.out.GroupRoleQueriedResource;
-import com.example.demo.iface.dto.out.GroupRolesUpdatedResource;
+import com.example.demo.iface.dto.request.UpdateGroupRolesResource;
+import com.example.demo.iface.dto.response.response.GroupRolesUpdatedResource;
 import com.example.demo.util.BaseDataTransformer;
 
 import lombok.AllArgsConstructor;

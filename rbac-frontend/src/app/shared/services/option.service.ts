@@ -8,7 +8,7 @@ import { userInfo } from 'os';
 import { UserInfoOption } from '../models/userinfo-option.model';
 import { RoleInfoOption } from '../models/role-info-option.model';
 import { GroupInfoOption } from '../models/group-info-option.model';
-import { OptionGottenResource } from '../models/option-gotten.model';
+import { OptionGottenResource } from '../models/option-gotten-resource.model';
 
 @Injectable({
   providedIn: 'root',

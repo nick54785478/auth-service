@@ -16,9 +16,9 @@ import com.example.demo.application.service.UserRoleCommandService;
 import com.example.demo.application.service.UserRoleQueryService;
 import com.example.demo.application.shared.dto.UserRoleQueried;
 import com.example.demo.domain.user.command.UpdateUserRolesCommand;
-import com.example.demo.iface.dto.in.UpdateUserRolesResource;
 import com.example.demo.iface.dto.out.UserRoleQueriedResource;
-import com.example.demo.iface.dto.out.UserRolesUpdatedResource;
+import com.example.demo.iface.dto.request.UpdateUserRolesResource;
+import com.example.demo.iface.dto.response.response.UserRolesUpdatedResource;
 import com.example.demo.util.BaseDataTransformer;
 
 import lombok.AllArgsConstructor;

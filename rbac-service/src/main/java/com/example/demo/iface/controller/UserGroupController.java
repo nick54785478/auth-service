@@ -16,10 +16,10 @@ import com.example.demo.application.service.UserGroupCommandService;
 import com.example.demo.application.service.UserGroupQueryService;
 import com.example.demo.application.shared.dto.UserGroupQueried;
 import com.example.demo.domain.user.command.UpdateUserGroupsCommand;
-import com.example.demo.iface.dto.in.UpdateUserGroupsResource;
 import com.example.demo.iface.dto.out.UserGroupDetailsQueriedResource;
 import com.example.demo.iface.dto.out.UserGroupQueriedResource;
 import com.example.demo.iface.dto.out.UserGroupUpdatedResource;
+import com.example.demo.iface.dto.request.UpdateUserGroupsResource;
 import com.example.demo.util.BaseDataTransformer;
 
 import lombok.AllArgsConstructor;

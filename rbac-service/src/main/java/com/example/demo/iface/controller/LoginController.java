@@ -10,9 +10,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.demo.application.service.JwtTokenCommandService;
 import com.example.demo.domain.user.command.GenerateJwtokenCommand;
 import com.example.demo.domain.user.command.RefreshTokenCommand;
-import com.example.demo.iface.dto.in.GenerateJwtokenResource;
-import com.example.demo.iface.dto.in.RefreshTokenResource;
 import com.example.demo.iface.dto.out.JwtTokenGeneratedResource;
+import com.example.demo.iface.dto.request.GenerateJwtokenResource;
+import com.example.demo.iface.dto.request.RefreshTokenResource;
 import com.example.demo.util.BaseDataTransformer;
 
 import lombok.AllArgsConstructor;

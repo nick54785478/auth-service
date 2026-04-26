@@ -19,14 +19,14 @@ import com.example.demo.application.shared.dto.UserGroupQueried;
 import com.example.demo.application.shared.dto.UserRoleQueried;
 import com.example.demo.domain.user.command.CreateUserCommand;
 import com.example.demo.domain.user.command.UpdateUserCommand;
-import com.example.demo.iface.dto.in.CreateUserResource;
-import com.example.demo.iface.dto.in.UpdateUserResource;
-import com.example.demo.iface.dto.out.UserCreatedResource;
 import com.example.demo.iface.dto.out.UserGroupDetailsQueriedResource;
 import com.example.demo.iface.dto.out.UserInfoDetailsQueriedResource;
 import com.example.demo.iface.dto.out.UserInfoQueriedResource;
 import com.example.demo.iface.dto.out.UserRoleQueriedResource;
-import com.example.demo.iface.dto.out.UserUpdatedResource;
+import com.example.demo.iface.dto.request.CreateUserResource;
+import com.example.demo.iface.dto.request.UpdateUserResource;
+import com.example.demo.iface.dto.response.response.UserCreatedResource;
+import com.example.demo.iface.dto.response.response.UserUpdatedResource;
 import com.example.demo.util.BaseDataTransformer;
 
 import lombok.AllArgsConstructor;

@@ -5,7 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import com.example.demo.iface.dto.response.BaseExceptionResponse;
+import com.example.demo.iface.dto.response.exception.BaseExceptionResponse;
 import com.example.demo.infra.exception.ValidationException;
 import com.example.demo.util.BaseDataTransformer;
 

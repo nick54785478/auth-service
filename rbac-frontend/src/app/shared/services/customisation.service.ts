@@ -6,6 +6,7 @@ import { FieldView } from '../models/field-view.model';
 import { map } from 'rxjs/internal/operators/map';
 import { BaseResponse } from '../models/base-response.model';
 import { UpdateCustomisation } from '../models/update-customisation-request.model';
+import { FieldViewCustomisationGottenResource } from '../models/field-view.model-gotten-resource';
 
 @Injectable({
   providedIn: 'root',
@@ -24,18 +25,20 @@ export class CustomisationService {
    */
   public getFieldViewCustomisations(
     username: string,
-    component: string
+    component: string,
   ): Observable<FieldView[]> {
     const url = this.baseApiUrl + '/customisation/fieldView';
     let params = new HttpParams()
       .set('username', username ? username : '')
       .set('component', component ? component : '');
-    return this.http.get<FieldView[]>(url, { params }).pipe(
-      map((response) => {
-        return response;
-        // return response.map((data) => data.field);
-      })
-    );
+    return this.http
+      .get<FieldViewCustomisationGottenResource>(url, { params })
+      .pipe(
+        map((response) => {
+          return response?.data;
+          // return response.map((data) => data.field);
+        }),
+      );
   }
 
   /**
@@ -44,13 +47,13 @@ export class CustomisationService {
    * @returns
    */
   public updateCustomisation(
-    requestData: UpdateCustomisation
+    requestData: UpdateCustomisation,
   ): Observable<BaseResponse> {
     const url = this.baseApiUrl + '/customisation';
     return this.http.post<BaseResponse>(url, requestData).pipe(
       map((response) => {
         return response;
-      })
+      }),
     );
   }
 }

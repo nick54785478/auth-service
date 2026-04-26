@@ -16,12 +16,12 @@ import com.example.demo.application.service.FunctionCommandService;
 import com.example.demo.application.service.FunctionQueryService;
 import com.example.demo.domain.function.command.CreateFunctionCommand;
 import com.example.demo.domain.function.command.CreateOrUpdateFunctionCommand;
-import com.example.demo.iface.dto.in.CreateFunctionResource;
-import com.example.demo.iface.dto.in.CreateOrUpdateFunctionResource;
-import com.example.demo.iface.dto.out.FunctionCreatedOrUpdatedResource;
-import com.example.demo.iface.dto.out.FunctionCreatedResource;
-import com.example.demo.iface.dto.out.FunctionDeletedResource;
 import com.example.demo.iface.dto.out.FunctionInfoQueriedResource;
+import com.example.demo.iface.dto.request.CreateFunctionResource;
+import com.example.demo.iface.dto.request.CreateOrUpdateFunctionResource;
+import com.example.demo.iface.dto.response.response.FunctionCreatedOrUpdatedResource;
+import com.example.demo.iface.dto.response.response.FunctionCreatedResource;
+import com.example.demo.iface.dto.response.response.FunctionDeletedResource;
 import com.example.demo.util.BaseDataTransformer;
 
 import lombok.AllArgsConstructor;

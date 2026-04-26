@@ -18,12 +18,12 @@ import com.example.demo.application.service.SettingCommandService;
 import com.example.demo.application.service.SettingQueryService;
 import com.example.demo.domain.setting.command.CreateSettingCommand;
 import com.example.demo.domain.setting.command.UpdateSettingCommand;
-import com.example.demo.iface.dto.in.CreateSettingResource;
-import com.example.demo.iface.dto.in.UpdateSettingResource;
-import com.example.demo.iface.dto.out.SettingCreatedResource;
-import com.example.demo.iface.dto.out.SettingDeletedResource;
 import com.example.demo.iface.dto.out.SettingQueriedResource;
-import com.example.demo.iface.dto.out.SettingUpdatedResource;
+import com.example.demo.iface.dto.request.CreateSettingResource;
+import com.example.demo.iface.dto.request.UpdateSettingResource;
+import com.example.demo.iface.dto.response.response.SettingCreatedResource;
+import com.example.demo.iface.dto.response.response.SettingDeletedResource;
+import com.example.demo.iface.dto.response.response.SettingUpdatedResource;
 import com.example.demo.util.BaseDataTransformer;
 
 import lombok.AllArgsConstructor;

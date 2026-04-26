@@ -13,10 +13,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.application.service.CustomisationCommandService;
 import com.example.demo.application.service.CustomisationQueryService;
+import com.example.demo.application.shared.dto.FieldViewCustomisationQueried;
 import com.example.demo.domain.customisation.command.UpdateCustomisationCommand;
-import com.example.demo.iface.dto.in.CustomisationUpdatedResource;
-import com.example.demo.iface.dto.in.UpdateCustomisationResource;
-import com.example.demo.iface.dto.out.FieldViewCustomisationQueriedResource;
+import com.example.demo.iface.dto.request.UpdateCustomisationResource;
+import com.example.demo.iface.dto.response.response.CustomisationUpdatedResource;
+import com.example.demo.iface.dto.response.response.FieldViewCustomisationGottenResource;
 import com.example.demo.util.BaseDataTransformer;
 
 import lombok.AllArgsConstructor;
@@ -53,10 +54,10 @@ public class CustomisationController {
 	 * @return ResponseEntity<List<FunctionInfoQueriedResource>>
 	 */
 	@GetMapping("/fieldView")
-	public ResponseEntity<List<FieldViewCustomisationQueriedResource>> getFieldViewCustomisation(
-			@RequestParam String username, @RequestParam String component) {
-		return new ResponseEntity<>(BaseDataTransformer.transformData(
-				customisationQueryService.getCustomisation(username, component, "FieldView"),
-				FieldViewCustomisationQueriedResource.class), HttpStatus.OK);
+	public ResponseEntity<FieldViewCustomisationGottenResource> getFieldViewCustomisation(@RequestParam String username,
+			@RequestParam String component) {
+		List<FieldViewCustomisationQueried> data = customisationQueryService.getCustomisation(username, component,
+				"FieldView");
+		return new ResponseEntity<>(new FieldViewCustomisationGottenResource("200", "查詢成功", data), HttpStatus.OK);
 	}
 }
