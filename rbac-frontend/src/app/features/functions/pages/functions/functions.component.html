@@ -142,6 +142,8 @@
           'min-width': '1000px',
           width: '100%',
         }"
+        [customSort]="true"
+        (customSort)="customSort($event)"
         [frozenWidth]="'100px'"
       >
         <!-- 標題 -->

@@ -22,7 +22,7 @@ import { LoadingMaskService } from '../../../../core/services/loading-mask.servi
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { DialogFormComponent } from '../../../../shared/component/dialog-form/dialog-form.component';
 import { takeUntil } from 'rxjs/internal/operators/takeUntil';
-import { MenuItem } from 'primeng/api';
+import { MenuItem, SortEvent } from 'primeng/api';
 import { Subject } from 'rxjs/internal/Subject';
 import { RolesConfigComponent } from './roles-config/roles-config.component';
 import { OverlayPanel } from 'primeng/overlaypanel';

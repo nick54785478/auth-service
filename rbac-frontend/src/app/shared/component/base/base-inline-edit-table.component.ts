@@ -215,4 +215,41 @@ export abstract class BaseInlineEditeTableCompoent {
    * @param tableData
    */
   protected submit(tableData: any[]) {}
+
+  /**
+   * 自訂排序邏輯：讓新增的未存檔資料永遠置頂
+   */
+  protected customSort(event: any) {
+    if (!event.field || !event.order || !this.tableData) return;
+
+    // 1. 將資料分為「新資料」與「舊資料」
+    // 假設你的新資料 givenIndex 都是負數（如 -1, -2），請依照你實際的判斷條件修改
+    const newRows = this.tableData.filter((row) => row.givenIndex < 0);
+    const oldRows = this.tableData.filter((row) => row.givenIndex >= 0);
+
+    // 2. 只針對舊資料進行排序
+    oldRows.sort((data1, data2) => {
+      let value1 = data1[event.field!];
+      let value2 = data2[event.field!];
+      let result = null;
+
+      // 處理 null 或 undefined 的情況
+      if (value1 == null && value2 != null) result = -1;
+      else if (value1 != null && value2 == null) result = 1;
+      else if (value1 == null && value2 == null) result = 0;
+      // 處理字串排序
+      else if (typeof value1 === 'string' && typeof value2 === 'string') {
+        result = value1.localeCompare(value2);
+      }
+      // 處理數字或其他型別排序
+      else {
+        result = value1 < value2 ? -1 : value1 > value2 ? 1 : 0;
+      }
+
+      return event.order! * result;
+    });
+
+    // 3. 把新資料合併回陣列的「最上方」，確保排序後新資料依舊在第一頁
+    this.tableData = [...newRows, ...oldRows];
+  }
 }

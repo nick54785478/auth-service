@@ -141,6 +141,8 @@
         editMode="row"
         [resizableColumns]="true"
         [frozenWidth]="'80px'"
+        [customSort]="true"
+        (customSort)="customSort($event)"
         [tableStyle]="{
           'min-width': '1000px',
           width: '100%',
