@@ -8,7 +8,6 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo.domain.function.aggregate.FunctionInfo;
 import com.example.demo.domain.role.aggregate.RoleInfo;
@@ -48,13 +47,37 @@ public class RoleFunctionService {
 	}
 
 	/**
+	 * 查詢該角色的功能
+	 * 
+	 * @param id      Role id
+	 * @param service Service
+	 * @return List<FunctionInfo>
+	 */
+	public List<FunctionInfo> getRoleFunctions(Long id, String service) {
+		Optional<RoleInfo> opt = roleInfoRepository.findById(id);
+		
+		if (opt.isEmpty()) {
+			System.out.println("AAAA");
+			return new ArrayList<>();
+		} else {
+			RoleInfo role = opt.get();
+			System.out.println("role:"+role);
+			List<Long> functionIds = role.getFunctions().stream()
+					.filter(e -> e.getActiveFlag() == YesNo.Y)
+					.map(RoleFunction::getFunctionId).collect(Collectors.toList());
+			return functionInfoRepository.findByIdIn(functionIds).stream()
+					.filter(e -> service.equals(e.getService()))
+					.collect(Collectors.toList());
+		}
+	}
+
+	/**
 	 * 查詢該角色不具備的其他功能
 	 * 
-	 * @param id      角色ID
-	 * @param service 服務
-	 * @return List<RoleFunctionQueried>
+	 * @param id      Role id
+	 * @param service Service
+	 * @return List<FunctionInfo>
 	 */
-	@Transactional
 	public List<FunctionInfo> queryOthers(Long id, String service) {
 		Optional<RoleInfo> opt = roleInfoRepository.findById(id);
 		if (opt.isPresent()) {

@@ -8,8 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.example.demo.application.shared.dto.GroupRoleQueried;
 import com.example.demo.domain.role.aggregate.RoleInfo;
 import com.example.demo.domain.service.GroupRoleService;
-import com.example.demo.domain.shared.detail.GroupRoleQueriedDetail;
-import com.example.demo.domain.shared.summary.GroupInfoQueriedSummary;
 import com.example.demo.util.BaseDataTransformer;
 
 import lombok.AllArgsConstructor;
@@ -25,8 +23,8 @@ public class GroupRoleQueryService {
 	/**
 	 * 查詢其他(不屬於該群組)的角色
 	 * 
-	 * @param id      群組ID
-	 * @param service 服務
+	 * @param id      Group id
+	 * @param service Service
 	 * @return List<GroupRoleQueried>
 	 */
 	@Transactional(readOnly = true)
@@ -39,12 +37,12 @@ public class GroupRoleQueryService {
 	 * 透過 Group 與服務查詢群組角色資料
 	 * 
 	 * @param id      Group id
-	 * @param service 服務
+	 * @param service Service
 	 * @return List<GroupRoleQueried>
 	 */
 	@Transactional(readOnly = true)
 	public List<GroupRoleQueried> getGroupRoles(Long id, String service) {
-		List<GroupRoleQueriedDetail> groupRoles = groupRoleService.getGroupRoles(id, service);
+		List<RoleInfo> groupRoles = groupRoleService.getGroupRoles(id, service);
 		return BaseDataTransformer.transformData(groupRoles, GroupRoleQueried.class);
 	}
 

@@ -12,7 +12,6 @@ import com.example.demo.domain.group.aggregate.GroupInfo;
 import com.example.demo.domain.group.aggregate.entity.GroupRole;
 import com.example.demo.domain.group.command.UpdateGroupRolesCommand;
 import com.example.demo.domain.role.aggregate.RoleInfo;
-import com.example.demo.domain.shared.detail.GroupRoleQueriedDetail;
 import com.example.demo.infra.exception.ValidationException;
 import com.example.demo.infra.repository.GroupInfoRepository;
 import com.example.demo.infra.repository.RoleInfoRepository;
@@ -94,25 +93,19 @@ public class GroupRoleService {
 	 * 查詢群組角色
 	 * 
 	 * @param id      Group id
-	 * @param service 服務
+	 * @param service Service
 	 * @return GroupRolesQueried
 	 */
-	public List<GroupRoleQueriedDetail> getGroupRoles(Long id, String service) {
+	public List<RoleInfo> getGroupRoles(Long id, String service) {
 		Optional<GroupInfo> opt = groupInfoRepository.findById(id);
 		if (opt.isEmpty()) {
 			return new ArrayList<>();
 		} else {
 			GroupInfo group = opt.get();
-			List<Long> roleIds = group.getRoles().stream().map(GroupRole::getRoleId).collect(Collectors.toList());
+			List<Long> roleIds = group.getRoles().stream().filter(e -> e.getActiveFlag() == YesNo.Y)
+					.map(GroupRole::getRoleId).collect(Collectors.toList());
 			return roleInfoRepository.findByIdIn(roleIds).stream().filter(e -> service.equals(e.getService()))
-					.map(role -> {
-						GroupRoleQueriedDetail groupRoleQueried = new GroupRoleQueriedDetail();
-						groupRoleQueried.setId(role.getId());
-						groupRoleQueried.setName(role.getName());
-						groupRoleQueried.setCode(role.getCode());
-						groupRoleQueried.setDescription(role.getDescription());
-						return groupRoleQueried;
-					}).collect(Collectors.toList());
+					.collect(Collectors.toList());
 		}
 	}
 

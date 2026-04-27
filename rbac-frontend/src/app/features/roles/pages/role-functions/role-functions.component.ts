@@ -46,7 +46,7 @@ export class RoleFunctionsComponent
   readonly _destroying$ = new Subject<void>();
 
   constructor(
-    private roleService: RoleService,
+    // private roleService: RoleService,
     private roleFunctionsService: RoleFunctionsService,
     private optionService: OptionService,
     private systemMessageService: SystemMessageService,
@@ -254,8 +254,8 @@ export class RoleFunctionsComponent
     this.loadMaskService.show();
     let service = this.formGroup.value.service;
     console.log(formData.role);
-    this.roleService
-      .queryByIdAndService(formData.role.id, service)
+    this.roleFunctionsService
+      .getRoleFunctionsByIdAndService(formData.role.id, service)
       .pipe(
         finalize(() => {
           this.loadMaskService.hide();
@@ -264,7 +264,7 @@ export class RoleFunctionsComponent
       )
       .subscribe((res) => {
         console.log(this.selected);
-        let funcList = res.functions;
+        let funcList = res;
         if (funcList) {
           this.targetList = funcList.map((func: any) => ({
             id: func.id,

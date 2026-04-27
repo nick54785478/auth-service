@@ -49,9 +49,9 @@ public class RoleFunctionController {
 	/**
 	 * 查詢不屬於該角色的功能資料
 	 * 
-	 * @param id      角色ID
-	 * @param service 服務
-	 * @return ResponseEntity<List<RoleQueriedResource>>
+	 * @param id      Role id
+	 * @param service Service
+	 * @return ResponseEntity<RoleFunctionsGottenResource>
 	 */
 	@GetMapping("/{id}/others")
 	public ResponseEntity<RoleFunctionsGottenResource> getOtherRoleFunctions(@PathVariable Long id,
@@ -60,4 +60,17 @@ public class RoleFunctionController {
 		return new ResponseEntity<>(new RoleFunctionsGottenResource("200", "查詢成功", data), HttpStatus.OK);
 	}
 
+	/**
+	 * 查詢屬於該角色的功能資料
+	 * 
+	 * @param id      Role id
+	 * @param service Service
+	 * @return ResponseEntity<RoleFunctionsGottenResource>
+	 */
+	@GetMapping("/{id}")
+	public ResponseEntity<RoleFunctionsGottenResource> getRoleFunctions(@PathVariable Long id,
+			@RequestParam String service) {
+		List<RoleFunctionQueried> data = roleFunctionQueryService.getRoleFunctions(id, service);
+		return new ResponseEntity<>(new RoleFunctionsGottenResource("200", "查詢成功", data), HttpStatus.OK);
+	}
 }

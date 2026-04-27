@@ -35,6 +35,22 @@ export class RoleFunctionsService {
   }
 
   /**
+   * 透過 ID 查詢角色資料
+   * @param id
+   * @param service
+   */
+  getRoleFunctionsByIdAndService(
+    id: number,
+    service: string,
+  ): Observable<RoleFunctionQueried[]> {
+    const url = this.baseApiUrl + '/roles/functions/' + id;
+    let params = new HttpParams().set('service', service ? service : '');
+    return this.http
+      .get<RoleFunctionGottenResource>(url, { params })
+      .pipe(map((res) => res.data));
+  }
+
+  /**
    * 提交更新或新增角色資料
    * @param requestData
    */
