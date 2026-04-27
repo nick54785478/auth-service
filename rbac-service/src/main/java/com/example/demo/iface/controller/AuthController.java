@@ -14,9 +14,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.demo.application.service.AuthCommandService;
 import com.example.demo.application.service.AuthQueryService;
 import com.example.demo.application.shared.dto.TokenValidatedAndParsed;
-import com.example.demo.iface.dto.out.TokenValidatedAndParsedResource;
 import com.example.demo.iface.dto.request.MaintainPermissionQueriedResource;
 import com.example.demo.iface.dto.request.ValidateTokenResource;
+import com.example.demo.iface.dto.response.response.TokenValidatedAndParsedResource;
 import com.example.demo.util.BaseDataTransformer;
 
 import lombok.AllArgsConstructor;

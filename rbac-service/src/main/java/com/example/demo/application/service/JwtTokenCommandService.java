@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo.application.port.JwTokenManagerPort;
 import com.example.demo.application.shared.dto.JwtTokenGenerated;
@@ -26,7 +27,6 @@ import com.example.demo.infra.exception.ValidationException;
 import com.example.demo.infra.repository.UserInfoRepository;
 import com.example.demo.util.PasswordUtil;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -51,7 +51,7 @@ public class JwtTokenCommandService {
 	 * @param command {@link GenerateJwtokenCommand}
 	 * @return token
 	 */
-	@Transactional
+	@Transactional(readOnly = true)
 	public JwtTokenGenerated generateToken(GenerateJwtokenCommand command) {
 		// 透過 ContextHolder 取得 Service
 		String service = ContextHolder.getService();

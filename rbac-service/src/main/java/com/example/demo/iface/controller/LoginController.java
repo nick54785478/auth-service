@@ -8,9 +8,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.application.service.JwtTokenCommandService;
+import com.example.demo.application.shared.dto.JwtTokenGenerated;
 import com.example.demo.domain.user.command.GenerateJwtokenCommand;
 import com.example.demo.domain.user.command.RefreshTokenCommand;
-import com.example.demo.iface.dto.out.JwtTokenGeneratedResource;
+import com.example.demo.iface.dto.response.JwtTokenGeneratedResource;
 import com.example.demo.iface.dto.request.GenerateJwtokenResource;
 import com.example.demo.iface.dto.request.RefreshTokenResource;
 import com.example.demo.util.BaseDataTransformer;
@@ -33,8 +34,9 @@ public class LoginController {
 	@PostMapping("/login")
 	public ResponseEntity<JwtTokenGeneratedResource> login(@RequestBody GenerateJwtokenResource resource) {
 		GenerateJwtokenCommand command = BaseDataTransformer.transformData(resource, GenerateJwtokenCommand.class);
-		return new ResponseEntity<>(BaseDataTransformer.transformData(commandService.generateToken(command),
-				JwtTokenGeneratedResource.class), HttpStatus.OK);
+		JwtTokenGenerated tokenGenerated = commandService.generateToken(command);
+		return new ResponseEntity<>(new JwtTokenGeneratedResource("200", "查詢成功", tokenGenerated.getToken(),
+				tokenGenerated.getRefreshToken()), HttpStatus.OK);
 	}
 
 	/**

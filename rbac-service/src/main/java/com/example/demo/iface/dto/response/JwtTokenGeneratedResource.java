@@ -1,4 +1,4 @@
-package com.example.demo.iface.dto.out;
+package com.example.demo.iface.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
