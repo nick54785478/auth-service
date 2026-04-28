@@ -61,7 +61,7 @@ public class RoleCommandService {
 			roleInfo.update(command);
 			roleInfoRepository.save(roleInfo);
 		} else {
-			throw new ValidationException("VALIDATION_FAILED", "查無此角色資料 id，更新失敗");
+			throw new ValidationException("VALIDATE_FAILED", "查無此角色資料 id，更新失敗");
 		}
 	}
 

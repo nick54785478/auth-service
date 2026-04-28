@@ -89,7 +89,7 @@ public class GroupService {
 					.activeFlag(group.getActiveFlag()).build();
 
 		} else {
-			throw new ValidationException("VALIDATION_FAILED", "該群組 ID 有誤，查詢失敗");
+			throw new ValidationException("VALIDATE_FAILED", "該群組 ID 有誤，查詢失敗");
 		}
 	}
 

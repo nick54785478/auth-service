@@ -23,7 +23,7 @@ export class RegisterComponent extends BaseFormCompoent implements OnInit {
   constructor(
     private systemMessageService: SystemMessageService,
     private loadMaskService: LoadingMaskService,
-    private registerService: RegisterService
+    private registerService: RegisterService,
   ) {
     super();
   }
@@ -60,11 +60,11 @@ export class RegisterComponent extends BaseFormCompoent implements OnInit {
               this.loadMaskService.hide();
               this.submitted = false;
               location.reload();
-            })
+            }),
           )
           .subscribe({
             next: (res) => {
-              if (res.code === 'VALIDATION_FAILED') {
+              if (res.code === 'VALIDATE_FAILED') {
                 this.systemMessageService.error(res?.message);
                 location.reload;
               } else {

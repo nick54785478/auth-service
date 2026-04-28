@@ -76,7 +76,7 @@ export class LoginComponent
       .subscribe({
         next: (res) => {
           console.log(res);
-          if (res?.code === 'VALIDATION_FAILED') {
+          if (res?.code === 'VALIDATE_FAILED') {
             this.messageService.error(res.message);
           } else {
             this.messageService.success('使用者登入成功');

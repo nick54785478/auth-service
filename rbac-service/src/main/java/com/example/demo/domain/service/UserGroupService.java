@@ -63,7 +63,7 @@ public class UserGroupService {
 			return filtered;
 
 		} else {
-			throw new ValidationException("VALIDATION_FAILED", "該群組 ID 有誤，查詢失敗");
+			throw new ValidationException("VALIDATE_FAILED", "該群組 ID 有誤，查詢失敗");
 		}
 	}
 
@@ -123,13 +123,13 @@ public class UserGroupService {
 	 * 取得特定使用者所在的群組資料
 	 * 
 	 * @param username 使用者帳號
+	 * @param service  Service
 	 * @return List<UserGroupQueried>
 	 */
 	public List<GroupInfo> queryGroups(String username, String service) {
 		UserInfo userInfo = userInfoRepository.findByUsername(username);
 		// 取得 User Group 的 GroupId
-		List<Long> groupIds = userInfo.getGroups().stream()
-				.filter(e -> StringUtils.equals(e.getActiveFlag().getValue(), YesNo.Y.getValue()))
+		List<Long> groupIds = userInfo.getGroups().stream().filter(e -> e.getActiveFlag() != YesNo.Y)
 				.map(UserGroup::getGroupId).collect(Collectors.toList());
 		// 透過 ID 取得 Group 資料
 		return groupInfoRepository.findByIdInAndServiceAndActiveFlag(groupIds, service, YesNo.Y);

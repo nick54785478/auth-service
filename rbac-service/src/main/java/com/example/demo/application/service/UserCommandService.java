@@ -32,7 +32,7 @@ public class UserCommandService {
 	 */
 	public void create(CreateUserCommand command) {
 		if (!userService.checkIsRegistered(command)) {
-			throw new ValidationException("VALIDATION_FAILED", "該使用者相關資訊已註冊");
+			throw new ValidationException("VALIDATE_FAILED", "該使用者相關資訊已註冊");
 		}
 		UserInfo userInfo = UserInfo.create(command);
 		userRepository.save(userInfo);
@@ -50,7 +50,7 @@ public class UserCommandService {
 			userInfo.update(command);
 			userRepository.save(userInfo);
 		} else {
-			throw new ValidationException("VALIDATION_FAILED", "查無此資料 id，更新失敗");
+			throw new ValidationException("VALIDATE_FAILED", "查無此資料 id，更新失敗");
 		}
 	}
 

@@ -12,7 +12,9 @@ import com.example.demo.infra.jwt.JwtTokenParser;
 import com.example.demo.infra.jwt.JwtTokenValidator;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Component
 @AllArgsConstructor
 class JwTokenManagerAdapter implements JwTokenManagerPort {
@@ -24,6 +26,8 @@ class JwTokenManagerAdapter implements JwTokenManagerPort {
 	@Override
 	public JwtTokenGenerated generateToken(String username, String email, List<String> roles, List<String> groups,
 			List<String> functions) {
+		log.info("username:{}, email:{}, roles:{}, groups: {}, functions:{}", username, email, roles, 
+				groups, functions);
 		return jwTokenGenerator.generateToken(username, email, roles, groups, functions);
 	}
 

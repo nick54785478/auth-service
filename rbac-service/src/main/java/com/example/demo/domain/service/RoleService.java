@@ -86,7 +86,7 @@ public class RoleService {
 					.description(role.getDescription()).name(role.getName()).type(role.getType())
 					.functions(roleFunctionList).activeFlag(role.getActiveFlag().getValue()).build();
 		} else {
-			throw new ValidationException("VALIDATION_FAILED", "該角色 ID 有誤，查詢失敗");
+			throw new ValidationException("VALIDATE_FAILED", "該角色 ID 有誤，查詢失敗");
 		}
 	}
 

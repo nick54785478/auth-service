@@ -33,7 +33,7 @@ export class UserGroupsComponent
     private userService: UsersService,
     private dialogConfig: DynamicDialogConfig,
     private messageService: SystemMessageService,
-    public ref: DynamicDialogRef
+    public ref: DynamicDialogRef,
   ) {
     super();
   }
@@ -103,11 +103,11 @@ export class UserGroupsComponent
           this.submitted = false;
           this.query();
           this.queryOthers();
-        })
+        }),
       )
       .subscribe({
         next: (res) => {
-          if (res.code !== 'VALIDATION_FAILED') {
+          if (res.code !== 'VALIDATE_FAILED') {
             this.messageService.success(res.message);
           } else {
             this.messageService.error(res.message);
@@ -176,7 +176,7 @@ export class UserGroupsComponent
         finalize(() => {
           this.loadMaskService.hide();
           this.submitted = false;
-        })
+        }),
       )
       .subscribe((res) => {
         console.log(res);

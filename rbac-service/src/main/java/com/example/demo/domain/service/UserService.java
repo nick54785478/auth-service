@@ -51,7 +51,7 @@ public class UserService {
 		UserInfo user = userRepository.findByUsername(command.getUsername());
 		if (Objects.isNull(user)) {
 			log.error("該使用者名稱不合法");
-			throw new ValidationException("VALIDATION_FAILED", "該使用者名稱不合法");
+			throw new ValidationException("VALIDATE_FAILED", "該使用者名稱不合法");
 		}
 
 		List<RoleInfo> roleList = roleRepository.findByIdIn(command.getRoleIds());

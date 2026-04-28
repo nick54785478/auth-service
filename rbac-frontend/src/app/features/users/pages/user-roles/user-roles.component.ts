@@ -172,7 +172,7 @@ export class UserRolesComponent extends BasePickListCompoent implements OnInit {
       )
       .subscribe({
         next: (res) => {
-          if (res.code !== 'VALIDATION_FAILED') {
+          if (res.code !== 'VALIDATE_FAILED') {
             this.messageService.success(res.message);
           } else {
             this.messageService.error(res.message);

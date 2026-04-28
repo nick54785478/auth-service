@@ -286,7 +286,7 @@ export class GroupsComponent
       )
       .subscribe({
         next: (res) => {
-          if (res?.code === 'VALIDATION_FAILED') {
+          if (res?.code === 'VALIDATE_FAILED') {
             this.messageService.error(res.message);
           } else {
             this.messageService.success(res.message);
@@ -551,7 +551,7 @@ export class GroupsComponent
       )
       .subscribe({
         next: (res) => {
-          if (res?.code === 'VALIDATION_FAILED') {
+          if (res?.code === 'VALIDATE_FAILED') {
             this.messageService.error(res.message);
           } else {
             this.messageService.success(res.message);

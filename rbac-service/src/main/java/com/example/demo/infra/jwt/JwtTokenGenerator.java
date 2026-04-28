@@ -3,6 +3,7 @@ package com.example.demo.infra.jwt;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.crypto.SecretKey;
 
@@ -65,7 +66,8 @@ public class JwtTokenGenerator {
 	public String generateToken(String username, String email, List<String> roles, List<String> groups,
 			List<String> functions, long expiration) {
 		log.debug("有效時間: {}", expiration);
-		HashMap<String, Object> map = new HashMap<>();
+		
+		Map<String, Object> map = new HashMap<>();
 		map.put(JwtConstants.JWT_CLAIMS_KEY_EMAIL.getValue(), email);
 		map.put(JwtConstants.JWT_CLAIMS_KEY_ROLE.getValue(), roles); // 個人角色
 		map.put(JwtConstants.JWT_CLAIMS_KEY_GROUP.getValue(), groups); // 群組角色

@@ -54,7 +54,7 @@ public class SettingCommandService {
 			settingRepository.save(setting);
 		}, () -> {
 			log.error("查無此資料，ID:{} 刪除失敗 ", id);
-			throw new ValidationException("VALIDATION_FAILED", "查無此資料，刪除失敗");
+			throw new ValidationException("VALIDATE_FAILED", "查無此資料，刪除失敗");
 		});
 	}
 }

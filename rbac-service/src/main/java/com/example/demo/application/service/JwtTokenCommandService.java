@@ -55,6 +55,7 @@ public class JwtTokenCommandService {
 	public JwtTokenGenerated generateToken(GenerateJwtokenCommand command) {
 		// 透過 ContextHolder 取得 Service
 		String service = ContextHolder.getService();
+		System.out.println("service"+service);
 
 		UserInfo userInfo = userInfoRepository.findByUsername(command.getUsername());
 
@@ -71,11 +72,11 @@ public class JwtTokenCommandService {
 		}
 
 		// 查詢該使用者所在的群組
-		List<GroupInfo> queryGroups = userGroupService.queryGroups(command.getUsername(), ContextHolder.getService());
+		List<GroupInfo> queryGroups = userGroupService.queryGroups(command.getUsername(), service);
 		List<String> groups = queryGroups.stream().map(GroupInfo::getCode).collect(Collectors.toList());
 
 		// 查詢該使用者個人角色
-		List<RoleInfo> queryRoles = userRoleService.getUserRoles(command.getUsername(), ContextHolder.getService());
+		List<RoleInfo> queryRoles = userRoleService.getUserRoles(command.getUsername(), service);
 		List<String> roles = queryRoles.stream().map(RoleInfo::getCode).collect(Collectors.toList());
 
 		// 取得該角色清單所具備的相關功能權限

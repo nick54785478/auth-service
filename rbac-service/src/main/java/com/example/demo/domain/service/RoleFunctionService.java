@@ -106,7 +106,7 @@ public class RoleFunctionService {
 			return filtered;
 
 		} else {
-			throw new ValidationException("VALIDATION_FAILED", "該角色 ID 有誤，查詢失敗");
+			throw new ValidationException("VALIDATE_FAILED", "該角色 ID 有誤，查詢失敗");
 		}
 
 	}

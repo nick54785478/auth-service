@@ -32,7 +32,7 @@ export class RolesConfigComponent
     private groupRolesService: GroupRolesService,
     private groupService: GroupsService,
     private loadMaskService: LoadingMaskService,
-    private messageService: SystemMessageService
+    private messageService: SystemMessageService,
   ) {
     super();
   }
@@ -85,11 +85,11 @@ export class RolesConfigComponent
         finalize(() => {
           this.loadMaskService.hide();
           this.submitted = false;
-        })
+        }),
       )
       .subscribe({
         next: (res) => {
-          if (res.code !== 'VALIDATION_FAILED') {
+          if (res.code !== 'VALIDATE_FAILED') {
             this.messageService.success(res.message);
             this.onCloseForm();
           } else {
@@ -121,7 +121,7 @@ export class RolesConfigComponent
       .pipe(
         finalize(() => {
           // 無論成功或失敗都會執行
-        })
+        }),
       )
       .subscribe((res) => {
         console.log(res);
@@ -148,7 +148,7 @@ export class RolesConfigComponent
         finalize(() => {
           this.loadMaskService.hide();
           this.submitted = false;
-        })
+        }),
       )
       .subscribe((res) => {
         let roleList = res.roles;
