@@ -48,11 +48,11 @@ public class OptionQueryService {
 	/**
 	 * 查詢使用者資料 (AutoComplete)
 	 * 
-	 * @param str 使用者字串
+	 * @param str 使用者帳號字串
 	 * @return List<UserOptionQueried>
 	 */
 	public List<UserOptionQueried> getUserOptions(String str) {
-		return BaseDataTransformer.transformData(userInfoRepository.findAllWithSpecification(str),
+		return BaseDataTransformer.transformData(userInfoRepository.findByUsernameContaining(str),
 				UserOptionQueried.class);
 
 	}
@@ -68,7 +68,7 @@ public class OptionQueryService {
 		return BaseDataTransformer.transformData(roleInfoRepository.findAllWithSpecification(service, str),
 				RoleOptionQueried.class);
 	}
-	
+
 	/**
 	 * 查詢角色資料 (DropDown)
 	 * 
@@ -104,7 +104,7 @@ public class OptionQueryService {
 		return groups.stream().map(GroupInfo::getType).distinct().map(type -> new OptionQueried(type, type))
 				.collect(Collectors.toList());
 	}
-	
+
 	/**
 	 * 查詢功能資料 (DropDown)
 	 * 

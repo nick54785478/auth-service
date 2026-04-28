@@ -33,7 +33,7 @@ public class FunctionQueryService {
 	public List<FunctionInfoQueried> summary(String service, String actionType, String type, String name,
 			String activeFlag) {
 
-		GetFunctionsSpecification specification = new GetFunctionsSpecification(service, actionType, type, name,
+		GetFunctionsSpecification specification = new GetFunctionsSpecification(service, type, actionType, name,
 				activeFlag);
 		List<FunctionInfo> functions = functionInfoRepository.findAll(specification.toSpecification());
 		return BaseDataTransformer.transformData(functions, FunctionInfoQueried.class);
