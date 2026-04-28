@@ -22,7 +22,7 @@ public class SettingService {
 	/**
 	 * 建立設定
 	 * 
-	 * @param command
+	 * @param command {@link CreateSettingCommand}
 	 */
 	public void create(CreateSettingCommand command) {
 		// 領域檢核:
@@ -37,7 +37,7 @@ public class SettingService {
 	/**
 	 * 修改設定
 	 * 
-	 * @param command
+	 * @param command {@link UpdateSettingCommand}
 	 */
 	public void update(UpdateSettingCommand command) {
 		// 領域檢核:
@@ -55,7 +55,7 @@ public class SettingService {
 	/**
 	 * 刪除特定 id 的 Setting 資料
 	 * 
-	 * @param id
+	 * @param id Setting id
 	 */
 	public void delete(Long id) {
 		settingRepository.findById(id).ifPresentOrElse(setting -> {
@@ -70,7 +70,8 @@ public class SettingService {
 	/**
 	 * 進行領域檢核
 	 * 
-	 * @param command
+	 * @param type       種類
+	 * @param priorityNo 排序
 	 */
 	private void checkSetting(String type, Integer priorityNo) {
 		if (StringUtils.equals(type, "CONFIGURE") && priorityNo != 0L) {

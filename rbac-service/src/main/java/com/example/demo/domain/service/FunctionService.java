@@ -23,7 +23,7 @@ public class FunctionService {
 	/**
 	 * 建立多筆功能資訊(僅限於前端使用 Inline-Edit)
 	 * 
-	 * @param command
+	 * @param command {@link CreateOrUpdateFunctionCommand} 清單
 	 */
 	public void createOrUpdate(List<CreateOrUpdateFunctionCommand> commands) {
 		// 取得 id 清單

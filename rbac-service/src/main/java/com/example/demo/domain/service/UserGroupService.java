@@ -30,8 +30,8 @@ public class UserGroupService {
 	 * 查詢不屬於該使用者的群組
 	 * 
 	 * @param username 使用者帳號
-	 * @param service  服務
-	 * @return List<UserGroupQueried>
+	 * @param service  Service
+	 * @return List<GroupInfo>
 	 */
 	public List<GroupInfo> getOtherUserGroups(String username, String service) {
 		UserInfo userInfo = userInfoRepository.findByUsername(username);
@@ -59,9 +59,9 @@ public class UserGroupService {
 
 			// 合併兩者
 			filtered.addAll(inactiveRelated);
-			
+
 			return filtered;
-			
+
 		} else {
 			throw new ValidationException("VALIDATION_FAILED", "該群組 ID 有誤，查詢失敗");
 		}
@@ -75,7 +75,7 @@ public class UserGroupService {
 	 */
 	public void update(UpdateUserGroupsCommand command) {
 		UserInfo userInfo = userInfoRepository.findByUsername(command.getUsername());
-		
+
 		List<GroupInfo> groups = groupInfoRepository.findByIdInAndActiveFlag(command.getGroupIds(), YesNo.Y);
 
 		// 處理要被更新的 Group 資料

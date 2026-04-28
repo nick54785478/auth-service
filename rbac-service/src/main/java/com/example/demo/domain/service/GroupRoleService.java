@@ -29,8 +29,8 @@ public class GroupRoleService {
 	/**
 	 * 查詢該群組內部不存在的其他角色(要透過 service 過濾，不然會有其他服務的角色)
 	 * 
-	 * @param id      群組ID
-	 * @param service 服務
+	 * @param id      Group id
+	 * @param service Service
 	 * @return List<GroupRoleQueried>
 	 */
 	public List<RoleInfo> getOtherGroupRoles(Long id, String service) {
@@ -70,7 +70,7 @@ public class GroupRoleService {
 	/**
 	 * 更新群組角色
 	 * 
-	 * @param command
+	 * @param command {@link UpdateGroupRolesCommand}
 	 */
 	public void update(UpdateGroupRolesCommand command) {
 		// 透過 Role id 清單找出 Role 資料

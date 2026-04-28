@@ -32,7 +32,7 @@ public class RoleService {
 	/**
 	 * 建立多筆角色資訊(僅限於前端使用 Inline-Edit)
 	 * 
-	 * @param command
+	 * @param command {@link CreateOrUpdateRoleCommand} 清單
 	 */
 	public void createOrUpdate(List<CreateOrUpdateRoleCommand> commands) {
 
@@ -64,9 +64,9 @@ public class RoleService {
 	/**
 	 * 查詢符合條件的角色資料
 	 * 
-	 * @param id      角色ID
-	 * @param service 服務
-	 * @return RoleInfoQueried
+	 * @param id      Role id
+	 * @param service Service
+	 * @return {@link RoleInfoQueriedSummary}
 	 */
 	public RoleInfoQueriedSummary getRoleInfo(Long id, String service) {
 		Optional<RoleInfo> opt = roleInfoRepository.findById(id);

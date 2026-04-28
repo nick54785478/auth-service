@@ -25,5 +25,4 @@ public class CreateUserCommand {
 
 	private String address;
 	
-	
 }

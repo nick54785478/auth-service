@@ -43,10 +43,9 @@ public class UserService {
 	private FunctionInfoRepository functionRepository;
 
 	/**
-	 * 更新使用者角色資料
+	 * 賦予使用者相關權限
 	 * 
-	 * @param command
-	 * @return UserRoleGranted
+	 * @param command {@link UpdateUserRolesCommand}
 	 */
 	public void grant(UpdateUserRolesCommand command) {
 		UserInfo user = userRepository.findByUsername(command.getUsername());

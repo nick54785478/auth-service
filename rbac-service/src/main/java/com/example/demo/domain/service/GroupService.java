@@ -65,9 +65,9 @@ public class GroupService {
 	/**
 	 * 查詢符合條件的群組資料
 	 * 
-	 * @param id      群組ID
-	 * @param service 服務
-	 * @return GroupInfoQueried
+	 * @param id      Group id
+	 * @param service Service
+	 * @return {@link GroupInfoQueriedSummary}
 	 */
 	public GroupInfoQueriedSummary getGroupInfo(Long id, String service) {
 		Optional<GroupInfo> opt = groupInfoRepository.findById(id);
@@ -96,13 +96,11 @@ public class GroupService {
 	/**
 	 * 刪除多筆角色資料
 	 * 
-	 * @param ids 要被刪除的 id 清單
+	 * @param ids 要被刪除的 Group id 清單
 	 */
 	public void delete(List<Long> ids) {
 		List<GroupInfo> groups = groupInfoRepository.findByIdInAndActiveFlag(ids, YesNo.Y);
-		groups.stream().forEach(group -> {
-			group.delete();
-		});
+		groups.stream().forEach(GroupInfo::delete);
 		groupInfoRepository.saveAll(groups);
 	}
 }

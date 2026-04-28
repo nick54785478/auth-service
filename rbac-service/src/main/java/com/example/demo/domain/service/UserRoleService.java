@@ -32,7 +32,7 @@ public class UserRoleService {
 	 * 
 	 * @param username 使用者名稱
 	 * @param service  服務
-	 * @return List<UserRoleGroupQueried>
+	 * @return List<RoleInfo>
 	 */
 	@Transactional
 	public List<RoleInfo> getOtherRoles(String username, String service) {
@@ -59,8 +59,8 @@ public class UserRoleService {
 
 			// 合併兩者
 			filtered.addAll(inactiveRelated);
-			
-			return filtered;		
+
+			return filtered;
 		} else {
 			throw new ValidationException("VALIDATION_FAILED", "該角色 ID 有誤，查詢失敗");
 		}
@@ -70,7 +70,7 @@ public class UserRoleService {
 	/**
 	 * 更新使用者角色權限
 	 * 
-	 * @param command
+	 * @param command {@link UpdateUserRolesCommand}
 	 */
 	public void update(UpdateUserRolesCommand command) {
 		UserInfo userInfo = userInfoRepository.findByUsername(command.getUsername());
@@ -88,9 +88,9 @@ public class UserRoleService {
 	/**
 	 * 處理要被更新的 Role 資料
 	 * 
-	 * @param service    服務
-	 * @param userInfo   使用者資料
-	 * @param roles      要被更新的角色清單
+	 * @param service  Service
+	 * @param userInfo 使用者資料
+	 * @param roles    要被更新的角色清單
 	 */
 	private List<UserRole> processUpdatedRoleData(String service, UserInfo userInfo, List<RoleInfo> roles) {
 		List<RoleInfo> roleList = new ArrayList<>();
@@ -122,8 +122,8 @@ public class UserRoleService {
 	 * 取得特定使用者的角色資料
 	 * 
 	 * @param username 使用者帳號
-	 * @param service  服務
-	 * @return List<UserRoleQueried>
+	 * @param service  Service
+	 * @return List<RoleInfo>
 	 */
 	public List<RoleInfo> getUserRoles(String username, String service) {
 		UserInfo user = userInfoRepository.findByUsername(username);
