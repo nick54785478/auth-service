@@ -41,7 +41,6 @@ public class RoleFunctionQueryService {
 	@Transactional(readOnly = true)
 	public List<RoleFunctionQueried> getRoleFunctions(Long id, String service) {
 		List<FunctionInfo> functions = roleFunctionService.getRoleFunctions(id, service);
-		System.out.println(functions);
 		return BaseDataTransformer.transformData(functions, RoleFunctionQueried.class);
 	}
 }

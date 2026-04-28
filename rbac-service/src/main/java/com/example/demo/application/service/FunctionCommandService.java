@@ -50,9 +50,7 @@ public class FunctionCommandService {
 	 */
 	public void delete(List<Long> ids) {
 		List<FunctionInfo> functions = functionRepository.findByIdIn(ids);
-		functions.stream().forEach(function -> {
-			function.delete();
-		});
+		functions.stream().forEach(FunctionInfo::delete);
 		functionRepository.saveAll(functions);
 	}
 

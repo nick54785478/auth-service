@@ -57,11 +57,9 @@ public class RoleFunctionService {
 		Optional<RoleInfo> opt = roleInfoRepository.findById(id);
 		
 		if (opt.isEmpty()) {
-			System.out.println("AAAA");
 			return new ArrayList<>();
 		} else {
 			RoleInfo role = opt.get();
-			System.out.println("role:"+role);
 			List<Long> functionIds = role.getFunctions().stream()
 					.filter(e -> e.getActiveFlag() == YesNo.Y)
 					.map(RoleFunction::getFunctionId).collect(Collectors.toList());
