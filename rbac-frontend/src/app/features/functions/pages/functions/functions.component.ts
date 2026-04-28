@@ -30,6 +30,10 @@ import { CustomisationService } from '../../../../shared/services/customisation.
 import { SystemStorageKey } from '../../../../core/enums/system-storage.enum';
 import { StorageService } from '../../../../core/services/storage.service';
 import { UpdateCustomisation } from '../../../../shared/models/update-customisation-request.model';
+import { catchError } from 'rxjs/internal/operators/catchError';
+import { of } from 'rxjs/internal/observable/of';
+import { switchMap } from 'rxjs/internal/operators/switchMap';
+import { tap } from 'rxjs/internal/operators/tap';
 
 @Component({
   selector: 'app-functions',
@@ -82,24 +86,60 @@ export class FunctionsComponent
     this.initTabs();
 
     // 監聽 service 變更，變更後要更新 Type 的下拉選單資料
-    this.formGroup.get('service')?.valueChanges.subscribe((serviceValue) => {
-      this.refreshTabs(serviceValue);
-      const control = this.formGroup.get('type');
-      if (serviceValue) {
-        control?.enable(); // 選擇 service -> 啟用 type
-        this.optionService.getFunctionDropdownOptions(serviceValue).subscribe({
-          next: (res) => {
-            this.types = res;
-          },
-          error: (error) => {
-            this.messageService.error('取得資料發生錯誤', error.message);
-          },
-        });
-      } else {
-        control?.reset(); // 清空角色
-        control?.disable(); // 禁用 type
-      }
-    });
+    this.formGroup
+      .get('service')
+      ?.valueChanges.pipe(
+        // 【步驟 1：同步清理與狀態更新】
+        tap((serviceValue) => {
+          // 刷新上方 Tab 按鈕狀態
+          this.refreshTabs(serviceValue);
+
+          const typeControl = this.formGroup.get('type');
+
+          // 徹底清空下方的查詢結果，避免切換 Service 時幽靈資料殘留
+          this.tableData = [];
+          this.selectedData = [];
+          if (this.dataTable) {
+            // 注意：你的基礎類別似乎是用 dataTable 或 dt，請依實際變數名稱調整
+            this.dataTable.reset();
+          }
+
+          if (serviceValue) {
+            typeControl?.enable();
+            typeControl?.setValue(null); // 清空下拉選單目前的值
+            typeControl?.markAsUntouched();
+            typeControl?.markAsPristine();
+          } else {
+            typeControl?.setValue(null);
+            typeControl?.disable();
+            this.types = []; // Service 為空時，一併清空選項陣列
+          }
+        }),
+
+        // 【步驟 2：非同步取得下拉選單資料】
+        switchMap((serviceValue) => {
+          // 如果沒有選擇 Service，直接回傳空陣列中斷流程
+          if (!serviceValue) {
+            return of([]);
+          }
+
+          return this.optionService
+            .getFunctionDropdownOptions(serviceValue)
+            .pipe(
+              // 攔截 API 錯誤，避免 RxJS 管線崩潰
+              catchError((error) => {
+                this.messageService.error('取得資料發生錯誤', error.message);
+                return of([]); // 報錯時回傳空陣列，維持流程運作
+              }),
+            );
+        }),
+      )
+      .subscribe({
+        // 【步驟 3：接收並綁定乾淨的資料】
+        next: (res) => {
+          this.types = res;
+        },
+      });
 
     // 初始化 Table 配置
     this.cols = [

@@ -25,6 +25,10 @@ import { OverlayPanel } from 'primeng/overlaypanel';
 import { SystemStorageKey } from '../../../../core/enums/system-storage.enum';
 import { UpdateCustomisation } from '../../../../shared/models/update-customisation-request.model';
 import { Table } from 'primeng/table';
+import { catchError } from 'rxjs/internal/operators/catchError';
+import { of } from 'rxjs/internal/observable/of';
+import { switchMap } from 'rxjs/internal/operators/switchMap';
+import { tap } from 'rxjs/internal/operators/tap';
 
 @Component({
   selector: 'app-roles',
@@ -86,27 +90,60 @@ export class RolesComponent
     this.initTabs();
 
     // 監聽 service 變更，
-    this.formGroup.get('service')?.valueChanges.subscribe((serviceValue) => {
-      // 刷新 Tab 狀態
-      this.refreshTabs(serviceValue);
-      // 變更後要更新 Type 的下拉選單資料
-      const control = this.formGroup.get('type');
-      if (serviceValue) {
-        control?.enable(); // 選擇 service -> 啟用 type
-        this.optionService.getRoleDropdownOptions(serviceValue).subscribe({
-          next: (res) => {
-            this.types = res;
-          },
-          error: (error) => {
-            this.messageService.error('取得資料發生錯誤', error.message);
-          },
-        });
-      } else {
-        control?.reset(); // 清空角色
-        control?.disable(); // 禁用 role
-      }
-    });
+    this.formGroup
+      .get('service')
+      ?.valueChanges.pipe(
+        takeUntil(this._destroying$), // 如果你有實作取消訂閱，建議加上這行
 
+        // 【步驟 1：同步副作用】利用 tap 在打 API 前先清理畫面狀態
+        tap((serviceValue) => {
+          // 刷新 Tab 狀態
+          this.refreshTabs(serviceValue);
+
+          const typeControl = this.formGroup.get('type');
+
+          // 一併清空下方的查詢表格結果，避免幽靈資料殘留
+          this.tableData = [];
+          this.selectedData = [];
+          if (this.dataTable) {
+            this.dataTable.reset();
+          }
+
+          if (serviceValue) {
+            typeControl?.enable();
+            typeControl?.setValue(null); // PrimeNG 標準清空法
+            typeControl?.markAsUntouched();
+            typeControl?.markAsPristine();
+          } else {
+            typeControl?.setValue(null);
+            typeControl?.disable();
+            this.types = []; // 如果 Service 沒選，順手把 Types 的選項陣列也抽空
+          }
+        }),
+
+        // 【步驟 2：非同步 API】利用 switchMap 打斷舊請求，避免 Race Condition
+        switchMap((serviceValue) => {
+          // 如果 service 被清空，直接回傳空陣列，不打 API
+          if (!serviceValue) {
+            return of([]);
+          }
+
+          return this.optionService.getRoleDropdownOptions(serviceValue).pipe(
+            // 關鍵防護：把錯誤攔截寫在 switchMap 內部，這樣 API 報錯才不會把整個 valueChanges 監聽器殺死
+            catchError((error) => {
+              // this.messageService.error('取得資料發生錯誤', error.message);
+              console.error('取得角色種類發生錯誤:', error);
+              return of([]); // 報錯時給空陣列，維持 RxJS 管線存活
+            }),
+          );
+        }),
+      )
+      .subscribe({
+        // 【步驟 3：接收最終乾淨的資料】
+        next: (res) => {
+          this.types = res;
+        },
+      });
     // 初始化 Table 配置
     this.cols = [
       {

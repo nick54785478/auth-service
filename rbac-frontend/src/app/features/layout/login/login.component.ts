@@ -37,7 +37,7 @@ export class LoginComponent
     private loginService: LoginService,
     private authService: AuthService,
     private storageService: StorageService,
-    private messageService: SystemMessageService
+    private messageService: SystemMessageService,
   ) {
     super();
   }
@@ -71,7 +71,7 @@ export class LoginComponent
         takeUntil(this._destroying$),
         finalize(() => {
           this.submitted = false;
-        })
+        }),
       )
       .subscribe({
         next: (res) => {
@@ -87,15 +87,17 @@ export class LoginComponent
             // 設置使用者名稱進 LocalStorage 和 SessionStorage
             this.setUsername(formData.username);
 
+            console.log(formData);
+
             // 設置 Refresh Token
             this.storageService.setLocalStorageItem(
               SystemStorageKey.REFRESH_TOKEN,
-              res?.refreshToken
+              res?.refreshToken,
             );
             // 設置 Refresh Token
             this.storageService.setSessionStorageItem(
               SystemStorageKey.REFRESH_TOKEN,
-              res?.refreshToken
+              res?.refreshToken,
             );
 
             // 設置 Token 進 AuthService Subject 訂閱
@@ -124,10 +126,11 @@ export class LoginComponent
   setUsername(username: string) {
     // 透過後端 API 取得使用者個人資訊
     this.loginService.getUserInfo(username).subscribe((res) => {
+      console.log(res);
       // 設置 name
       this.storageService.setSessionStorageItem(
         SystemStorageKey.NAME,
-        res.name
+        res.name,
       );
       // 設置 name
       this.storageService.setLocalStorageItem(SystemStorageKey.NAME, res.name);
@@ -136,13 +139,13 @@ export class LoginComponent
     // 設置 username
     this.storageService.setSessionStorageItem(
       SystemStorageKey.USERNAME,
-      username
+      username,
     );
 
     // 設置 username
     this.storageService.setLocalStorageItem(
       SystemStorageKey.USERNAME,
-      username
+      username,
     );
   }
 
@@ -156,7 +159,7 @@ export class LoginComponent
     // 設置 Token 進 SessionStorage
     this.storageService.setSessionStorageItem(
       SystemStorageKey.JWT_TOKEN,
-      token
+      token,
     );
     // 設置 Token 進 LocalStorage
     this.storageService.setLocalStorageItem(SystemStorageKey.JWT_TOKEN, token);
