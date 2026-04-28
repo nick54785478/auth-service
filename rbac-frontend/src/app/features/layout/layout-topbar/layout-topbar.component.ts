@@ -18,7 +18,7 @@ import { AuthService } from '../../../core/services/auth.service';
 import { StorageService } from '../../../core/services/storage.service';
 import { SystemStorageKey } from '../../../core/enums/system-storage.enum';
 import { defaultIfEmpty, firstValueFrom, of, tap } from 'rxjs';
-import { UserProfile } from '../models/user-profile.model';
+import { UserProfileQueried } from '../models/user-profile.model';
 
 @Component({
   selector: 'app-layout-topbar',
@@ -37,14 +37,14 @@ export class LayoutTopbarComponent implements OnInit {
 
   sidebarVisible: boolean = false; // 本地變數，監聽 SideBar 狀態
 
-  userProfile: UserProfile = new UserProfile(); // 使用者資訊
+  userProfile: UserProfileQueried = new UserProfileQueried(); // 使用者資訊
 
   constructor(
     private windowRef: WindowRefService,
     private router: Router,
     private storageService: StorageService,
     private authService: AuthService,
-    private primengConfig: PrimeNGConfig
+    private primengConfig: PrimeNGConfig,
   ) {}
 
   async ngOnInit(): Promise<void> {
@@ -59,21 +59,21 @@ export class LayoutTopbarComponent implements OnInit {
     this.userProfile.username = await firstValueFrom(
       of(
         this.storageService.getLocalStorageItem(SystemStorageKey.USERNAME) ||
-          this.storageService.getSessionStorageItem(SystemStorageKey.USERNAME)
+          this.storageService.getSessionStorageItem(SystemStorageKey.USERNAME),
       ).pipe(
         tap((value) => console.log('username value:', value)),
-        defaultIfEmpty('')
-      )
+        defaultIfEmpty(''),
+      ),
     );
 
     this.userProfile.name = await firstValueFrom(
       of(
         this.storageService.getLocalStorageItem(SystemStorageKey.NAME) ||
-          this.storageService.getSessionStorageItem(SystemStorageKey.NAME)
+          this.storageService.getSessionStorageItem(SystemStorageKey.NAME),
       ).pipe(
         tap((value) => console.log('name value:', value)),
-        defaultIfEmpty('')
-      )
+        defaultIfEmpty(''),
+      ),
     );
 
     console.log(this.userProfile);

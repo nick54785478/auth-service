@@ -5,7 +5,9 @@ import { JwtToken } from '../models/jwt-token.model';
 import { Observable } from 'rxjs/internal/Observable';
 import { url } from 'inspector';
 import { Login } from '../models/login-request.model';
-import { UserProfile } from '../models/user-profile.model';
+import { UserProfileQueried } from '../models/user-profile.model';
+import { UserInfoGottenResource } from '../models/user-profile-gotten.model';
+import { map } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -30,8 +32,10 @@ export class LoginService {
    * @param username
    * @returns Observable<UserProfile>
    */
-  getUserInfo(username: string): Observable<UserProfile> {
+  getUserInfo(username: string): Observable<UserProfileQueried> {
     const url = this.baseApiUrl + '/users/' + username;
-    return this.http.get<UserProfile>(url);
+    return this.http
+      .get<UserInfoGottenResource>(url)
+      .pipe(map((res) => res?.data));
   }
 }

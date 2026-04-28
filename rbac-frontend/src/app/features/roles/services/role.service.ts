@@ -5,6 +5,8 @@ import { environment } from '../../../../environments/environment';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { SaveRole } from '../models/save-role-request.model';
 import { BaseResponse } from '../../../shared/models/base-response.model';
+import { RoleQueriedResource } from '../models/role-gotten-response.model';
+import { map } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -33,7 +35,9 @@ export class RoleService {
       .set('type', type ? type : '')
       .set('name', name ? name : '')
       .set('activeFlag', activeFlag ? activeFlag : '');
-    return this.http.get<RoleQueried[]>(url, { params });
+    return this.http
+      .get<RoleQueriedResource>(url, { params })
+      .pipe(map((res) => res?.data));
   }
 
   /**
