@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../../../../environments/environment';
 import { JwtToken } from '../models/jwt-token.model';
@@ -22,9 +22,16 @@ export class LoginService {
    * @param request
    * @returns JwtToken
    */
-  login(request: Login): Observable<any> {
+  login(request: Login, serviceHeader?: string): Observable<any> {
+    // 1. 建立自訂的 HttpHeaders
+    const customHeaders = new HttpHeaders({
+      'service-header': serviceHeader ? serviceHeader : 'AUTH_SERVICE',
+    });
+
     const url = this.baseApiUrl + '/login';
-    return this.http.post<JwtToken>(url, request);
+    return this.http.post<JwtToken>(url, request, {
+      headers: customHeaders,
+    });
   }
 
   /**
