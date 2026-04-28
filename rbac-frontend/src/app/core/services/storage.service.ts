@@ -86,7 +86,7 @@ export class StorageService {
     if (isPlatformBrowser(this.platformId)) {
       this.setSessionStorageItem(
         SystemStorageKey.PERMISSIONS,
-        permissions.join(',')
+        permissions.join(','),
       );
     }
   }
@@ -115,6 +115,17 @@ export class StorageService {
   removeSessionStorageItem(key: string) {
     if (isPlatformBrowser(this.platformId)) {
       sessionStorage.removeItem(key);
+    }
+  }
+
+  /**
+   * 徹底清除所有 LocalStorage 與 SessionStorage 的資料
+   * (通常用於登出或 Token 更新失敗時的強制登出)
+   */
+  clearAll(): void {
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.clear();
+      sessionStorage.clear();
     }
   }
 }

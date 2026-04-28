@@ -59,7 +59,7 @@ public class JwtTokenCommandService {
 		UserInfo userInfo = userInfoRepository.findByUsername(command.getUsername());
 
 		if (Objects.isNull(userInfo)) {
-			throw new ValidationException("VALIDATION_FAILED", "該使用者帳號不存在");// 比對失敗
+			throw new ValidationException("VALIDATED_FAILED", "該使用者帳號不存在");// 比對失敗
 		}
 
 		boolean checkPassword = PasswordUtil.checkPassword(command.getPassword(), userInfo.getPassword());
@@ -67,7 +67,7 @@ public class JwtTokenCommandService {
 
 		// 檢查密碼是否相符
 		if (!checkPassword) {
-			throw new ValidationException("VALIDATION_FAILED", "使用者帳號或密碼有誤");// 比對失敗
+			throw new ValidationException("VALIDATED_FAILED", "使用者帳號或密碼有誤");// 比對失敗
 		}
 
 		// 查詢該使用者所在的群組
@@ -88,15 +88,8 @@ public class JwtTokenCommandService {
 		userInfo.updateRefreshToken(tokenGenerated.getRefreshToken());
 		userInfoRepository.save(userInfo);
 
-		// 若不存在 RefreshToken，設置進去
-		if (StringUtils.isBlank(userInfo.getRefreshToken())) {
-			userInfo.updateRefreshToken(tokenGenerated.getRefreshToken());
-		}
-
-		// 如果 RefreshToken 過期
-		if (jwTokenManager.isExpiration(userInfo.getRefreshToken())) {
-			userInfo.updateRefreshToken(tokenGenerated.getRefreshToken());
-		}
+		// 刷新 Refresh Token (不論過期與否)
+		userInfo.updateRefreshToken(tokenGenerated.getRefreshToken());
 		return tokenGenerated;
 	}
 
