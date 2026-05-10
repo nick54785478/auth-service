@@ -55,7 +55,6 @@ public class JwtTokenCommandService {
 	public JwtTokenGenerated generateToken(GenerateJwtokenCommand command) {
 		// 透過 ContextHolder 取得 Service
 		String service = ContextHolder.getService();
-		System.out.println("service"+service);
 
 		UserInfo userInfo = userInfoRepository.findByUsername(command.getUsername());
 
