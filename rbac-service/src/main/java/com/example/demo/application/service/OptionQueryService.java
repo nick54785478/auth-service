@@ -4,8 +4,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo.application.assembler.GroupAssembler;
+import com.example.demo.application.assembler.RoleAssembler;
+import com.example.demo.application.assembler.UserAssembler;
 import com.example.demo.application.shared.dto.GroupOptionQueried;
 import com.example.demo.application.shared.dto.OptionQueried;
 import com.example.demo.application.shared.dto.RoleOptionQueried;
@@ -13,14 +16,15 @@ import com.example.demo.application.shared.dto.UserOptionQueried;
 import com.example.demo.domain.function.aggregate.FunctionInfo;
 import com.example.demo.domain.group.aggregate.GroupInfo;
 import com.example.demo.domain.role.aggregate.RoleInfo;
+import com.example.demo.domain.user.aggregate.UserInfo;
 import com.example.demo.infra.repository.FunctionInfoRepository;
 import com.example.demo.infra.repository.GroupInfoRepository;
 import com.example.demo.infra.repository.RoleInfoRepository;
 import com.example.demo.infra.repository.SettingRepository;
 import com.example.demo.infra.repository.UserInfoRepository;
 import com.example.demo.infra.spec.GetGroupOptionsSpecification;
+import com.example.demo.infra.spec.GetRoleOptionsSpecification;
 import com.example.demo.shared.enums.YesNo;
-import com.example.demo.util.BaseDataTransformer;
 
 import lombok.AllArgsConstructor;
 
@@ -28,6 +32,8 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class OptionQueryService {
 
+	private UserAssembler userAssembler;
+	private RoleAssembler roleAssembler;
 	private GroupAssembler groupAssembler;
 	private RoleInfoRepository roleInfoRepository;
 	private SettingRepository settingRepository;
@@ -56,22 +62,23 @@ public class OptionQueryService {
 	 * @param str 使用者帳號字串
 	 * @return List<UserOptionQueried>
 	 */
+	@Transactional(readOnly = true)
 	public List<UserOptionQueried> getUserOptions(String str) {
-		return BaseDataTransformer.transformData(userInfoRepository.findByUsernameContaining(str),
-				UserOptionQueried.class);
-
+		List<UserInfo> users = userInfoRepository.findByUsernameContaining(str);
+		return userAssembler.transformUserOptions(users);
 	}
 
 	/**
 	 * 查詢角色資料 (AutoComplete)
 	 * 
 	 * @param service 服務
-	 * @param str     角色字串
+	 * @param keyword 關鍵字
 	 * @return List<RoleOptionQueried>
 	 */
-	public List<RoleOptionQueried> getRoleOptions(String service, String str) {
-		return BaseDataTransformer.transformData(roleInfoRepository.findAllWithSpecification(service, str),
-				RoleOptionQueried.class);
+	public List<RoleOptionQueried> getRoleOptions(String service, String keyword) {
+		GetRoleOptionsSpecification specification = new GetRoleOptionsSpecification(service, keyword);
+		List<RoleInfo> roles = roleInfoRepository.findAll(specification.toSpecification());
+		return roleAssembler.transformRoleOptions(roles);
 	}
 
 	/**

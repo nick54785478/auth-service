@@ -13,10 +13,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.application.service.UserCommandService;
 import com.example.demo.application.service.UserQueryService;
-import com.example.demo.domain.shared.summary.UserInfoDetailsQueriedSummary;
-import com.example.demo.domain.shared.summary.UserInfoQueriedSummary;
-import com.example.demo.domain.user.command.CreateUserCommand;
-import com.example.demo.domain.user.command.UpdateUserCommand;
+import com.example.demo.application.shared.command.CreateUserCommand;
+import com.example.demo.application.shared.command.UpdateUserCommand;
+import com.example.demo.application.shared.dto.UserDetailsQueried;
+import com.example.demo.application.shared.dto.UserInfoQueried;
 import com.example.demo.iface.dto.request.CreateUserResource;
 import com.example.demo.iface.dto.request.UpdateUserResource;
 import com.example.demo.iface.dto.response.response.UserCreatedResource;
@@ -59,8 +59,7 @@ public class UserController {
 	public ResponseEntity<UserUpdatedResource> update(@RequestBody UpdateUserResource resource, @PathVariable Long id) {
 		// 防腐處理 resource -> command
 		UpdateUserCommand command = BaseDataTransformer.transformData(resource, UpdateUserCommand.class);
-		command.setId(id);
-		userCommandService.update(command);
+		userCommandService.update(id, command);
 		return new ResponseEntity<>(new UserUpdatedResource("200", "更新使用者資料成功"), HttpStatus.OK);
 	}
 
@@ -100,7 +99,7 @@ public class UserController {
 	@GetMapping("/{username}/details")
 	public ResponseEntity<UserDetailsGottenResource> queryUserDetails(@PathVariable String username,
 			@RequestParam(defaultValue = "AUTH_SERVICE") String service) {
-		UserInfoDetailsQueriedSummary data = userQueryService.getUserDetails(username, service);
+		UserDetailsQueried data = userQueryService.getUserDetails(username, service);
 		return new ResponseEntity<>(new UserDetailsGottenResource("200", "查詢成功", data), HttpStatus.OK);
 	}
 
@@ -112,7 +111,7 @@ public class UserController {
 	 */
 	@GetMapping("/{username}")
 	public ResponseEntity<UserInfoGottenResource> query(@PathVariable String username) {
-		UserInfoQueriedSummary data = userQueryService.query(username);
+		UserInfoQueried data = userQueryService.query(username);
 		return new ResponseEntity<>(new UserInfoGottenResource("200", "查詢成功", data), HttpStatus.OK);
 	}
 

@@ -1,7 +1,7 @@
 package com.example.demo.iface.dto.response.response;
 
-import com.example.demo.domain.shared.summary.UserInfoQueriedSummary;
+import com.example.demo.application.shared.dto.UserInfoQueried;
 
-public record UserInfoGottenResource(String code, String message, UserInfoQueriedSummary data) {
+public record UserInfoGottenResource(String code, String message, UserInfoQueried data) {
 
 }

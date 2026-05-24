@@ -5,8 +5,8 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.demo.application.shared.command.UpdateUserRolesCommand;
 import com.example.demo.domain.service.UserRoleService;
-import com.example.demo.domain.user.command.UpdateUserRolesCommand;
 
 import lombok.AllArgsConstructor;
 

@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateOrUpdateRoleResource {
+public class UpsertRoleResource {
 
 	private Long id;
 	

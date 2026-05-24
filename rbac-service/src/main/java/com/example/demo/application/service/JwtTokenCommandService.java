@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo.application.port.JwTokenManagerPort;
+import com.example.demo.application.shared.command.GenerateJwtokenCommand;
+import com.example.demo.application.shared.command.RefreshTokenCommand;
 import com.example.demo.application.shared.dto.JwtTokenGenerated;
 import com.example.demo.domain.group.aggregate.GroupInfo;
 import com.example.demo.domain.role.aggregate.RoleInfo;
@@ -19,8 +21,6 @@ import com.example.demo.domain.service.UserGroupService;
 import com.example.demo.domain.service.UserRoleService;
 import com.example.demo.domain.service.UserService;
 import com.example.demo.domain.user.aggregate.UserInfo;
-import com.example.demo.domain.user.command.GenerateJwtokenCommand;
-import com.example.demo.domain.user.command.RefreshTokenCommand;
 import com.example.demo.infra.context.ContextHolder;
 import com.example.demo.infra.exception.ValidationException;
 import com.example.demo.infra.repository.UserInfoRepository;
@@ -81,8 +81,8 @@ public class JwtTokenCommandService {
 		// 取得該角色清單所具備的相關功能權限
 		Set<String> functionCodes = roleFunctionService.getFunctionsByRoleIds(service, roles).getFuncList().stream()
 				.map(function -> function.getScope().getCode()).collect(Collectors.toSet());
-		JwtTokenGenerated tokenGenerated = jwTokenManager.generateToken(userInfo.getUsername(), userInfo.getEmail(),
-				roles, groups, new ArrayList<>(functionCodes));
+		JwtTokenGenerated tokenGenerated = jwTokenManager.generateToken(userInfo.getUsername(),
+				userInfo.getProfile().getEmail(), roles, groups, new ArrayList<>(functionCodes));
 
 		// 更新 Refresh Token
 		userInfo.updateRefreshToken(tokenGenerated.getRefreshToken());
@@ -117,8 +117,8 @@ public class JwtTokenCommandService {
 			// 取得該角色清單所具備的相關功能權限
 			Set<String> functions = roleFunctionService.getFunctionsByRoleIds(service, roles).getFuncList().stream()
 					.map(function -> function.getScope().getCode()).collect(Collectors.toSet());
-			JwtTokenGenerated tokenGenerated = jwTokenManager.generateToken(userInfo.getUsername(), userInfo.getEmail(),
-					roles, groups, new ArrayList<>(functions));
+			JwtTokenGenerated tokenGenerated = jwTokenManager.generateToken(userInfo.getUsername(),
+					userInfo.getProfile().getEmail(), roles, groups, new ArrayList<>(functions));
 
 			// 若不存在 RefreshToken，設置進去
 			if (StringUtils.isBlank(userInfo.getRefreshToken())) {

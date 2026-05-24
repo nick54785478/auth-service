@@ -1,5 +1,7 @@
 package com.example.demo.application.shared.command;
 
+import java.util.Date;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -7,20 +9,16 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateOrUpdateRoleCommand {
-
-	private Long id;
-	
-	private String service;
-
-	private String code;
+public class UpdateUserCommand {
 	
 	private String name;
+
+	private String email;
+
+	private Date birthday;
 	
-	private String type;
-	
-	private String description;
-	
-	private String activeFlag;
+	private String nationalId;
+
+	private String address;
 	
 }

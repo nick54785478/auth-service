@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 
 import com.example.demo.application.shared.dto.RoleInfoQueried;
+import com.example.demo.application.shared.dto.RoleOptionQueried;
 import com.example.demo.domain.role.aggregate.RoleInfo;
 import com.example.demo.domain.role.aggregate.vo.RoleProfile;
 import com.example.demo.domain.role.aggregate.vo.RoleScope;
@@ -22,7 +23,7 @@ public class RoleAssembler {
 	 * @param role 角色資料
 	 * @return {@link RoleInfoQueried}
 	 */
-	public RoleInfoQueried transform(RoleInfo role) {
+	public RoleInfoQueried transformRole(RoleInfo role) {
 		if (role == null) {
 			return null;
 		}
@@ -41,15 +42,43 @@ public class RoleAssembler {
 	}
 
 	/**
+	 * 轉換 Role Option 資料
+	 * 
+	 * @param role 角色資料
+	 * @return {@link RoleOptionQueried}
+	 */
+	public RoleOptionQueried transformRoleOption(RoleInfo role) {
+		if (role == null) {
+			return null;
+		}
+		RoleScope scope = role.getScope();
+		RoleProfile profile = role.getProfile();
+		return new RoleOptionQueried(role.getId(), scope.getCode(), profile.getName());
+	}
+
+	/**
 	 * 轉換 Role 清單資料
 	 * 
 	 * @param roles 角色資料清單
 	 * @return {@link RoleInfoQueried} 清單
 	 */
-	public List<RoleInfoQueried> transformList(List<RoleInfo> roles) {
+	public List<RoleInfoQueried> transformRoles(List<RoleInfo> roles) {
 		if (roles == null || roles.isEmpty()) {
 			return List.of(); // 回傳空集合，避免回傳 null 造成呼叫端麻煩
 		}
-		return roles.stream().map(this::transform).collect(Collectors.toList());
+		return roles.stream().map(this::transformRole).collect(Collectors.toList());
+	}
+
+	/**
+	 * 轉換 Role Option 資料清單
+	 * 
+	 * @param roles 角色資料清單
+	 * @return {@link RoleOptionQueried} 清單
+	 */
+	public List<RoleOptionQueried> transformRoleOptions(List<RoleInfo> roles) {
+		if (roles == null || roles.isEmpty()) {
+			return List.of(); // 回傳空集合，避免回傳 null 造成呼叫端麻煩
+		}
+		return roles.stream().map(this::transformRoleOption).collect(Collectors.toList());
 	}
 }

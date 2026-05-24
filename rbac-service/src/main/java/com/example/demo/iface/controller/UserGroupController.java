@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.application.service.UserGroupCommandService;
 import com.example.demo.application.service.UserGroupQueryService;
+import com.example.demo.application.shared.command.UpdateUserGroupsCommand;
 import com.example.demo.application.shared.dto.UserGroupQueried;
-import com.example.demo.domain.user.command.UpdateUserGroupsCommand;
 import com.example.demo.iface.dto.request.UpdateUserGroupsResource;
 import com.example.demo.iface.dto.response.response.UserGroupUpdatedResource;
 import com.example.demo.iface.dto.response.response.UserGroupsGottenResource;

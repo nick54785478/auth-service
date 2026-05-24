@@ -34,10 +34,9 @@ public class RoleQueryService {
 	 */
 	@Transactional
 	public List<RoleInfoQueried> summary(String service, String type, String name, String activeFlag) {
-
 		GetRolesSummarySpecification specification = new GetRolesSummarySpecification(service, type, name, activeFlag);
 		List<RoleInfo> roles = roleInfoRepository.findAll(specification.toSpecification());
-		return assembler.transformList(roles);
+		return assembler.transformRoles(roles);
 	}
 
 	/**

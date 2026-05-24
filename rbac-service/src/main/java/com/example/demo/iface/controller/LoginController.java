@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.application.service.JwtTokenCommandService;
+import com.example.demo.application.shared.command.GenerateJwtokenCommand;
+import com.example.demo.application.shared.command.RefreshTokenCommand;
 import com.example.demo.application.shared.dto.JwtTokenGenerated;
-import com.example.demo.domain.user.command.GenerateJwtokenCommand;
-import com.example.demo.domain.user.command.RefreshTokenCommand;
 import com.example.demo.iface.dto.response.JwtTokenGeneratedResource;
 import com.example.demo.iface.dto.request.GenerateJwtokenResource;
 import com.example.demo.iface.dto.request.RefreshTokenResource;

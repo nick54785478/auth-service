@@ -60,8 +60,8 @@ public class AuthService {
 		// 透過功能 ID 清單搜尋該權限擁有的功能
 		List<String> functions = functionRepository.findByIdInAndActiveFlag(functionIds, YesNo.Y).stream()
 				.map(function -> function.getScope().getCode()).collect(Collectors.toList());
-		return GroupsAuthQueriedDetail.builder().username(userInfo.getUsername()).email(userInfo.getEmail())
-				.roles(roles).functions(functions).build();
+		return GroupsAuthQueriedDetail.builder().username(userInfo.getUsername())
+				.email(userInfo.getProfile().getEmail()).roles(roles).functions(functions).build();
 	}
 
 	/**
@@ -84,8 +84,8 @@ public class AuthService {
 
 		List<String> functions = functionRepository.findByIdInAndActiveFlag(functionIds, YesNo.Y).stream()
 				.map(function -> function.getScope().getCode()).collect(Collectors.toList());
-		return PersonalAuthQueriedSummary.builder().username(userInfo.getUsername()).email(userInfo.getEmail())
-				.roles(roles).functions(functions).build();
+		return PersonalAuthQueriedSummary.builder().username(userInfo.getUsername())
+				.email(userInfo.getProfile().getEmail()).roles(roles).functions(functions).build();
 	}
 
 	/**

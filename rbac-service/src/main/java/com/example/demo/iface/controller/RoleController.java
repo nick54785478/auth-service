@@ -16,13 +16,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.application.service.RoleCommandService;
 import com.example.demo.application.service.RoleQueryService;
-import com.example.demo.application.shared.command.CreateOrUpdateRoleCommand;
 import com.example.demo.application.shared.command.CreateRoleCommand;
 import com.example.demo.application.shared.command.UpdateRoleCommand;
+import com.example.demo.application.shared.command.UpsertRoleCommand;
 import com.example.demo.application.shared.dto.RoleInfoQueried;
-import com.example.demo.iface.dto.request.CreateOrUpdateRoleResource;
 import com.example.demo.iface.dto.request.CreateRoleResource;
 import com.example.demo.iface.dto.request.UpdateRoleResource;
+import com.example.demo.iface.dto.request.UpsertRoleResource;
 import com.example.demo.iface.dto.response.response.RoleCreatedOrUpdatedResource;
 import com.example.demo.iface.dto.response.response.RoleCreatedResource;
 import com.example.demo.iface.dto.response.response.RoleDeletedResource;
@@ -43,7 +43,7 @@ public class RoleController {
 	/**
 	 * 新增 角色資料
 	 * 
-	 * @param resource
+	 * @param resource {@link CreateRoleResource}
 	 * @return ResponseEntity<RoleCreatedResource>
 	 */
 	@PostMapping("")
@@ -61,11 +61,10 @@ public class RoleController {
 	 * @return ResponseEntity<RoleCreatedResource>
 	 */
 	@PostMapping("/saveList")
-	public ResponseEntity<RoleCreatedOrUpdatedResource> save(@RequestBody List<CreateOrUpdateRoleResource> resources) {
+	public ResponseEntity<RoleCreatedOrUpdatedResource> save(@RequestBody List<UpsertRoleResource> resources) {
 		// 防腐處理 resource -> command
-		List<CreateOrUpdateRoleCommand> commands = BaseDataTransformer.transformData(resources,
-				CreateOrUpdateRoleCommand.class);
-		roleCommandService.createOrUpdate(commands);
+		List<UpsertRoleCommand> commands = BaseDataTransformer.transformData(resources, UpsertRoleCommand.class);
+		roleCommandService.upsert(commands);
 		return new ResponseEntity<>(new RoleCreatedOrUpdatedResource("200", "新增/更新多筆角色資料"), HttpStatus.OK);
 	}
 
@@ -95,7 +94,6 @@ public class RoleController {
 		roleCommandService.delete(ids);
 		return new ResponseEntity<>(new RoleDeletedResource("200", "成功刪除多筆角色資料"), HttpStatus.OK);
 	}
-
 
 	/**
 	 * 查詢角色資料

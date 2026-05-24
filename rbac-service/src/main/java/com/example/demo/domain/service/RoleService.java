@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
-import com.example.demo.application.shared.command.CreateOrUpdateRoleCommand;
+import com.example.demo.application.shared.command.UpsertRoleCommand;
 import com.example.demo.domain.function.aggregate.FunctionInfo;
 import com.example.demo.domain.role.aggregate.RoleInfo;
 import com.example.demo.domain.role.aggregate.entity.RoleFunction;
@@ -36,11 +36,11 @@ public class RoleService {
 	 * 
 	 * @param command {@link CreateOrUpdateRoleCommand} 清單
 	 */
-	public void createOrUpdate(List<CreateOrUpdateRoleCommand> commands) {
+	public void upsert(List<UpsertRoleCommand> commands) {
 
 		// 取得 id 清單
-		List<Long> ids = commands.stream().filter(command -> command.getId() != null)
-				.map(CreateOrUpdateRoleCommand::getId).collect(Collectors.toList());
+		List<Long> ids = commands.stream().filter(command -> command.getId() != null).map(UpsertRoleCommand::getId)
+				.collect(Collectors.toList());
 
 		// 取出清單相對應資料
 		List<RoleInfo> roles = roleInfoRepository.findByIdIn(ids);
@@ -79,8 +79,8 @@ public class RoleService {
 			RoleInfo role = opt.get();
 			List<Long> funcIds = role.getFunctions().stream().filter(e -> Objects.equals(e.getActiveFlag(), YesNo.Y))
 					.map(RoleFunction::getFunctionId).collect(Collectors.toList());
-			List<FunctionInfo> functions = functionInfoRepository.findByIdInAndScopeServiceAndActiveFlag(funcIds, service,
-					YesNo.Y);
+			List<FunctionInfo> functions = functionInfoRepository.findByIdInAndScopeServiceAndActiveFlag(funcIds,
+					service, YesNo.Y);
 			List<RoleFunctionQueriedDetail> roleFunctionList = functions.stream().map(roleFunction -> {
 				return new RoleFunctionQueriedDetail(roleFunction.getId(), roleFunction.getType(),
 						roleFunction.getScope().getCode(), roleFunction.getProfile().getName(),

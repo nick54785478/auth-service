@@ -20,8 +20,6 @@ import com.example.demo.domain.shared.summary.UserInfoDetailsQueriedSummary;
 import com.example.demo.domain.user.aggregate.UserInfo;
 import com.example.demo.domain.user.aggregate.entity.UserGroup;
 import com.example.demo.domain.user.aggregate.entity.UserRole;
-import com.example.demo.domain.user.command.CreateUserCommand;
-import com.example.demo.domain.user.command.UpdateUserRolesCommand;
 import com.example.demo.infra.exception.ValidationException;
 import com.example.demo.infra.repository.FunctionInfoRepository;
 import com.example.demo.infra.repository.GroupInfoRepository;
@@ -45,16 +43,17 @@ public class UserService {
 	/**
 	 * 賦予使用者相關權限
 	 * 
-	 * @param command {@link UpdateUserRolesCommand}
+	 * @param username 使用者帳號
+	 * @param roleIds  角色 ID 清單
 	 */
-	public void grant(UpdateUserRolesCommand command) {
-		UserInfo user = userRepository.findByUsername(command.getUsername());
+	public void grant(String username, List<Long> roleIds) {
+		UserInfo user = userRepository.findByUsername(username);
 		if (Objects.isNull(user)) {
 			log.error("該使用者名稱不合法");
 			throw new ValidationException("VALIDATE_FAILED", "該使用者名稱不合法");
 		}
 
-		List<RoleInfo> roleList = roleRepository.findByIdIn(command.getRoleIds());
+		List<RoleInfo> roleList = roleRepository.findByIdIn(roleIds);
 
 		List<UserRole> userRoles = roleList.stream().map(role -> {
 			UserRole userRole = new UserRole();
@@ -126,22 +125,24 @@ public class UserService {
 		// 查詢角色資料
 		List<RoleInfo> roles = roleRepository.findByIdInAndScopeServiceAndActiveFlag(roleIds, service, YesNo.Y);
 		// 放置個人功能權限清單
-		funcMap.put("PERSONALITY", this.getFuncList("個人角色", roles));
+		funcMap.put("PERSONALITY", this.getFuncListByRoleIds("個人角色", roles));
 		// 群組角色權限
 		List<Long> groupRoleIds = groups.stream().flatMap(g -> g.getRoles().stream().map(GroupRole::getRoleId))
 				.distinct().collect(Collectors.toList());
 		List<RoleInfo> groupRoles = roleRepository.findByIdInAndScopeServiceAndActiveFlag(groupRoleIds, service,
 				YesNo.Y);
 		// 放置群組功能權限清單
-		funcMap.put("GROUP", this.getFuncList("群組角色", groupRoles));
+		funcMap.put("GROUP", this.getFuncListByRoleIds("群組角色", groupRoles));
 
 		// 合併功能權限(群組角色功能、個人角色功能)
 		List<FunctionInfoDetailsQueriedDetail> functions = funcMap.values().stream().flatMap(Collection::stream)
 				.collect(Collectors.toList());
-		return UserInfoDetailsQueriedSummary.builder().id(userInfo.getId()).name(userInfo.getName())
-				.username(userInfo.getUsername()).email(userInfo.getEmail()).nationalIdNo(userInfo.getNationalIdNo())
-				.birthday(userInfo.getBirthday()).address(userInfo.getAddress()).groups(groups).roles(roles)
-				.functions(functions).activeFlag(userInfo.getActiveFlag().name()).build();
+
+		return UserInfoDetailsQueriedSummary.builder().id(userInfo.getId()).name(userInfo.getProfile().getName())
+				.username(userInfo.getUsername()).email(userInfo.getProfile().getEmail())
+				.nationalIdNo(userInfo.getProfile().getNationalIdNo()).birthday(userInfo.getProfile().getBirthday())
+				.address(userInfo.getProfile().getAddress()).groups(groups).roles(roles).functions(functions)
+				.activeFlag(userInfo.getActiveFlag().name()).build();
 
 	}
 
@@ -152,10 +153,12 @@ public class UserService {
 	 * @param roles 角色清單
 	 * @return List<FunctionInfo>
 	 */
-	private List<FunctionInfoDetailsQueriedDetail> getFuncList(String label, List<RoleInfo> roles) {
+	private List<FunctionInfoDetailsQueriedDetail> getFuncListByRoleIds(String label, List<RoleInfo> roles) {
 		// 個人角色權限 ID 清單
 		List<Long> funcIds = roles.stream().flatMap(r -> r.getFunctions().stream().map(RoleFunction::getFunctionId))
 				.distinct().collect(Collectors.toList());
+
+		// 透過 ID 清單查詢對應的功能清單
 		List<FunctionInfo> functions = functionRepository.findByIdIn(funcIds);
 		return functions.stream().map(function -> {
 			return FunctionInfoDetailsQueriedDetail.builder().id(function.getId())
@@ -170,12 +173,14 @@ public class UserService {
 	/**
 	 * 檢查該帳號、身分證、email 是否已註冊
 	 * 
-	 * @author command
+	 * @param username     使用者帳號
+	 * @param email        信箱
+	 * @param nationalIdNo 身分證字號
 	 * @return boolean
 	 */
-	public boolean checkIsRegistered(CreateUserCommand command) {
-		List<UserInfo> userList = userRepository.findByUsernameOrNationalIdNoOrEmail(command.getUsername(),
-				command.getNationalId(), command.getEmail());
+	public boolean checkIsRegistered(String username, String email, String nationalIdNo) {
+		List<UserInfo> userList = userRepository.findByUsernameOrProfileNationalIdNoOrProfileEmail(username,
+				nationalIdNo, email);
 		return userList.isEmpty();
 	}
 }

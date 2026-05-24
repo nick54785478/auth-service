@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
-import com.example.demo.application.shared.command.CreateOrUpdateGroupCommand;
+import com.example.demo.application.shared.command.UpsertGroupCommand;
 import com.example.demo.domain.group.aggregate.GroupInfo;
 import com.example.demo.domain.group.aggregate.entity.GroupRole;
 import com.example.demo.domain.group.aggregate.vo.GroupProfile;
@@ -36,11 +36,11 @@ public class GroupService {
 	 * 
 	 * @param commands CreateOrUpdateGroupCommand 清單
 	 */
-	public void createOrUpdate(List<CreateOrUpdateGroupCommand> commands) {
+	public void upsert(List<UpsertGroupCommand> commands) {
 
 		// 取得 id 清單
 		List<Long> ids = commands.stream().filter(command -> command.getId() != null)
-				.map(CreateOrUpdateGroupCommand::getId).collect(Collectors.toList());
+				.map(UpsertGroupCommand::getId).collect(Collectors.toList());
 
 		// 取出清單相對應資料
 		List<GroupInfo> roles = groupInfoRepository.findByIdIn(ids);

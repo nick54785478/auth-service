@@ -1,25 +1,22 @@
 package com.example.demo.domain.user.aggregate;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.example.demo.domain.user.aggregate.entity.UserGroup;
 import com.example.demo.domain.user.aggregate.entity.UserRole;
-import com.example.demo.domain.user.command.CreateUserCommand;
-import com.example.demo.domain.user.command.UpdateUserCommand;
+import com.example.demo.domain.user.aggregate.vo.UserProfile;
 import com.example.demo.shared.enums.YesNo;
-import com.example.demo.util.PasswordUtil;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.EnumType;
@@ -38,7 +35,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 /**
- * 角色表
+ * 使用者表
  */
 @Entity
 @Getter
@@ -53,20 +50,23 @@ public class UserInfo {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	private String name; // 使用者姓名
+	@Embedded
+	private UserProfile profile; // 封裝個人資料
 
-	private String email; // 信箱
+//	private String name; // 使用者姓名
+//
+//	private String email; // 信箱
 
 	private String username; // 帳號
 
-	private String password; // 密碼
+	private String password; // 密碼 (必須是已加密的 Hash 值)
 
-	@Column(name = "national_id")
-	private String nationalIdNo; // 身分證字號
+//	@Column(name = "national_id")
+//	private String nationalIdNo; // 身分證字號
 
-	private Date birthday; // 出生年月日
-
-	private String address;
+//	private Date birthday; // 出生年月日
+//
+//	private String address;
 
 	@Column(name = "refresh_token")
 	private String refreshToken;
@@ -92,34 +92,28 @@ public class UserInfo {
 	}
 
 	/**
-	 * 工廠方法: 新增使用者資料
+	 * 工廠方法 : 新增一筆使用者資料
 	 * 
-	 * @param command
+	 * @param username        帳號
+	 * @param encodedPassword 已在 Application 層加密好的密碼
+	 * @param profile         個人檔案 VO
 	 */
-	public static UserInfo create(CreateUserCommand command) {
-		UserInfo userInfo = new UserInfo();
-		userInfo.name = command.getName();
-		userInfo.username = command.getUsername();
-		userInfo.password = PasswordUtil.encode(command.getPassword());
-		userInfo.birthday = command.getBirthday();
-		userInfo.nationalIdNo = command.getNationalId();
-		userInfo.email = command.getEmail();
-		userInfo.address = command.getAddress();
-		userInfo.activeFlag = YesNo.Y;
-		return userInfo;
+	public static UserInfo create(String username, String encodedPassword, UserProfile profile) {
+		UserInfo user = new UserInfo();
+		user.username = username;
+		user.password = encodedPassword;
+		user.profile = profile;
+		user.activeFlag = YesNo.Y;
+		return user;
 	}
 
 	/**
 	 * 更新使用者資料
 	 * 
-	 * @param command
+	 * @param profile {@link UserProfile}
 	 */
-	public void update(UpdateUserCommand command) {
-		this.birthday = command.getBirthday();
-		this.nationalIdNo = command.getNationalId();
-		this.name = (StringUtils.isNotBlank(command.getName())) ? command.getName() : this.name;
-		this.email = (StringUtils.isNotBlank(command.getEmail())) ? command.getEmail() : this.email;
-		this.address = (StringUtils.isNotBlank(command.getAddress())) ? command.getAddress() : this.address;
+	public void updateProfile(UserProfile profile) {
+		this.profile = profile;
 	}
 
 	/**

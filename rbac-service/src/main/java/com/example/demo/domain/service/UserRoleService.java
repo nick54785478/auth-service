@@ -9,10 +9,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.demo.application.shared.command.UpdateUserRolesCommand;
 import com.example.demo.domain.role.aggregate.RoleInfo;
 import com.example.demo.domain.user.aggregate.UserInfo;
 import com.example.demo.domain.user.aggregate.entity.UserRole;
-import com.example.demo.domain.user.command.UpdateUserRolesCommand;
 import com.example.demo.infra.exception.ValidationException;
 import com.example.demo.infra.repository.RoleInfoRepository;
 import com.example.demo.infra.repository.UserInfoRepository;

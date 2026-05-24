@@ -24,6 +24,9 @@ public class FunctionAssembler {
 	 * @return {@link FunctionInfoQueried}
 	 */
 	public FunctionInfoQueried transformFunction(FunctionInfo function) {
+		if (function == null) {
+			return null;
+		}
 		FunctionScope scope = function.getScope();
 		FunctionProfile profile = function.getProfile();
 		return new FunctionInfoQueried(function.getId(), scope.getService(), function.getType(), scope.getCode(),
@@ -48,6 +51,9 @@ public class FunctionAssembler {
 	 * @return {@link FunctionOptionQueried}
 	 */
 	public FunctionOptionQueried transformFunctionOption(FunctionInfo function) {
+		if (function == null) {
+			return null;
+		}
 		FunctionScope scope = function.getScope();
 		FunctionProfile profile = function.getProfile();
 		return new FunctionOptionQueried(function.getId(), scope.getCode(), profile.getName());

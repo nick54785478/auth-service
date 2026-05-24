@@ -15,13 +15,13 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.demo.application.service.GroupCommandService;
 import com.example.demo.application.service.GroupQueryService;
 import com.example.demo.application.shared.command.CreateGroupCommand;
-import com.example.demo.application.shared.command.CreateOrUpdateGroupCommand;
+import com.example.demo.application.shared.command.UpsertGroupCommand;
 import com.example.demo.application.shared.dto.GroupInfoQueried;
 import com.example.demo.iface.dto.request.CreateGroupResource;
-import com.example.demo.iface.dto.request.CreateOrUpdateGroupResource;
-import com.example.demo.iface.dto.response.response.GroupCreatedOrUpdatedResource;
+import com.example.demo.iface.dto.request.UpsertGroupResource;
 import com.example.demo.iface.dto.response.response.GroupCreatedResource;
 import com.example.demo.iface.dto.response.response.GroupDeletedResource;
+import com.example.demo.iface.dto.response.response.GroupUpsertedResource;
 import com.example.demo.iface.dto.response.response.GroupsSummaryGottenResource;
 import com.example.demo.util.BaseDataTransformer;
 
@@ -56,13 +56,11 @@ public class GroupController {
 	 * @return ResponseEntity<GroupCreatedOrUpdatedResource>
 	 */
 	@PostMapping("/saveList")
-	public ResponseEntity<GroupCreatedOrUpdatedResource> create(
-			@RequestBody List<CreateOrUpdateGroupResource> resources) {
+	public ResponseEntity<GroupUpsertedResource> create(@RequestBody List<UpsertGroupResource> resources) {
 		// 防腐處理 resource -> command
-		List<CreateOrUpdateGroupCommand> commands = BaseDataTransformer.transformData(resources,
-				CreateOrUpdateGroupCommand.class);
-		groupCommandService.createOrUpdate(commands);
-		return new ResponseEntity<>(new GroupCreatedOrUpdatedResource("200", "新增/更新多筆角色資料"), HttpStatus.OK);
+		List<UpsertGroupCommand> commands = BaseDataTransformer.transformData(resources, UpsertGroupCommand.class);
+		groupCommandService.upsert(commands);
+		return new ResponseEntity<>(new GroupUpsertedResource("200", "新增/更新多筆角色資料"), HttpStatus.OK);
 	}
 
 	/**

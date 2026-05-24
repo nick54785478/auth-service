@@ -5,8 +5,8 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.demo.application.shared.command.UpdateUserGroupsCommand;
 import com.example.demo.domain.service.UserGroupService;
-import com.example.demo.domain.user.command.UpdateUserGroupsCommand;
 
 import lombok.AllArgsConstructor;
 

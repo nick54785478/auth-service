@@ -23,6 +23,9 @@ public class SettingAssembler {
 	 * @return {@link SettingQueried}
 	 */
 	public SettingQueried transformSetting(Setting setting) {
+		if (setting == null) {
+			return null;
+		}
 		SettingScope scope = setting.getScope();
 		SettingProfile profile = setting.getProfile();
 		return new SettingQueried(setting.getId(), scope.getService(), setting.getDataType(), setting.getType(),

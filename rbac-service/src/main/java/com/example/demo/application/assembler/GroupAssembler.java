@@ -34,6 +34,9 @@ public class GroupAssembler {
 	 * @return {@link GroupOptionQueried}
 	 */
 	public GroupOptionQueried transformGroupOption(GroupInfo group) {
+		if (group == null) {
+			return null;
+		}
 		String code = group.getScope().getCode();
 		String name = group.getProfile().getName();
 		return new GroupOptionQueried(group.getId(), code, name);
@@ -48,7 +51,7 @@ public class GroupAssembler {
 	public List<GroupInfoQueried> transformGroups(List<GroupInfo> groups) {
 		return groups.stream().map(this::transformGroup).collect(Collectors.toList());
 	}
-	
+
 	/**
 	 * 轉換 Group 資料
 	 * 
@@ -56,6 +59,9 @@ public class GroupAssembler {
 	 * @return {@link GroupInfoQueried}
 	 */
 	public GroupInfoQueried transformGroup(GroupInfo group) {
+		if (group == null) {
+			return null;
+		}
 		GroupScope scope = group.getScope();
 		GroupProfile profile = group.getProfile();
 		return new GroupInfoQueried(group.getId(), scope.getService(), group.getType(), scope.getCode(),

@@ -8,10 +8,10 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
+import com.example.demo.application.shared.command.UpdateUserGroupsCommand;
 import com.example.demo.domain.group.aggregate.GroupInfo;
 import com.example.demo.domain.user.aggregate.UserInfo;
 import com.example.demo.domain.user.aggregate.entity.UserGroup;
-import com.example.demo.domain.user.command.UpdateUserGroupsCommand;
 import com.example.demo.infra.exception.ValidationException;
 import com.example.demo.infra.repository.GroupInfoRepository;
 import com.example.demo.infra.repository.UserInfoRepository;

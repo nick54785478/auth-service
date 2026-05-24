@@ -5,13 +5,11 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
 import com.example.demo.domain.function.aggregate.FunctionInfo;
 import com.example.demo.domain.function.aggregate.vo.FunctionScope;
 import com.example.demo.shared.enums.YesNo;
 
-@Repository
 public interface FunctionInfoRepository extends JpaRepository<FunctionInfo, Long> {
 
 	List<FunctionInfo> findByIdIn(List<Long> ids);

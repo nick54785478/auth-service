@@ -1,4 +1,4 @@
-package com.example.demo.application.shared.command;
+package com.example.demo.iface.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,12 +7,12 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateOrUpdateGroupCommand {
+public class UpsertGroupResource {
 
 	private Long id;
-
+	
 	private String service;
-
+	
 	private String type;
 	
 	private String code;
@@ -22,4 +22,5 @@ public class CreateOrUpdateGroupCommand {
 	private String description;
 	
 	private String activeFlag;
+	
 }

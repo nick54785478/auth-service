@@ -8,9 +8,9 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.demo.application.shared.command.CreateOrUpdateRoleCommand;
 import com.example.demo.application.shared.command.CreateRoleCommand;
 import com.example.demo.application.shared.command.UpdateRoleCommand;
+import com.example.demo.application.shared.command.UpsertRoleCommand;
 import com.example.demo.domain.role.aggregate.RoleInfo;
 import com.example.demo.domain.role.aggregate.vo.RoleProfile;
 import com.example.demo.domain.role.aggregate.vo.RoleScope;
@@ -44,10 +44,10 @@ public class RoleCommandService {
 	/**
 	 * 建立或更新多筆角色資料 (適用於前端的 Inline Editable 功能)
 	 * 
-	 * @param command {@link CreateOrUpdateRoleCommand} 清單
+	 * @param command {@link UpsertRoleCommand} 清單
 	 */
-	public void createOrUpdate(List<CreateOrUpdateRoleCommand> commands) {
-		roleService.createOrUpdate(commands);
+	public void upsert(List<UpsertRoleCommand> commands) {
+		roleService.upsert(commands);
 	}
 
 	/**
