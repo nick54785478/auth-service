@@ -1,4 +1,4 @@
-package com.example.demo.domain.group.aggregate.vo;
+package com.example.demo.domain.function.aggregate.vo;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
@@ -7,28 +7,27 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /**
- * 群組範圍
+ * 功能範圍 (業務自然鍵)
  */
 @Getter
 @Embeddable
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class GroupScope {
+public class FunctionScope {
 
 	@Column(name = "service", nullable = false)
-	private String service; // 服務，可根據個別服務建立該服務適用的群組
+	private String service; // 服務，可根據個別服務建立該服務適用功能
 
 	@Column(name = "code", nullable = false)
-	private String code; // 群組代碼
+	private String code; // 功能代碼
 
-	
 	/**
-	 * 工廠類方法: 填充 GroupScope
+	 * 工廠類方法: 填充 FunctionScope
 	 * 
 	 * @param service 服務
-	 * @param code    角色代碼
+	 * @param code    功能代碼
 	 */
-	public static GroupScope of(String service, String code) {
-		GroupScope scope = new GroupScope();
+	public static FunctionScope of(String service, String code) {
+		FunctionScope scope = new FunctionScope();
 		scope.service = service;
 		scope.code = code;
 		return scope;

@@ -8,8 +8,10 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo.domain.function.aggregate.FunctionInfo;
+import com.example.demo.domain.function.aggregate.vo.FunctionProfile;
+import com.example.demo.domain.function.aggregate.vo.FunctionScope;
 import com.example.demo.domain.function.command.CreateFunctionCommand;
-import com.example.demo.domain.function.command.CreateOrUpdateFunctionCommand;
+import com.example.demo.domain.function.command.UpsertFunctionCommand;
 import com.example.demo.domain.service.FunctionService;
 import com.example.demo.infra.repository.FunctionInfoRepository;
 
@@ -30,7 +32,10 @@ public class FunctionCommandService {
 	 * @return FunctionCreated
 	 */
 	public void create(CreateFunctionCommand command) {
-		FunctionInfo function = FunctionInfo.create(command);
+		FunctionScope scope = FunctionScope.of(command.getService(), command.getCode());
+		FunctionProfile profile = FunctionProfile.of(command.getName(), command.getDescription());
+		FunctionInfo function = FunctionInfo.create(scope, profile, command.getType(), 
+				command.getActionType());
 		functionRepository.save(function);
 	}
 
@@ -39,7 +44,7 @@ public class FunctionCommandService {
 	 * 
 	 * @param commands
 	 */
-	public void createOrUpdate(List<CreateOrUpdateFunctionCommand> commands) {
+	public void upsert(List<UpsertFunctionCommand> commands) {
 		functionService.createOrUpdate(commands);
 	}
 

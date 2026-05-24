@@ -3,11 +3,12 @@ package com.example.demo.domain.function.aggregate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.example.demo.domain.function.aggregate.vo.ActionType;
-import com.example.demo.domain.function.command.CreateFunctionCommand;
-import com.example.demo.domain.function.command.CreateOrUpdateFunctionCommand;
+import com.example.demo.domain.function.aggregate.vo.FunctionProfile;
+import com.example.demo.domain.function.aggregate.vo.FunctionScope;
 import com.example.demo.shared.enums.YesNo;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.EnumType;
@@ -16,6 +17,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -29,7 +31,8 @@ import lombok.ToString;
 @Getter
 @ToString
 @AllArgsConstructor
-@Table(name = "function_info")
+@Table(name = "function_info", uniqueConstraints = {
+		@UniqueConstraint(name = "uk_function_service_code", columnNames = { "service", "code" }) })
 @EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class FunctionInfo {
@@ -38,72 +41,59 @@ public class FunctionInfo {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	private String service;
-
-	private String type; // 種類
+	@Embedded
+	private FunctionScope scope; // 替換原本的 service, code
 
 	@Column(name = "action_type")
 	@Enumerated(EnumType.STRING)
 	private ActionType actionType; // 動作種類
 
-	private String code; // Code
+	@Column(name = "type")
+	private String type; // 種類
 
-	private String name; // Code
-
-	private String description; // 敘述
+	@Embedded
+	private FunctionProfile profile; // 替換原本的 name, description
 
 	@Column(name = "active_flag")
 	@Enumerated(EnumType.STRING)
 	private YesNo activeFlag = YesNo.Y; // 是否有效
 
 	/**
-	 * 工廠方法: 建立一筆功能資料
-	 * 
-	 * @param command {@link CreateFunctionCommand}
-	 */
-	public static FunctionInfo create(CreateFunctionCommand command) {
-		FunctionInfo functionInfo = new FunctionInfo();
-		functionInfo.service = command.getService();
-		functionInfo.type = command.getType();
-		functionInfo.name = command.getName();
-		functionInfo.actionType = ActionType.fromLabel(command.getActionType());
-		functionInfo.code = command.getCode();
-		functionInfo.description = command.getDescription();
-		functionInfo.activeFlag = YesNo.Y;
-		return functionInfo;
-	}
-
-	/**
 	 * 工廠方法: 新增一筆功能資料
 	 * 
-	 * @param command CreateOrUpdateFunctionCommand
+	 * @param scope   功能範圍
+	 * @param profile 功能描述
+	 * @param type    功能種類
+	 * @param action  動作種類
+	 * @return 群組資料
 	 */
-	public static FunctionInfo create(CreateOrUpdateFunctionCommand command) {
-		FunctionInfo functionInfo = new FunctionInfo();
-		functionInfo.service = command.getService();
-		functionInfo.code = command.getCode();
-		functionInfo.name = command.getName();
-		functionInfo.description = command.getDescription();
-		functionInfo.actionType = ActionType.fromLabel(command.getActionType());
-		functionInfo.type = command.getType();
-		functionInfo.activeFlag = YesNo.Y;
-		return functionInfo;
+	public static FunctionInfo create(FunctionScope scope, FunctionProfile profile, String type,
+			String actionType) {
+		FunctionInfo function = new FunctionInfo();
+		function.scope = scope;
+		function.profile = profile;
+		function.type = type;
+		function.actionType = ActionType.fromLabel(actionType);
+		function.activeFlag = YesNo.Y;
+		return function;
 	}
 
 	/**
 	 * 更新一筆功能資料
 	 * 
-	 * @param command CreateOrUpdateFunctionCommand
+	 * @param scope      功能範圍
+	 * @param profile    功能描述
+	 * @param type       功能種類
+	 * @param action     動作種類
+	 * @param activeFlag 是否生效
 	 */
-	public void update(CreateOrUpdateFunctionCommand command) {
-		this.id = command.getId();
-		this.service = command.getService();
-		this.code = command.getCode();
-		this.name = command.getName();
-		this.type = command.getType();
-		this.actionType = ActionType.fromLabel(command.getActionType());
-		this.description = command.getDescription();
-		this.activeFlag = YesNo.valueOf(command.getActiveFlag());
+	public void update(FunctionScope scope, FunctionProfile profile, String type, String actionType,
+			String activeFlag) {
+		this.scope = scope;
+		this.profile = profile;
+		this.type = type;
+		this.actionType = ActionType.fromLabel(actionType);
+		this.activeFlag = YesNo.valueOf(activeFlag);
 	}
 
 	/**
@@ -112,5 +102,5 @@ public class FunctionInfo {
 	public void delete() {
 		this.activeFlag = YesNo.N;
 	}
-
+	
 }

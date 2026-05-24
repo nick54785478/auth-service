@@ -12,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo.application.port.JwTokenManagerPort;
 import com.example.demo.application.shared.dto.JwtTokenGenerated;
-import com.example.demo.domain.function.aggregate.FunctionInfo;
 import com.example.demo.domain.group.aggregate.GroupInfo;
 import com.example.demo.domain.role.aggregate.RoleInfo;
 import com.example.demo.domain.service.RoleFunctionService;
@@ -81,7 +80,7 @@ public class JwtTokenCommandService {
 
 		// 取得該角色清單所具備的相關功能權限
 		Set<String> functionCodes = roleFunctionService.getFunctionsByRoleIds(service, roles).getFuncList().stream()
-				.map(FunctionInfo::getCode).collect(Collectors.toSet());
+				.map(function -> function.getScope().getCode()).collect(Collectors.toSet());
 		JwtTokenGenerated tokenGenerated = jwTokenManager.generateToken(userInfo.getUsername(), userInfo.getEmail(),
 				roles, groups, new ArrayList<>(functionCodes));
 
@@ -117,7 +116,7 @@ public class JwtTokenCommandService {
 
 			// 取得該角色清單所具備的相關功能權限
 			Set<String> functions = roleFunctionService.getFunctionsByRoleIds(service, roles).getFuncList().stream()
-					.map(FunctionInfo::getCode).collect(Collectors.toSet());
+					.map(function -> function.getScope().getCode()).collect(Collectors.toSet());
 			JwtTokenGenerated tokenGenerated = jwTokenManager.generateToken(userInfo.getUsername(), userInfo.getEmail(),
 					roles, groups, new ArrayList<>(functions));
 

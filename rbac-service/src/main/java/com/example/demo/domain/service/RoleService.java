@@ -79,12 +79,13 @@ public class RoleService {
 			RoleInfo role = opt.get();
 			List<Long> funcIds = role.getFunctions().stream().filter(e -> Objects.equals(e.getActiveFlag(), YesNo.Y))
 					.map(RoleFunction::getFunctionId).collect(Collectors.toList());
-			List<FunctionInfo> functions = functionInfoRepository.findByIdInAndServiceAndActiveFlag(funcIds, service,
+			List<FunctionInfo> functions = functionInfoRepository.findByIdInAndScopeServiceAndActiveFlag(funcIds, service,
 					YesNo.Y);
 			List<RoleFunctionQueriedDetail> roleFunctionList = functions.stream().map(roleFunction -> {
 				return new RoleFunctionQueriedDetail(roleFunction.getId(), roleFunction.getType(),
-						roleFunction.getCode(), roleFunction.getName(), roleFunction.getActionType().getLabel(),
-						roleFunction.getDescription(), roleFunction.getActiveFlag().name());
+						roleFunction.getScope().getCode(), roleFunction.getProfile().getName(),
+						roleFunction.getActionType().getLabel(), roleFunction.getProfile().getDescription(),
+						roleFunction.getActiveFlag().name());
 			}).collect(Collectors.toList());
 
 			return RoleInfoQueriedSummary.builder().id(id).service(service).code(role.getScope().getCode())

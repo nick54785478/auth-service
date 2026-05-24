@@ -1,4 +1,4 @@
-package com.example.demo.iface.dto.request;
+package com.example.demo.domain.function.command;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateOrUpdateFunctionResource {
+public class UpsertFunctionCommand {
 
 	private Long id;
 	

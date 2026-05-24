@@ -43,7 +43,7 @@ public class RoleFunctionService {
 				.map(RoleFunction::getFunctionId).collect(Collectors.toSet());
 		// 取得 Function 清單
 		List<FunctionInfo> functions = functionInfoRepository
-				.findByIdInAndServiceAndActiveFlag(new ArrayList<>(allFuncIds), service, YesNo.Y);
+				.findByIdInAndScopeServiceAndActiveFlag(new ArrayList<>(allFuncIds), service, YesNo.Y);
 		return new RolesFunctionsQueriedSummary(service, rolesList, functions);
 	}
 
@@ -63,8 +63,8 @@ public class RoleFunctionService {
 			RoleInfo role = opt.get();
 			List<Long> functionIds = role.getFunctions().stream().filter(e -> e.getActiveFlag() == YesNo.Y)
 					.map(RoleFunction::getFunctionId).collect(Collectors.toList());
-			return functionInfoRepository.findByIdIn(functionIds).stream().filter(e -> service.equals(e.getService()))
-					.collect(Collectors.toList());
+			return functionInfoRepository.findByIdIn(functionIds).stream()
+					.filter(e -> service.equals(e.getScope().getService())).collect(Collectors.toList());
 		}
 	}
 
@@ -85,7 +85,7 @@ public class RoleFunctionService {
 					.collect(Collectors.toList());
 
 			// 查出該角色功能資料清單
-			List<FunctionInfo> functions = functionInfoRepository.findByServiceAndActiveFlag(service, YesNo.Y);
+			List<FunctionInfo> functions = functionInfoRepository.findByScopeServiceAndActiveFlag(service, YesNo.Y);
 
 			// 過濾出該角色所沒有的功能資料
 			List<FunctionInfo> filtered = functions.stream().filter(e -> !existingIds.contains(e.getId()))

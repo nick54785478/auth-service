@@ -14,7 +14,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class GetGroupOptionSpecification {
+public class GetGroupOptionsSpecification {
 
 	private String service;
 	private String keyword;

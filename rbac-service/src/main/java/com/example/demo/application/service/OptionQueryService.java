@@ -18,7 +18,7 @@ import com.example.demo.infra.repository.GroupInfoRepository;
 import com.example.demo.infra.repository.RoleInfoRepository;
 import com.example.demo.infra.repository.SettingRepository;
 import com.example.demo.infra.repository.UserInfoRepository;
-import com.example.demo.infra.spec.GetGroupOptionSpecification;
+import com.example.demo.infra.spec.GetGroupOptionsSpecification;
 import com.example.demo.shared.enums.YesNo;
 import com.example.demo.util.BaseDataTransformer;
 
@@ -92,7 +92,7 @@ public class OptionQueryService {
 	 * @return List<GroupOptionQueried>
 	 */
 	public List<GroupOptionQueried> getGroupOptions(String service, String keyword) {
-		GetGroupOptionSpecification specification = new GetGroupOptionSpecification(service, keyword);
+		GetGroupOptionsSpecification specification = new GetGroupOptionsSpecification(service, keyword);
 		List<GroupInfo> groups = groupInfoRepository.findAll(specification.toSpecification());
 		return groupAssembler.transformGroupOptions(groups);
 	}
@@ -116,7 +116,7 @@ public class OptionQueryService {
 	 * @return List<OptionQueried>
 	 */
 	public List<OptionQueried> getFunctionOptions(String service) {
-		List<FunctionInfo> groups = functionInfoRepository.findByServiceAndActiveFlag(service, YesNo.Y);
+		List<FunctionInfo> groups = functionInfoRepository.findByScopeServiceAndActiveFlag(service, YesNo.Y);
 		return groups.stream().map(FunctionInfo::getType).distinct().map(type -> new OptionQueried(type, type))
 				.collect(Collectors.toList());
 	}

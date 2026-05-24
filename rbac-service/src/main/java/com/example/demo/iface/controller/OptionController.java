@@ -81,7 +81,7 @@ public class OptionController {
 	 * 查詢群組相關的 AutoComplete 資料
 	 * 
 	 * @param service 服務
-	 * @param str     群組相關字串 return ResponseEntity<List<GroupOptionQueriedResource>>
+	 * @param str     群組相關字串
 	 * @return ResponseEntity<GroupOptionsGottenResource>
 	 */
 	@GetMapping("/groups")

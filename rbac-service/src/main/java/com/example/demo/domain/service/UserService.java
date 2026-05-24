@@ -130,7 +130,8 @@ public class UserService {
 		// 群組角色權限
 		List<Long> groupRoleIds = groups.stream().flatMap(g -> g.getRoles().stream().map(GroupRole::getRoleId))
 				.distinct().collect(Collectors.toList());
-		List<RoleInfo> groupRoles = roleRepository.findByIdInAndScopeServiceAndActiveFlag(groupRoleIds, service, YesNo.Y);
+		List<RoleInfo> groupRoles = roleRepository.findByIdInAndScopeServiceAndActiveFlag(groupRoleIds, service,
+				YesNo.Y);
 		// 放置群組功能權限清單
 		funcMap.put("GROUP", this.getFuncList("群組角色", groupRoles));
 
@@ -157,10 +158,11 @@ public class UserService {
 				.distinct().collect(Collectors.toList());
 		List<FunctionInfo> functions = functionRepository.findByIdIn(funcIds);
 		return functions.stream().map(function -> {
-			return FunctionInfoDetailsQueriedDetail.builder().id(function.getId()).service(function.getService())
-					.type(function.getType()).code(function.getCode()).name(function.getName())
-					.actionType(function.getActionType().getLabel()).description(function.getDescription()).label(label)
-					.activeFlag(function.getActiveFlag()).build();
+			return FunctionInfoDetailsQueriedDetail.builder().id(function.getId())
+					.service(function.getScope().getService()).type(function.getType())
+					.code(function.getScope().getCode()).name(function.getProfile().getName())
+					.actionType(function.getActionType().getLabel()).description(function.getProfile().getDescription())
+					.label(label).activeFlag(function.getActiveFlag()).build();
 		}).collect(Collectors.toList());
 
 	}

@@ -7,11 +7,11 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class GroupOptionQueried {
+public class FunctionOptionQueried {
 
 	private Long id;
 
-	private String code; // 群組 Code
+	private String code; // 功能 Code
 
 	private String name;
 

@@ -6,7 +6,6 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
-import com.example.demo.domain.function.aggregate.FunctionInfo;
 import com.example.demo.domain.group.aggregate.GroupInfo;
 import com.example.demo.domain.group.aggregate.entity.GroupRole;
 import com.example.demo.domain.role.aggregate.RoleInfo;
@@ -60,7 +59,7 @@ public class AuthService {
 				.collect(Collectors.toList());
 		// 透過功能 ID 清單搜尋該權限擁有的功能
 		List<String> functions = functionRepository.findByIdInAndActiveFlag(functionIds, YesNo.Y).stream()
-				.map(FunctionInfo::getCode).collect(Collectors.toList());
+				.map(function -> function.getScope().getCode()).collect(Collectors.toList());
 		return GroupsAuthQueriedDetail.builder().username(userInfo.getUsername()).email(userInfo.getEmail())
 				.roles(roles).functions(functions).build();
 	}
@@ -84,7 +83,7 @@ public class AuthService {
 		List<String> roles = roleList.stream().map(r -> r.getScope().getCode()).collect(Collectors.toList());
 
 		List<String> functions = functionRepository.findByIdInAndActiveFlag(functionIds, YesNo.Y).stream()
-				.map(FunctionInfo::getCode).collect(Collectors.toList());
+				.map(function -> function.getScope().getCode()).collect(Collectors.toList());
 		return PersonalAuthQueriedSummary.builder().username(userInfo.getUsername()).email(userInfo.getEmail())
 				.roles(roles).functions(functions).build();
 	}
@@ -107,8 +106,8 @@ public class AuthService {
 				.filter(e -> StringUtils.equals(e, "ADMIN")).collect(Collectors.toList());
 		// Admin 直接看全部
 		if (roles.contains("ADMIN")) {
-			return functionRepository.findByTypeAndActiveFlag("MAINTAIN", YesNo.Y).stream().map(FunctionInfo::getCode)
-					.collect(Collectors.toList());
+			return functionRepository.findByTypeAndActiveFlag("MAINTAIN", YesNo.Y).stream()
+					.map(function -> function.getScope().getCode()).collect(Collectors.toList());
 		}
 
 		List<Long> functionIds = roleList.stream()
@@ -116,7 +115,7 @@ public class AuthService {
 				.flatMap(role -> role.getFunctions().stream().map(RoleFunction::getFunctionId)).distinct()
 				.collect(Collectors.toList());
 		return functionRepository.findByIdInAndTypeAndActiveFlag(functionIds, "MAINTAIN", YesNo.Y).stream()
-				.map(FunctionInfo::getCode).collect(Collectors.toList());
+				.map(function -> function.getScope().getCode()).collect(Collectors.toList());
 
 	}
 

@@ -16,12 +16,12 @@ import com.example.demo.application.service.FunctionCommandService;
 import com.example.demo.application.service.FunctionQueryService;
 import com.example.demo.application.shared.dto.FunctionInfoQueried;
 import com.example.demo.domain.function.command.CreateFunctionCommand;
-import com.example.demo.domain.function.command.CreateOrUpdateFunctionCommand;
+import com.example.demo.domain.function.command.UpsertFunctionCommand;
 import com.example.demo.iface.dto.request.CreateFunctionResource;
-import com.example.demo.iface.dto.request.CreateOrUpdateFunctionResource;
-import com.example.demo.iface.dto.response.response.FunctionCreatedOrUpdatedResource;
+import com.example.demo.iface.dto.request.UpsertFunctionResource;
 import com.example.demo.iface.dto.response.response.FunctionCreatedResource;
 import com.example.demo.iface.dto.response.response.FunctionDeletedResource;
+import com.example.demo.iface.dto.response.response.FunctionUpsertedResource;
 import com.example.demo.iface.dto.response.response.FunctionsSummaryGottenResource;
 import com.example.demo.util.BaseDataTransformer;
 
@@ -38,7 +38,7 @@ public class FunctionController {
 	/**
 	 * 新增 功能資料
 	 * 
-	 * @param resource
+	 * @param resource {@link CreateFunctionResource}
 	 * @return ResponseEntity<FunctionCreatedResource>
 	 */
 	@PostMapping("")
@@ -52,17 +52,16 @@ public class FunctionController {
 	/**
 	 * 新增/更新多筆功能資料
 	 * 
-	 * @param resource
+	 * @param resource {@link UpsertFunctionResource} 資料清單
 	 * @return ResponseEntity<FunctionCreatedOrUpdatedResource>
 	 */
 	@PostMapping("/saveList")
-	public ResponseEntity<FunctionCreatedOrUpdatedResource> save(
-			@RequestBody List<CreateOrUpdateFunctionResource> resources) {
+	public ResponseEntity<FunctionUpsertedResource> upsert(@RequestBody List<UpsertFunctionResource> resources) {
 		// 防腐處理 resource -> command
-		List<CreateOrUpdateFunctionCommand> commands = BaseDataTransformer.transformData(resources,
-				CreateOrUpdateFunctionCommand.class);
-		functionCommandService.createOrUpdate(commands);
-		return new ResponseEntity<>(new FunctionCreatedOrUpdatedResource("200", "新增/更新多筆功能資料"), HttpStatus.OK);
+		List<UpsertFunctionCommand> commands = BaseDataTransformer.transformData(resources,
+				UpsertFunctionCommand.class);
+		functionCommandService.upsert(commands);
+		return new ResponseEntity<>(new FunctionUpsertedResource("200", "新增/更新多筆功能資料"), HttpStatus.OK);
 	}
 
 	/**

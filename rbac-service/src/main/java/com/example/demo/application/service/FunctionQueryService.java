@@ -5,11 +5,13 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.demo.application.assembler.FunctionAssembler;
 import com.example.demo.application.shared.dto.FunctionInfoQueried;
+import com.example.demo.application.shared.dto.FunctionOptionQueried;
 import com.example.demo.domain.function.aggregate.FunctionInfo;
 import com.example.demo.infra.repository.FunctionInfoRepository;
-import com.example.demo.infra.spec.GetFunctionsSpecification;
-import com.example.demo.util.BaseDataTransformer;
+import com.example.demo.infra.spec.GetFunctionsOptionsSpecification;
+import com.example.demo.infra.spec.GetFunctionsSummarySpecification;
 
 import lombok.AllArgsConstructor;
 
@@ -17,6 +19,7 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class FunctionQueryService {
 
+	private FunctionAssembler assembler;
 	private FunctionInfoRepository functionInfoRepository;
 
 	/**
@@ -32,21 +35,22 @@ public class FunctionQueryService {
 	@Transactional(readOnly = true)
 	public List<FunctionInfoQueried> summary(String service, String actionType, String type, String name,
 			String activeFlag) {
-
-		GetFunctionsSpecification specification = new GetFunctionsSpecification(service, type, actionType, name,
-				activeFlag);
+		GetFunctionsSummarySpecification specification = new GetFunctionsSummarySpecification(service, type, actionType,
+				name, activeFlag);
 		List<FunctionInfo> functions = functionInfoRepository.findAll(specification.toSpecification());
-		return BaseDataTransformer.transformData(functions, FunctionInfoQueried.class);
+		return assembler.transformFunctions(functions);
 	}
 
 	/**
 	 * 模糊查詢符合條件的群組資料
 	 * 
-	 * @param queryStr
-	 * @return List<GroupInfoQueried>
+	 * @param service 服務
+	 * @param keyword 關鍵字
+	 * @return List<FunctionInfoQueried>
 	 */
-	public List<FunctionInfoQueried> query(String queryStr) {
-		List<FunctionInfo> functions = functionInfoRepository.findAllWithSpecification(queryStr);
-		return BaseDataTransformer.transformData(functions, FunctionInfoQueried.class);
+	public List<FunctionOptionQueried> query(String service, String keyword) {
+		GetFunctionsOptionsSpecification specification = new GetFunctionsOptionsSpecification(service, keyword);
+		List<FunctionInfo> functions = functionInfoRepository.findAll(specification.toSpecification());
+		return assembler.transformFunctionOptions(functions);
 	}
 }
