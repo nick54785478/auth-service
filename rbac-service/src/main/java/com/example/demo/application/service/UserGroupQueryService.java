@@ -22,7 +22,7 @@ public class UserGroupQueryService {
 	private UserGroupService userGroupService;
 
 	/**
-	 * 取得特定使用者所在的 Role 資料
+	 * 取得特定使用者所在的群組資料
 	 * 
 	 * @param username 使用者帳號
 	 * @param service  服務
@@ -35,11 +35,11 @@ public class UserGroupQueryService {
 	}
 
 	/**
-	 * 查詢該群組內部不存在的其他角色
+	 * 查詢該群組內部不存在的其他群組
 	 * 
 	 * @param username 使用者帳號
 	 * @param service  服務
-	 * @return List<GroupRoleQueried> 群組角色清單
+	 * @return List<UserGroupQueried>
 	 */
 	@Transactional
 	public List<UserGroupQueried> getOtherUserGroups(String username, String service) {

@@ -14,9 +14,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.demo.application.service.CustomisationCommandService;
 import com.example.demo.application.service.CustomisationQueryService;
 import com.example.demo.application.shared.dto.FieldViewCustomisationQueried;
-import com.example.demo.domain.customisation.command.UpdateCustomisationCommand;
-import com.example.demo.iface.dto.request.UpdateCustomisationResource;
-import com.example.demo.iface.dto.response.response.CustomisationUpdatedResource;
+import com.example.demo.domain.customisation.command.UpsertCustomisationCommand;
+import com.example.demo.iface.dto.request.UpsertCustomisationResource;
+import com.example.demo.iface.dto.response.response.CustomisationUpsertedResource;
 import com.example.demo.iface.dto.response.response.FieldViewCustomisationGottenResource;
 import com.example.demo.util.BaseDataTransformer;
 
@@ -34,16 +34,15 @@ public class CustomisationController {
 	 * 更新個人化設定資料
 	 * 
 	 * @param resource
-	 * @return ResponseEntity<GroupCreatedResource>
+	 * @return ResponseEntity<CustomisationUpsertedResource>
 	 */
 	@PostMapping("")
-	public ResponseEntity<CustomisationUpdatedResource> updateCustomisation(
-			@RequestBody UpdateCustomisationResource resource) {
+	public ResponseEntity<CustomisationUpsertedResource> upsert(@RequestBody UpsertCustomisationResource resource) {
 		// 防腐處理 resource -> command
-		UpdateCustomisationCommand command = BaseDataTransformer.transformData(resource,
-				UpdateCustomisationCommand.class);
-		customisationCommandService.updateCustomisation(command);
-		return new ResponseEntity<>(new CustomisationUpdatedResource("200", "成功更新一筆個人化設定資料"), HttpStatus.OK);
+		UpsertCustomisationCommand command = BaseDataTransformer.transformData(resource,
+				UpsertCustomisationCommand.class);
+		customisationCommandService.upsert(command);
+		return new ResponseEntity<>(new CustomisationUpsertedResource("200", "成功更新一筆個人化設定資料"), HttpStatus.OK);
 	}
 
 	/**
@@ -51,7 +50,7 @@ public class CustomisationController {
 	 * 
 	 * @param username  使用者帳號
 	 * @param component Component 名稱
-	 * @return ResponseEntity<List<FunctionInfoQueriedResource>>
+	 * @return ResponseEntity<FieldViewCustomisationGottenResource>
 	 */
 	@GetMapping("/fieldView")
 	public ResponseEntity<FieldViewCustomisationGottenResource> getFieldViewCustomisation(@RequestParam String username,

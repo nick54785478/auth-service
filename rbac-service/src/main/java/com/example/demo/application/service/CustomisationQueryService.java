@@ -26,11 +26,11 @@ public class CustomisationQueryService {
 	 * @param username  使用者名稱
 	 * @param component Component
 	 * @param type      種類
-	 * @return 表格欄位設定
+	 * @return 表格欄位設定清單
 	 */
 	public List<FieldViewCustomisationQueried> getCustomisation(String username, String component, String type) {
 		Customisation customisation = customisationRepository
-				.findByUsernameAndComponentAndType(username, component, type).orElse(null);
+				.findByScopeUsernameAndScopeComponentAndScopeType(username, component, type).orElse(null);
 		if (!this.checkValue(customisation)) {
 			return new ArrayList<>();
 		}

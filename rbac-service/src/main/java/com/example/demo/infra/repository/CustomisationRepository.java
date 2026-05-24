@@ -10,5 +10,5 @@ import com.example.demo.domain.customisation.aggregate.Customisation;
 @Repository
 public interface CustomisationRepository extends JpaRepository<Customisation, Long> {
 
-	Optional<Customisation> findByUsernameAndComponentAndType(String username, String component, String type);
+	Optional<Customisation> findByScopeUsernameAndScopeComponentAndScopeType(String username, String component, String type);
 }

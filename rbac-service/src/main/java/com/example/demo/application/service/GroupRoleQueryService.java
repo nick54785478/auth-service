@@ -35,7 +35,7 @@ public class GroupRoleQueryService {
 	}
 
 	/**
-	 * 透過 Group 與服務查詢群組角色資料
+	 * 查詢屬於該群組的角色
 	 * 
 	 * @param id      Group id
 	 * @param service Service

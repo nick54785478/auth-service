@@ -22,7 +22,7 @@ public class UserRoleQueryService {
 	private UserRoleService userRoleService;
 
 	/**
-	 * 取得特定使用者所在的 Role 資料
+	 * 取得特定使用者所在的角色資料
 	 * 
 	 * @param username 使用者帳號
 	 * @return List<UserRoleQueried>
