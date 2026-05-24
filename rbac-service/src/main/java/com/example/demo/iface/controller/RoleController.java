@@ -16,10 +16,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.application.service.RoleCommandService;
 import com.example.demo.application.service.RoleQueryService;
+import com.example.demo.application.shared.command.CreateOrUpdateRoleCommand;
+import com.example.demo.application.shared.command.CreateRoleCommand;
+import com.example.demo.application.shared.command.UpdateRoleCommand;
 import com.example.demo.application.shared.dto.RoleInfoQueried;
-import com.example.demo.domain.shared.command.CreateOrUpdateRoleCommand;
-import com.example.demo.domain.shared.command.CreateRoleCommand;
-import com.example.demo.domain.shared.command.UpdateRoleCommand;
 import com.example.demo.iface.dto.request.CreateOrUpdateRoleResource;
 import com.example.demo.iface.dto.request.CreateRoleResource;
 import com.example.demo.iface.dto.request.UpdateRoleResource;

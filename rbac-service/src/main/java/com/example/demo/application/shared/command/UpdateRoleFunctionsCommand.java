@@ -1,4 +1,4 @@
-package com.example.demo.domain.shared.command;
+package com.example.demo.application.shared.command;
 
 import java.util.List;
 

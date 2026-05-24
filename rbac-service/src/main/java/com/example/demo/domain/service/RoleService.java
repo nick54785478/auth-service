@@ -9,12 +9,12 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.example.demo.application.shared.command.CreateOrUpdateRoleCommand;
 import com.example.demo.domain.function.aggregate.FunctionInfo;
 import com.example.demo.domain.role.aggregate.RoleInfo;
 import com.example.demo.domain.role.aggregate.entity.RoleFunction;
 import com.example.demo.domain.role.aggregate.vo.RoleProfile;
 import com.example.demo.domain.role.aggregate.vo.RoleScope;
-import com.example.demo.domain.shared.command.CreateOrUpdateRoleCommand;
 import com.example.demo.domain.shared.detail.RoleFunctionQueriedDetail;
 import com.example.demo.domain.shared.summary.RoleInfoQueriedSummary;
 import com.example.demo.infra.exception.ValidationException;

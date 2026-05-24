@@ -8,13 +8,13 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.demo.application.shared.command.CreateOrUpdateRoleCommand;
+import com.example.demo.application.shared.command.CreateRoleCommand;
+import com.example.demo.application.shared.command.UpdateRoleCommand;
 import com.example.demo.domain.role.aggregate.RoleInfo;
 import com.example.demo.domain.role.aggregate.vo.RoleProfile;
 import com.example.demo.domain.role.aggregate.vo.RoleScope;
 import com.example.demo.domain.service.RoleService;
-import com.example.demo.domain.shared.command.CreateOrUpdateRoleCommand;
-import com.example.demo.domain.shared.command.CreateRoleCommand;
-import com.example.demo.domain.shared.command.UpdateRoleCommand;
 import com.example.demo.infra.exception.ValidationException;
 import com.example.demo.infra.repository.RoleInfoRepository;
 
