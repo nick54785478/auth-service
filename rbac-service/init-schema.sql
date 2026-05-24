@@ -119,8 +119,6 @@ CREATE TABLE customisation (
     `username` VARCHAR(100),
     `component` VARCHAR(100),
     `type` VARCHAR(100),       
-    `name` VARCHAR(100),
     `value` VARCHAR(150),   
-    `description` TEXT,
     `active_flag` CHAR(2)
 );
