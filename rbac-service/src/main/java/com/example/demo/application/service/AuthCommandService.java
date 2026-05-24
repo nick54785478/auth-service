@@ -2,7 +2,7 @@ package com.example.demo.application.service;
 
 import org.springframework.stereotype.Service;
 
-import com.example.demo.application.assembler.TokenParsedDataAssembler;
+import com.example.demo.application.assembler.AuthAssembler;
 import com.example.demo.application.port.JwTokenManagerPort;
 import com.example.demo.application.shared.dto.TokenValidatedAndParsed;
 import com.example.demo.infra.exception.ValidationException;
@@ -14,7 +14,7 @@ import lombok.AllArgsConstructor;
 public class AuthCommandService {
 
 	private JwTokenManagerPort jwTokenManager;
-	private TokenParsedDataAssembler assembler;
+	private AuthAssembler assembler;
 
 	/**
 	 * 驗證及轉換 Token 資料

@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import com.example.demo.application.shared.dto.TokenValidatedAndParsed;
 
 @Component
-public class TokenParsedDataAssembler {
+public class AuthAssembler {
 
 	/**
 	 * 組裝 Token Parsed 資料
