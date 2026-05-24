@@ -2,10 +2,8 @@ package com.example.demo.domain.service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.application.shared.command.UpdateGroupRolesCommand;
@@ -27,44 +25,50 @@ public class GroupRoleService {
 	private GroupInfoRepository groupInfoRepository;
 
 	/**
-	 * 查詢該群組內部不存在的其他角色(要透過 service 過濾，不然會有其他服務的角色)
+	 * 查詢群組角色
 	 * 
 	 * @param id      Group id
 	 * @param service Service
-	 * @return List<GroupRoleQueried>
+	 * @return List<RoleInfo>
 	 */
-	public List<RoleInfo> getOtherGroupRoles(Long id, String service) {
-		Optional<GroupInfo> opt = groupInfoRepository.findById(id);
-		if (opt.isPresent()) {
-			GroupInfo group = opt.get();
-
-			// 篩選出該角色有的 Role ID 清單
-			List<Long> existingIds = group.getRoles().stream().map(GroupRole::getRoleId).collect(Collectors.toList());
-
-			// 取得與該 Service 相關的角色資料
-			List<RoleInfo> roles = roleInfoRepository.findByScopeServiceAndActiveFlag(service, YesNo.Y);
-
-			// 過濾出該群組所沒有的角色資料
-			List<RoleInfo> filtered = roles.stream().filter(e -> !existingIds.contains(e.getId()))
-					.collect(Collectors.toList());
-
-			// 過濾出該使用者角色 ActiveFlag = 'N' 的資料
-			List<Long> inactiveRelatedIds = group.getRoles().stream()
-					.filter(e -> StringUtils.equals(e.getActiveFlag().getValue(), YesNo.N.getValue()))
+	public List<RoleInfo> getGroupRoles(Long id, String service) {
+		return groupInfoRepository.findById(id).map(group -> {
+			// 1. 篩選出該群組中「啟用中 (YesNo.Y)」的 GroupRole 關聯，並提取 Role ID
+			List<Long> activeRoleIds = group.getRoles().stream().filter(e -> e.getActiveFlag() == YesNo.Y)
 					.map(GroupRole::getRoleId).collect(Collectors.toList());
 
-			// 過濾出該使用者資料但失效的資料 activeFlag = 'N'
-			List<RoleInfo> inactiveRelated = roles.stream().filter(e -> inactiveRelatedIds.contains(e.getId()))
-					.collect(Collectors.toList());
+			if (activeRoleIds.isEmpty()) {
+				return new ArrayList<RoleInfo>();
+			}
 
-			// 合併兩者
-			filtered.addAll(inactiveRelated);
-			return filtered;
+			// 2. 將 ID In、Service (Scope) 以及 ActiveFlag 條件統包交給 DB 查詢
+			// 避免將所有 Role 查回 Java 記憶體後再跑 filter
+			return roleInfoRepository.findByIdInAndScopeServiceAndActiveFlag(activeRoleIds, service, YesNo.Y);
+		}).orElse(new ArrayList<>()); // 找不到 Group 時回傳空陣列
+	}
 
-		} else {
-			throw new ValidationException("VALIDATE_FAILED", "該群組 ID 有誤，查詢失敗");
-		}
+	/**
+	 * 查詢該群組內部不存在的其他角色 (已透過 service 過濾)
+	 * 
+	 * @param id      Group id
+	 * @param service Service
+	 * @return List<RoleInfo>
+	 */
+	public List<RoleInfo> getOtherGroupRoles(Long id, String service) {
+		// 1. 查出 Group Aggregate，若無則拋出例外
+		GroupInfo group = groupInfoRepository.findById(id)
+				.orElseThrow(() -> new ValidationException("VALIDATE_FAILED", "該群組 ID 有誤，查詢失敗"));
 
+		// 2. 篩選出該群組「目前已擁有，且關聯有效 (Y)」的 Role ID 清單
+		List<Long> activeAssignedRoleIds = group.getRoles().stream().filter(e -> e.getActiveFlag() == YesNo.Y)
+				.map(GroupRole::getRoleId).collect(Collectors.toList());
+
+		// 3. 查出該 Service 下，系統中「所有啟用中」的 Role 資料
+		List<RoleInfo> allActiveRolesInService = roleInfoRepository.findByScopeServiceAndActiveFlag(service, YesNo.Y);
+
+		// 4. 邏輯簡化：系統有效角色 - 群組已擁有的有效角色 = 群組不具備的其他角色
+		return allActiveRolesInService.stream().filter(r -> !activeAssignedRoleIds.contains(r.getId()))
+				.collect(Collectors.toList());
 	}
 
 	/**
@@ -88,25 +92,4 @@ public class GroupRoleService {
 			groupInfoRepository.save(group);
 		});
 	}
-
-	/**
-	 * 查詢群組角色
-	 * 
-	 * @param id      Group id
-	 * @param service Service
-	 * @return GroupRolesQueried
-	 */
-	public List<RoleInfo> getGroupRoles(Long id, String service) {
-		Optional<GroupInfo> opt = groupInfoRepository.findById(id);
-		if (opt.isEmpty()) {
-			return new ArrayList<>();
-		} else {
-			GroupInfo group = opt.get();
-			List<Long> roleIds = group.getRoles().stream().filter(e -> e.getActiveFlag() == YesNo.Y)
-					.map(GroupRole::getRoleId).collect(Collectors.toList());
-			return roleInfoRepository.findByIdIn(roleIds).stream()
-					.filter(e -> service.equals(e.getScope().getService())).collect(Collectors.toList());
-		}
-	}
-
 }

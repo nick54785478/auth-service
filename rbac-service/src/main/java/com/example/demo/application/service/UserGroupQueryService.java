@@ -5,10 +5,10 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.demo.application.assembler.UserGroupAssembler;
 import com.example.demo.application.shared.dto.UserGroupQueried;
 import com.example.demo.domain.group.aggregate.GroupInfo;
 import com.example.demo.domain.service.UserGroupService;
-import com.example.demo.util.BaseDataTransformer;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 @AllArgsConstructor
 public class UserGroupQueryService {
 
+	private UserGroupAssembler assembler;
 	private UserGroupService userGroupService;
 
 	/**
@@ -30,7 +31,7 @@ public class UserGroupQueryService {
 	@Transactional
 	public List<UserGroupQueried> queryGroups(String username, String service) {
 		List<GroupInfo> groups = userGroupService.queryGroups(username, service);
-		return BaseDataTransformer.transformData(groups, UserGroupQueried.class);
+		return assembler.transformList(groups);
 	}
 
 	/**
@@ -43,6 +44,6 @@ public class UserGroupQueryService {
 	@Transactional
 	public List<UserGroupQueried> getOtherUserGroups(String username, String service) {
 		List<GroupInfo> others = userGroupService.getOtherUserGroups(username, service);
-		return BaseDataTransformer.transformData(others, UserGroupQueried.class);
+		return assembler.transformList(others);
 	}
 }

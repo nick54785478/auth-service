@@ -2,11 +2,9 @@ package com.example.demo.domain.service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.application.shared.command.UpdateRoleFunctionsCommand;
@@ -48,24 +46,26 @@ public class RoleFunctionService {
 	}
 
 	/**
-	 * 查詢該角色的功能
+	 * 查詢該角色的功能 
 	 * 
-	 * @param id      Role id
+	 * @param id Role id
 	 * @param service Service
 	 * @return List<FunctionInfo>
 	 */
 	public List<FunctionInfo> getRoleFunctions(Long id, String service) {
-		Optional<RoleInfo> opt = roleInfoRepository.findById(id);
-
-		if (opt.isEmpty()) {
-			return new ArrayList<>();
-		} else {
-			RoleInfo role = opt.get();
-			List<Long> functionIds = role.getFunctions().stream().filter(e -> e.getActiveFlag() == YesNo.Y)
+		return roleInfoRepository.findById(id).map(role -> {
+			// 1. 從 Aggregate 中篩選出「啟用中 (YesNo.Y)」的 RoleFunction 關聯，並提取 Function ID
+			List<Long> activeFunctionIds = role.getFunctions().stream().filter(e -> e.getActiveFlag() == YesNo.Y)
 					.map(RoleFunction::getFunctionId).collect(Collectors.toList());
-			return functionInfoRepository.findByIdIn(functionIds).stream()
-					.filter(e -> service.equals(e.getScope().getService())).collect(Collectors.toList());
-		}
+
+			if (activeFunctionIds.isEmpty()) {
+				return new ArrayList<FunctionInfo>();
+			}
+
+			// 2. 直接利用我們剛在 FunctionInfoRepository 改好的方法，
+			// 把 in (IDs) + scopeService + activeFlag(Y) 統包給資料庫查詢，減少記憶體內的 filter
+			return functionInfoRepository.findByIdInAndScopeServiceAndActiveFlag(activeFunctionIds, service, YesNo.Y);
+		}).orElse(new ArrayList<>()); // 找不到 Role 時回傳空陣列
 	}
 
 	/**
@@ -76,38 +76,21 @@ public class RoleFunctionService {
 	 * @return List<FunctionInfo>
 	 */
 	public List<FunctionInfo> queryOthers(Long id, String service) {
-		Optional<RoleInfo> opt = roleInfoRepository.findById(id);
-		if (opt.isPresent()) {
-			RoleInfo role = opt.get();
+		// 1. 查出 Aggregate Root，若無則拋出例外
+		RoleInfo role = roleInfoRepository.findById(id)
+				.orElseThrow(() -> new ValidationException("VALIDATE_FAILED", "該角色 ID 有誤，查詢失敗"));
 
-			// 篩選出該角色有的 Function ID 清單
-			List<Long> existingIds = role.getFunctions().stream().map(RoleFunction::getFunctionId)
-					.collect(Collectors.toList());
+		// 2. 篩選出該角色「目前已擁有，且關聯有效 (Y)」的 Function ID 清單
+		List<Long> activeAssignedFunctionIds = role.getFunctions().stream().filter(e -> e.getActiveFlag() == YesNo.Y)
+				.map(RoleFunction::getFunctionId).collect(Collectors.toList());
 
-			// 查出該角色功能資料清單
-			List<FunctionInfo> functions = functionInfoRepository.findByScopeServiceAndActiveFlag(service, YesNo.Y);
+		// 3. 查出該 Service 下系統「所有啟用中」的 Function 資料
+		List<FunctionInfo> allActiveFunctionsInService = functionInfoRepository.findByScopeServiceAndActiveFlag(service,
+				YesNo.Y);
 
-			// 過濾出該角色所沒有的功能資料
-			List<FunctionInfo> filtered = functions.stream().filter(e -> !existingIds.contains(e.getId()))
-					.collect(Collectors.toList());
-
-			// 過濾出該角色 ActiveFlag = 'N' 的功能資料
-			List<Long> inactiveRelatedIds = role.getFunctions().stream()
-					.filter(e -> StringUtils.equals(e.getActiveFlag().getValue(), YesNo.N.getValue()))
-					.map(RoleFunction::getFunctionId).collect(Collectors.toList());
-
-			// 過濾出該角色資料但失效的功能資料 activeFlag = 'N'
-			List<FunctionInfo> inactiveRelated = functions.stream().filter(e -> inactiveRelatedIds.contains(e.getId()))
-					.collect(Collectors.toList());
-
-			// 合併兩者
-			filtered.addAll(inactiveRelated);
-			return filtered;
-
-		} else {
-			throw new ValidationException("VALIDATE_FAILED", "該角色 ID 有誤，查詢失敗");
-		}
-
+		// 4. 邏輯簡化：全部有效功能 - 角色已擁有的有效功能 = 角色不具備的功能
+		return allActiveFunctionsInService.stream().filter(f -> !activeAssignedFunctionIds.contains(f.getId()))
+				.collect(Collectors.toList());
 	}
 
 	/**

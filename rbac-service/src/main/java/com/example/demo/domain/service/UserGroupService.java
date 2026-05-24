@@ -27,44 +27,57 @@ public class UserGroupService {
 	private GroupInfoRepository groupInfoRepository;
 
 	/**
-	 * 查詢不屬於該使用者的群組
+	 * 取得特定使用者所在的群組資料
+	 * 
+	 * @param username 使用者帳號
+	 * @param service  Service
+	 * @return List<GroupInfo>
+	 */
+	public List<GroupInfo> queryGroups(String username, String service) {
+		// 查出 User Aggregate，若無則拋出例外 (適應 Optional 調整)
+		UserInfo user = userInfoRepository.findByUsername(username);
+		if (user == null) {
+			throw new ValidationException("VALIDATE_FAILED", "該使用者帳號有誤，查詢失敗");
+		}
+
+		// 篩選出該使用者「啟用中 (YesNo.Y)」的群組關聯
+		List<Long> activeGroupIds = user.getGroups().stream().filter(e -> e.getActiveFlag() == YesNo.Y)
+				.map(UserGroup::getGroupId).collect(Collectors.toList());
+
+		if (activeGroupIds.isEmpty()) {
+			return new ArrayList<>();
+		}
+
+		// 透過 ID 取得 Group 資料，並交由 DB 進行 Scope 與狀態過濾
+		return groupInfoRepository.findByIdInAndScopeServiceAndActiveFlag(activeGroupIds, service, YesNo.Y);
+
+	}
+
+	/**
+	 * 查詢不屬於該使用者的群組 (已透過 service 過濾)
 	 * 
 	 * @param username 使用者帳號
 	 * @param service  Service
 	 * @return List<GroupInfo>
 	 */
 	public List<GroupInfo> getOtherUserGroups(String username, String service) {
-		UserInfo userInfo = userInfoRepository.findByUsername(username);
-
-		if (!Objects.isNull(userInfo)) {
-
-			// 篩選出該使用者有的 群組 ID 清單
-			List<Long> existingIds = userInfo.getGroups().stream().map(UserGroup::getGroupId)
-					.collect(Collectors.toList());
-
-			List<GroupInfo> groups = groupInfoRepository.findByScopeServiceAndActiveFlag(service, YesNo.Y);
-
-			// 過濾出該使用者沒有的群組資料
-			List<GroupInfo> filtered = groups.stream().filter(e -> !existingIds.contains(e.getId()))
-					.collect(Collectors.toList());
-
-			// 過濾出該使用者角色 ActiveFlag = 'N' 的資料
-			List<Long> inactiveRelatedIds = userInfo.getGroups().stream()
-					.filter(e -> StringUtils.equals(e.getActiveFlag().getValue(), YesNo.N.getValue()))
-					.map(UserGroup::getGroupId).collect(Collectors.toList());
-
-			// 過濾出該使用者資料但失效的資料 activeFlag = 'N'
-			List<GroupInfo> inactiveRelated = groups.stream().filter(e -> inactiveRelatedIds.contains(e.getId()))
-					.collect(Collectors.toList());
-
-			// 合併兩者
-			filtered.addAll(inactiveRelated);
-
-			return filtered;
-
-		} else {
-			throw new ValidationException("VALIDATE_FAILED", "該群組 ID 有誤，查詢失敗");
+		// 查出 User Aggregate，若無則拋出例外 (適應 Optional 調整)
+		UserInfo user = userInfoRepository.findByUsername(username);
+		if (user == null) {
+			throw new ValidationException("VALIDATE_FAILED", "該使用者帳號有誤，查詢失敗");
 		}
+
+		// 篩選出該使用者「目前已擁有，且關聯有效 (Y)」的群組 ID 清單
+		List<Long> activeAssignedGroupIds = user.getGroups().stream().filter(e -> e.getActiveFlag() == YesNo.Y)
+				.map(UserGroup::getGroupId).collect(Collectors.toList());
+
+		// 查出該 Service 下系統中「所有啟用中」的群組資料
+		List<GroupInfo> allActiveGroupsInService = groupInfoRepository.findByScopeServiceAndActiveFlag(service,
+				YesNo.Y);
+
+		// 邏輯簡化：全部有效群組 - 使用者已擁有的有效群組 = 使用者不具備的其他群組
+		return allActiveGroupsInService.stream().filter(g -> !activeAssignedGroupIds.contains(g.getId()))
+				.collect(Collectors.toList());
 	}
 
 	/**
@@ -120,19 +133,4 @@ public class UserGroupService {
 		}).collect(Collectors.toList());
 	}
 
-	/**
-	 * 取得特定使用者所在的群組資料
-	 * 
-	 * @param username 使用者帳號
-	 * @param service  Service
-	 * @return List<UserGroupQueried>
-	 */
-	public List<GroupInfo> queryGroups(String username, String service) {
-		UserInfo userInfo = userInfoRepository.findByUsername(username);
-		// 取得 User Group 的 GroupId
-		List<Long> groupIds = userInfo.getGroups().stream().filter(e -> e.getActiveFlag() != YesNo.Y)
-				.map(UserGroup::getGroupId).collect(Collectors.toList());
-		// 透過 ID 取得 Group 資料
-		return groupInfoRepository.findByIdInAndScopeServiceAndActiveFlag(groupIds, service, YesNo.Y);
-	}
 }

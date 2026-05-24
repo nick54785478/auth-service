@@ -5,10 +5,10 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.demo.application.assembler.GroupRoleAssembler;
 import com.example.demo.application.shared.dto.GroupRoleQueried;
 import com.example.demo.domain.role.aggregate.RoleInfo;
 import com.example.demo.domain.service.GroupRoleService;
-import com.example.demo.util.BaseDataTransformer;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 @AllArgsConstructor
 public class GroupRoleQueryService {
 
+	private GroupRoleAssembler assembler;
 	private GroupRoleService groupRoleService;
 
 	/**
@@ -30,7 +31,7 @@ public class GroupRoleQueryService {
 	@Transactional(readOnly = true)
 	public List<GroupRoleQueried> getOtherGroupRoles(Long id, String service) {
 		List<RoleInfo> others = groupRoleService.getOtherGroupRoles(id, service);
-		return BaseDataTransformer.transformData(others, GroupRoleQueried.class);
+		return assembler.transformList(others);
 	}
 
 	/**
@@ -43,7 +44,7 @@ public class GroupRoleQueryService {
 	@Transactional(readOnly = true)
 	public List<GroupRoleQueried> getGroupRoles(Long id, String service) {
 		List<RoleInfo> groupRoles = groupRoleService.getGroupRoles(id, service);
-		return BaseDataTransformer.transformData(groupRoles, GroupRoleQueried.class);
+		return assembler.transformList(groupRoles);
 	}
 
 }

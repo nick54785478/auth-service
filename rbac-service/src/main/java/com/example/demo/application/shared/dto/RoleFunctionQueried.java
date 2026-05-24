@@ -1,5 +1,7 @@
 package com.example.demo.application.shared.dto;
 
+import com.example.demo.shared.enums.YesNo;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,6 +25,6 @@ public class RoleFunctionQueried {
 
 	private String description;
 
-	private String activeFlag;
+	private YesNo activeFlag;
 
 }

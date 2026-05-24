@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo.application.shared.command.UpdateUserRolesCommand;
 import com.example.demo.domain.role.aggregate.RoleInfo;
@@ -28,43 +27,56 @@ public class UserRoleService {
 	private UserInfoRepository userInfoRepository;
 
 	/**
+	 * 取得特定使用者的角色資料
+	 * 
+	 * @param username 使用者帳號
+	 * @param service  Service
+	 * @return List<RoleInfo>
+	 */
+	public List<RoleInfo> getUserRoles(String username, String service) {
+		// 1. 查出 User Aggregate，若無則拋出例外 (適應 Optional，並修正錯誤訊息)
+		UserInfo user = userInfoRepository.findByUsername(username);
+		if (user == null) {
+			throw new ValidationException("VALIDATE_FAILED", "該使用者帳號有誤，查詢失敗");
+		}
+
+		// 1. 篩選出該使用者「啟用中 (YesNo.Y)」的 UserRole 關聯，並提取 Role ID
+		List<Long> activeRoleIds = user.getRoles().stream().filter(e -> e.getActiveFlag() == YesNo.Y)
+				.map(UserRole::getRoleId).collect(Collectors.toList());
+
+		if (activeRoleIds.isEmpty()) {
+			return new ArrayList<>();
+		}
+
+		// 2. 將 ID In、Service (Scope) 以及 ActiveFlag 條件統包交給 DB 查詢
+		return roleInfoRepository.findByIdInAndScopeServiceAndActiveFlag(activeRoleIds, service, YesNo.Y);
+
+	}
+
+	/**
 	 * 查詢不屬於該使用者的其他角色
 	 * 
 	 * @param username 使用者名稱
 	 * @param service  服務
 	 * @return List<RoleInfo>
 	 */
-	@Transactional
 	public List<RoleInfo> getOtherRoles(String username, String service) {
-		UserInfo userInfo = userInfoRepository.findByUsername(username);
-		if (!Objects.isNull(userInfo)) {
-			// 篩選出該使用者有的 角色 ID 清單
-			List<Long> existingIds = userInfo.getRoles().stream().map(UserRole::getRoleId).collect(Collectors.toList());
-
-			// 查出該使用者在某服務的角色資料清單
-			List<RoleInfo> roles = roleInfoRepository.findByScopeServiceAndActiveFlag(service, YesNo.Y);
-
-			// 過濾出該使用者所沒有的角色資料
-			List<RoleInfo> filtered = roles.stream().filter(e -> !existingIds.contains(e.getId()))
-					.collect(Collectors.toList());
-
-			// 過濾出該使用者角色 ActiveFlag = 'N' 的資料
-			List<Long> inactiveRelatedIds = userInfo.getRoles().stream()
-					.filter(e -> StringUtils.equals(e.getActiveFlag().getValue(), YesNo.N.getValue()))
-					.map(UserRole::getRoleId).collect(Collectors.toList());
-
-			// 過濾出該使用者資料但失效的資料 activeFlag = 'N'
-			List<RoleInfo> inactiveRelated = roles.stream().filter(e -> inactiveRelatedIds.contains(e.getId()))
-					.collect(Collectors.toList());
-
-			// 合併兩者
-			filtered.addAll(inactiveRelated);
-
-			return filtered;
-		} else {
-			throw new ValidationException("VALIDATE_FAILED", "該角色 ID 有誤，查詢失敗");
+		// 1. 查出 User Aggregate，若無則拋出例外 (適應 Optional，並修正錯誤訊息)
+		UserInfo user = userInfoRepository.findByUsername(username);
+		if (user == null) {
+			throw new ValidationException("VALIDATE_FAILED", "該使用者帳號有誤，查詢失敗");
 		}
 
+		// 2. 篩選出該使用者「目前已擁有，且關聯有效 (Y)」的 Role ID 清單
+		List<Long> activeAssignedRoleIds = user.getRoles().stream().filter(e -> e.getActiveFlag() == YesNo.Y)
+				.map(UserRole::getRoleId).collect(Collectors.toList());
+
+		// 3. 查出該 Service 下系統中「所有啟用中」的角色資料
+		List<RoleInfo> allActiveRolesInService = roleInfoRepository.findByScopeServiceAndActiveFlag(service, YesNo.Y);
+
+		// 4. 邏輯簡化：全部有效角色 - 使用者已擁有的有效角色 = 使用者不具備的其他角色
+		return allActiveRolesInService.stream().filter(r -> !activeAssignedRoleIds.contains(r.getId()))
+				.collect(Collectors.toList());
 	}
 
 	/**
@@ -119,22 +131,4 @@ public class UserRoleService {
 		}).collect(Collectors.toList());
 	}
 
-	/**
-	 * 取得特定使用者的角色資料
-	 * 
-	 * @param username 使用者帳號
-	 * @param service  Service
-	 * @return List<RoleInfo>
-	 */
-	public List<RoleInfo> getUserRoles(String username, String service) {
-		UserInfo user = userInfoRepository.findByUsername(username);
-		// 取得該使用者的 RoleId 清單
-		List<Long> roleIds = user.getRoles().stream()
-				// 過濾 UserRole 的 activeFlag = 'N' 者
-				.filter(e -> StringUtils.equals(e.getActiveFlag().getValue(), YesNo.Y.getValue()))
-				.map(UserRole::getRoleId).collect(Collectors.toList());
-
-		return roleInfoRepository.findByIdInAndScopeServiceAndActiveFlag(roleIds, service, YesNo.Y);
-
-	}
 }

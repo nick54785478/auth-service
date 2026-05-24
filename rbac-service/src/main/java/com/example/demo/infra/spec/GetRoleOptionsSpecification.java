@@ -29,7 +29,7 @@ public class GetRoleOptionsSpecification {
 		return ((root, query, cb) -> {
 			List<Predicate> predicates = new ArrayList<>();
 			if (StringUtils.isNotBlank(service)) {
-				predicates.add(cb.equal(root.get("profile").get("service"), service));
+				predicates.add(cb.equal(root.get("scope").get("service"), service));
 			}
 			if (StringUtils.isNotBlank(keyword)) {
 				Predicate predName = cb.like(root.get("profile").get("name"), "%" + keyword + "%");

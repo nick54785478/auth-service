@@ -5,10 +5,10 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.demo.application.assembler.RoleFunctionAssembler;
 import com.example.demo.application.shared.dto.RoleFunctionQueried;
 import com.example.demo.domain.function.aggregate.FunctionInfo;
 import com.example.demo.domain.service.RoleFunctionService;
-import com.example.demo.util.BaseDataTransformer;
 
 import lombok.AllArgsConstructor;
 
@@ -16,6 +16,7 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class RoleFunctionQueryService {
 
+	private RoleFunctionAssembler assembler;
 	private RoleFunctionService roleFunctionService;
 
 	/**
@@ -28,9 +29,9 @@ public class RoleFunctionQueryService {
 	@Transactional(readOnly = true)
 	public List<RoleFunctionQueried> getOtherRoleFunctions(Long id, String service) {
 		List<FunctionInfo> others = roleFunctionService.queryOthers(id, service);
-		return BaseDataTransformer.transformData(others, RoleFunctionQueried.class);
+		return assembler.transformList(others);
 	}
-	
+
 	/**
 	 * 查詢屬於該角色的功能
 	 * 
@@ -41,6 +42,6 @@ public class RoleFunctionQueryService {
 	@Transactional(readOnly = true)
 	public List<RoleFunctionQueried> getRoleFunctions(Long id, String service) {
 		List<FunctionInfo> functions = roleFunctionService.getRoleFunctions(id, service);
-		return BaseDataTransformer.transformData(functions, RoleFunctionQueried.class);
+		return assembler.transformList(functions);
 	}
 }

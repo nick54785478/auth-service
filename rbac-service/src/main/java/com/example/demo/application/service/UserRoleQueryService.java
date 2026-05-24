@@ -5,10 +5,10 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.demo.application.assembler.UserRoleAssembler;
 import com.example.demo.application.shared.dto.UserRoleQueried;
 import com.example.demo.domain.role.aggregate.RoleInfo;
 import com.example.demo.domain.service.UserRoleService;
-import com.example.demo.util.BaseDataTransformer;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 @AllArgsConstructor
 public class UserRoleQueryService {
 
+	private UserRoleAssembler assembler;
 	private UserRoleService userRoleService;
 
 	/**
@@ -30,7 +31,7 @@ public class UserRoleQueryService {
 	public List<UserRoleQueried> getUserRoles(String username, String service) {
 		List<RoleInfo> roles = userRoleService.getUserRoles(username, service);
 		log.debug("roles: {}", roles);
-		return BaseDataTransformer.transformData(roles, UserRoleQueried.class);
+		return assembler.transformList(roles);
 	}
 
 	/**
@@ -43,7 +44,7 @@ public class UserRoleQueryService {
 	@Transactional(readOnly = true)
 	public List<UserRoleQueried> getOtherRoles(String username, String service) {
 		List<RoleInfo> others = userRoleService.getOtherRoles(username, service);
-		return BaseDataTransformer.transformData(others, UserRoleQueried.class);
+		return assembler.transformList(others);
 
 	}
 }
