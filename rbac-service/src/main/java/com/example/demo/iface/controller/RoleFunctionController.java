@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.demo.application.service.RoleFunctionCommandService;
 import com.example.demo.application.service.RoleFunctionQueryService;
 import com.example.demo.application.shared.dto.RoleFunctionQueried;
-import com.example.demo.domain.role.command.UpdateRoleFunctionsCommand;
+import com.example.demo.domain.shared.command.UpdateRoleFunctionsCommand;
 import com.example.demo.iface.dto.request.UpdateRoleFunctionsResource;
 import com.example.demo.iface.dto.response.response.RoleFunctionsGottenResource;
 import com.example.demo.iface.dto.response.response.RoleFunctionsUpdatedResource;

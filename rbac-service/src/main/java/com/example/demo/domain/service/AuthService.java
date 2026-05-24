@@ -52,7 +52,7 @@ public class AuthService {
 				.collect(Collectors.toList());
 		// 取得角色資料
 		List<RoleInfo> roleList = roleInfoRepository.findByIdIn(roleIds);
-		List<String> roles = roleList.stream().map(RoleInfo::getCode).collect(Collectors.toList());
+		List<String> roles = roleList.stream().map(r -> r.getScope().getCode()).collect(Collectors.toList());
 		// 取得角色擁有的功能 ID 清單
 		List<Long> functionIds = roleList.stream()
 				// 使用 flatMap 將每個 role 中的 function Id 集合平鋪到一個流中。
@@ -61,8 +61,8 @@ public class AuthService {
 		// 透過功能 ID 清單搜尋該權限擁有的功能
 		List<String> functions = functionRepository.findByIdInAndActiveFlag(functionIds, YesNo.Y).stream()
 				.map(FunctionInfo::getCode).collect(Collectors.toList());
-		return GroupsAuthQueriedDetail.builder().username(userInfo.getUsername()).email(userInfo.getEmail()).roles(roles)
-				.functions(functions).build();
+		return GroupsAuthQueriedDetail.builder().username(userInfo.getUsername()).email(userInfo.getEmail())
+				.roles(roles).functions(functions).build();
 	}
 
 	/**
@@ -81,12 +81,12 @@ public class AuthService {
 				.flatMap(role -> role.getFunctions().stream().map(RoleFunction::getFunctionId)).distinct()
 				.collect(Collectors.toList());
 
-		List<String> roles = roleList.stream().map(RoleInfo::getCode).collect(Collectors.toList());
+		List<String> roles = roleList.stream().map(r -> r.getScope().getCode()).collect(Collectors.toList());
 
 		List<String> functions = functionRepository.findByIdInAndActiveFlag(functionIds, YesNo.Y).stream()
 				.map(FunctionInfo::getCode).collect(Collectors.toList());
-		return PersonalAuthQueriedSummary.builder().username(userInfo.getUsername()).email(userInfo.getEmail()).roles(roles)
-				.functions(functions).build();
+		return PersonalAuthQueriedSummary.builder().username(userInfo.getUsername()).email(userInfo.getEmail())
+				.roles(roles).functions(functions).build();
 	}
 
 	/**
@@ -103,8 +103,8 @@ public class AuthService {
 		// 透過角色 ID 清單找出所屬角色
 		List<RoleInfo> roleList = roleInfoRepository.findByIdIn(roleIds);
 
-		List<String> roles = roleList.stream().map(RoleInfo::getCode).filter(e -> StringUtils.equals(e, "ADMIN"))
-				.collect(Collectors.toList());
+		List<String> roles = roleList.stream().map(r -> r.getScope().getCode())
+				.filter(e -> StringUtils.equals(e, "ADMIN")).collect(Collectors.toList());
 		// Admin 直接看全部
 		if (roles.contains("ADMIN")) {
 			return functionRepository.findByTypeAndActiveFlag("MAINTAIN", YesNo.Y).stream().map(FunctionInfo::getCode)

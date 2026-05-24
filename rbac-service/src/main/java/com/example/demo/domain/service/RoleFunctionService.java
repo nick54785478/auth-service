@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import com.example.demo.domain.function.aggregate.FunctionInfo;
 import com.example.demo.domain.role.aggregate.RoleInfo;
 import com.example.demo.domain.role.aggregate.entity.RoleFunction;
-import com.example.demo.domain.role.command.UpdateRoleFunctionsCommand;
+import com.example.demo.domain.shared.command.UpdateRoleFunctionsCommand;
 import com.example.demo.domain.shared.summary.RolesFunctionsQueriedSummary;
 import com.example.demo.infra.exception.ValidationException;
 import com.example.demo.infra.repository.FunctionInfoRepository;
@@ -36,7 +36,8 @@ public class RoleFunctionService {
 	 * @return RolesFunctionsQueried
 	 */
 	public RolesFunctionsQueriedSummary getFunctionsByRoleIds(String service, List<String> rolesList) {
-		List<RoleInfo> roles = roleInfoRepository.findByServiceAndCodeInAndActiveFlag(service, rolesList, YesNo.Y);
+		List<RoleInfo> roles = roleInfoRepository.findByScopeServiceAndScopeCodeInAndActiveFlag(service, rolesList,
+				YesNo.Y);
 		// 取得所有角色清單所帶有的功能 ID
 		Set<Long> allFuncIds = roles.stream().flatMap(role -> role.getFunctions().stream())
 				.map(RoleFunction::getFunctionId).collect(Collectors.toSet());
@@ -55,16 +56,14 @@ public class RoleFunctionService {
 	 */
 	public List<FunctionInfo> getRoleFunctions(Long id, String service) {
 		Optional<RoleInfo> opt = roleInfoRepository.findById(id);
-		
+
 		if (opt.isEmpty()) {
 			return new ArrayList<>();
 		} else {
 			RoleInfo role = opt.get();
-			List<Long> functionIds = role.getFunctions().stream()
-					.filter(e -> e.getActiveFlag() == YesNo.Y)
+			List<Long> functionIds = role.getFunctions().stream().filter(e -> e.getActiveFlag() == YesNo.Y)
 					.map(RoleFunction::getFunctionId).collect(Collectors.toList());
-			return functionInfoRepository.findByIdIn(functionIds).stream()
-					.filter(e -> service.equals(e.getService()))
+			return functionInfoRepository.findByIdIn(functionIds).stream().filter(e -> service.equals(e.getService()))
 					.collect(Collectors.toList());
 		}
 	}

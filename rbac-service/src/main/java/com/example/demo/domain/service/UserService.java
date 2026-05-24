@@ -124,13 +124,13 @@ public class UserService {
 		// 查詢群組資料
 		List<GroupInfo> groups = groupRepository.findByIdInAndServiceAndActiveFlag(groupIds, service, YesNo.Y);
 		// 查詢角色資料
-		List<RoleInfo> roles = roleRepository.findByIdInAndServiceAndActiveFlag(roleIds, service, YesNo.Y);
+		List<RoleInfo> roles = roleRepository.findByIdInAndScopeServiceAndActiveFlag(roleIds, service, YesNo.Y);
 		// 放置個人功能權限清單
 		funcMap.put("PERSONALITY", this.getFuncList("個人角色", roles));
 		// 群組角色權限
 		List<Long> groupRoleIds = groups.stream().flatMap(g -> g.getRoles().stream().map(GroupRole::getRoleId))
 				.distinct().collect(Collectors.toList());
-		List<RoleInfo> groupRoles = roleRepository.findByIdInAndServiceAndActiveFlag(groupRoleIds, service, YesNo.Y);
+		List<RoleInfo> groupRoles = roleRepository.findByIdInAndScopeServiceAndActiveFlag(groupRoleIds, service, YesNo.Y);
 		// 放置群組功能權限清單
 		funcMap.put("GROUP", this.getFuncList("群組角色", groupRoles));
 

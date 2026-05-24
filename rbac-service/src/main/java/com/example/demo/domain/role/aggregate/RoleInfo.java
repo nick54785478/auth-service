@@ -10,12 +10,12 @@ import java.util.stream.Collectors;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.example.demo.domain.role.aggregate.entity.RoleFunction;
-import com.example.demo.domain.role.command.CreateOrUpdateRoleCommand;
-import com.example.demo.domain.role.command.CreateRoleCommand;
-import com.example.demo.domain.role.command.UpdateRoleCommand;
+import com.example.demo.domain.role.aggregate.vo.RoleProfile;
+import com.example.demo.domain.role.aggregate.vo.RoleScope;
 import com.example.demo.shared.enums.YesNo;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.EnumType;
@@ -27,6 +27,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -40,7 +41,8 @@ import lombok.ToString;
 @Entity
 @ToString
 @AllArgsConstructor
-@Table(name = "role_info")
+@Table(name = "role_info", uniqueConstraints = {
+		@UniqueConstraint(name = "uk_role_service_code", columnNames = { "service", "code" }) })
 @EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class RoleInfo {
@@ -49,15 +51,13 @@ public class RoleInfo {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	private String service; // 服務
+	@Embedded
+	private RoleScope scope; // VO: 取代原本的 service, code
 
-	private String code; // 角色 Code
-
-	private String name; // 角色名稱
+	@Embedded
+	private RoleProfile profile; // VO: 取代原本的 name, description
 
 	private String type; // 權限種類
-
-	private String description; // 敘述
 
 	// 使用懶加載，避免 N+1 query 效能問題
 	@OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
@@ -68,63 +68,79 @@ public class RoleInfo {
 	private YesNo activeFlag = YesNo.Y; // 是否有效
 
 	/**
-	 * 新增一筆角色資料
+	 * 工廠方法: 新增一筆角色資料
 	 * 
-	 * @param command
+	 * @param scope   角色範圍
+	 * @param profile 角色描述
+	 * @param type    角色種類
+	 * @return 角色資料
 	 */
-	public static RoleInfo create(CreateRoleCommand command) {
-		RoleInfo roleInfo = new RoleInfo();
-		roleInfo.code = command.getCode();
-		roleInfo.service = command.getService();
-		roleInfo.name = command.getName();
-		roleInfo.description = command.getDescription();
-		roleInfo.type = command.getType();
-		roleInfo.activeFlag = YesNo.Y;
-		return roleInfo;
+	public static RoleInfo create(RoleScope scope, RoleProfile profile, String type) {
+		RoleInfo role = new RoleInfo();
+		role.scope = scope;
+		role.profile = profile;
+		role.type = type;
+		role.activeFlag = YesNo.Y;
+		return role;
+	}
+
+//	/**
+//	 * 新增/更新一筆角色資料
+//	 * 
+//	 * @param command {@link CreateOrUpdateRoleCommand}
+//	 */
+//	public static RoleInfo create(CreateOrUpdateRoleCommand command) {
+//		RoleInfo roleInfo = new RoleInfo();
+//		roleInfo.service = command.getService();
+//		roleInfo.code = command.getCode();
+//		roleInfo.name = command.getName();
+//		roleInfo.description = command.getDescription();
+//		roleInfo.type = command.getType();
+//		roleInfo.activeFlag = YesNo.Y;
+//		return roleInfo;
+//	}
+//	
+//	/**
+//	 * 更新一筆角色資料
+//	 * 
+//	 * @param command
+//	 */
+//	public void update(CreateOrUpdateRoleCommand command) {
+//		this.id = command.getId();
+//		this.service = command.getService();
+//		this.code = command.getCode();
+//		this.name = command.getName();
+//		this.type = command.getType();
+//		this.description = command.getDescription();
+//		this.activeFlag = YesNo.valueOf(command.getActiveFlag());
+//	}
+
+	/**
+	 * 領域行為：更新角色基本資料 (意圖明確)
+	 */
+	public void updateProfile(RoleProfile newProfile, String newType) {
+		this.profile = newProfile;
+		this.type = newType;
 	}
 
 	/**
-	 * 新增/更新一筆角色資料
-	 * 
-	 * @param command {@link CreateOrUpdateRoleCommand}
+	 * 領域行為：修改業務範圍 (如果業務允許修改的話)
 	 */
-	public static RoleInfo create(CreateOrUpdateRoleCommand command) {
-		RoleInfo roleInfo = new RoleInfo();
-		roleInfo.service = command.getService();
-		roleInfo.code = command.getCode();
-		roleInfo.name = command.getName();
-		roleInfo.description = command.getDescription();
-		roleInfo.type = command.getType();
-		roleInfo.activeFlag = YesNo.Y;
-		return roleInfo;
+	public void changeScope(RoleScope newScope) {
+		this.scope = newScope;
 	}
 
 	/**
 	 * 更新一筆角色資料
 	 * 
-	 * @param command
+	 * @param scope   角色範圍
+	 * @param profile 角色描述
+	 * @param type    角色種類
 	 */
-	public void update(UpdateRoleCommand command) {
-		this.service = command.getService();
-		this.code = command.getCode();
-		this.name = command.getName();
-		this.type = command.getType();
-		this.description = command.getDescription();
-	}
-
-	/**
-	 * 更新一筆角色資料
-	 * 
-	 * @param command
-	 */
-	public void update(CreateOrUpdateRoleCommand command) {
-		this.id = command.getId();
-		this.service = command.getService();
-		this.code = command.getCode();
-		this.name = command.getName();
-		this.type = command.getType();
-		this.description = command.getDescription();
-		this.activeFlag = YesNo.valueOf(command.getActiveFlag());
+	public void update(RoleScope scope, RoleProfile profile, String type) {
+		this.type = type;
+		this.scope = scope;
+		this.profile = profile;
 	}
 
 	/**
@@ -158,16 +174,6 @@ public class RoleInfo {
 			}
 		});
 		this.functions = result;
-
-//		// 移除 functions 中不存在於 Role Functions 的項目
-//		this.functions.removeIf(
-//				existingFunction -> roleFunctions.stream().noneMatch(newFunc -> newFunc.equals(existingFunction)));
-//		// 增加新的 Role Function
-//		roleFunctions.stream().forEach(newFunction -> {
-//			if (!functions.contains(newFunction)) {
-//				functions.add(newFunction);
-//			}
-//		});
 	}
 
 	/**

@@ -17,9 +17,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.demo.application.service.RoleCommandService;
 import com.example.demo.application.service.RoleQueryService;
 import com.example.demo.application.shared.dto.RoleInfoQueried;
-import com.example.demo.domain.role.command.CreateOrUpdateRoleCommand;
-import com.example.demo.domain.role.command.CreateRoleCommand;
-import com.example.demo.domain.role.command.UpdateRoleCommand;
+import com.example.demo.domain.shared.command.CreateOrUpdateRoleCommand;
+import com.example.demo.domain.shared.command.CreateRoleCommand;
+import com.example.demo.domain.shared.command.UpdateRoleCommand;
 import com.example.demo.iface.dto.request.CreateOrUpdateRoleResource;
 import com.example.demo.iface.dto.request.CreateRoleResource;
 import com.example.demo.iface.dto.request.UpdateRoleResource;
@@ -108,7 +108,7 @@ public class RoleController {
 	public ResponseEntity<RolesSummaryGottenResource> summary(@RequestParam String service,
 			@RequestParam(required = false) String type, @RequestParam(required = false) String name,
 			@RequestParam(required = false) String activeFlag) {
-		List<RoleInfoQueried> data = roleQueryService.query(service, type, name, activeFlag);
+		List<RoleInfoQueried> data = roleQueryService.summary(service, type, name, activeFlag);
 		return new ResponseEntity<>(new RolesSummaryGottenResource("200", "查詢成功", data), HttpStatus.OK);
 	}
 

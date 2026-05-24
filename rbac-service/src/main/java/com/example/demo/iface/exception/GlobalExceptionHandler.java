@@ -5,9 +5,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import com.example.demo.iface.dto.response.exception.BaseExceptionResponse;
 import com.example.demo.infra.exception.ValidationException;
-import com.example.demo.util.BaseDataTransformer;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * 全域例外處理器
@@ -17,8 +19,21 @@ public class GlobalExceptionHandler {
 
 	@ExceptionHandler(ValidationException.class)
 	public ResponseEntity<BaseExceptionResponse> handleValidationException(ValidationException e) {
-		return ResponseEntity.status(HttpStatus.OK)
-				.body(BaseDataTransformer.transformData(e, BaseExceptionResponse.class));
+		return ResponseEntity.status(HttpStatus.OK).body(new BaseExceptionResponse(e.getCode(), e.getMessage()));
+	}
+
+	/**
+	 * 回傳訊息定義
+	 */
+	@Data
+	@NoArgsConstructor
+	@AllArgsConstructor
+	class BaseExceptionResponse {
+
+		private String code;
+
+		private String message;
+
 	}
 
 }

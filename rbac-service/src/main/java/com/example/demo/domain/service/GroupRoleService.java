@@ -42,7 +42,7 @@ public class GroupRoleService {
 			List<Long> existingIds = group.getRoles().stream().map(GroupRole::getRoleId).collect(Collectors.toList());
 
 			// 取得與該 Service 相關的角色資料
-			List<RoleInfo> roles = roleInfoRepository.findByServiceAndActiveFlag(service, YesNo.Y);
+			List<RoleInfo> roles = roleInfoRepository.findByScopeServiceAndActiveFlag(service, YesNo.Y);
 
 			// 過濾出該群組所沒有的角色資料
 			List<RoleInfo> filtered = roles.stream().filter(e -> !existingIds.contains(e.getId()))
@@ -104,8 +104,8 @@ public class GroupRoleService {
 			GroupInfo group = opt.get();
 			List<Long> roleIds = group.getRoles().stream().filter(e -> e.getActiveFlag() == YesNo.Y)
 					.map(GroupRole::getRoleId).collect(Collectors.toList());
-			return roleInfoRepository.findByIdIn(roleIds).stream().filter(e -> service.equals(e.getService()))
-					.collect(Collectors.toList());
+			return roleInfoRepository.findByIdIn(roleIds).stream()
+					.filter(e -> service.equals(e.getScope().getService())).collect(Collectors.toList());
 		}
 	}
 

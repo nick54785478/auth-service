@@ -9,10 +9,12 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo.domain.role.aggregate.RoleInfo;
-import com.example.demo.domain.role.command.CreateOrUpdateRoleCommand;
-import com.example.demo.domain.role.command.CreateRoleCommand;
-import com.example.demo.domain.role.command.UpdateRoleCommand;
+import com.example.demo.domain.role.aggregate.vo.RoleProfile;
+import com.example.demo.domain.role.aggregate.vo.RoleScope;
 import com.example.demo.domain.service.RoleService;
+import com.example.demo.domain.shared.command.CreateOrUpdateRoleCommand;
+import com.example.demo.domain.shared.command.CreateRoleCommand;
+import com.example.demo.domain.shared.command.UpdateRoleCommand;
 import com.example.demo.infra.exception.ValidationException;
 import com.example.demo.infra.repository.RoleInfoRepository;
 
@@ -23,25 +25,26 @@ import lombok.AllArgsConstructor;
 @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, timeout = 36000, rollbackFor = Exception.class)
 public class RoleCommandService {
 
-	private RoleInfoRepository roleInfoRepository;
 	private RoleService roleService;
+	private RoleInfoRepository roleInfoRepository;
 
 	/**
 	 * 建立角色資料
 	 * 
-	 * @param command
+	 * @param command {@link CreateRoleCommand}
 	 * @return RoleInfoCreated
 	 */
 	public void create(CreateRoleCommand command) {
-		RoleInfo roleInfo = RoleInfo.create(command);
+		RoleScope roleScope = RoleScope.of(command.getService(), command.getCode());
+		RoleProfile roleProfile = RoleProfile.of(command.getName(), command.getDescription());
+		RoleInfo roleInfo = RoleInfo.create(roleScope, roleProfile, command.getType());
 		roleInfoRepository.save(roleInfo);
 	}
 
 	/**
-	 * 建立多筆角色資料
+	 * 建立或更新多筆角色資料 (適用於前端的 Inline Editable 功能)
 	 * 
-	 * @param command
-	 * @return RoleInfoCreated
+	 * @param command {@link CreateOrUpdateRoleCommand} 清單
 	 */
 	public void createOrUpdate(List<CreateOrUpdateRoleCommand> commands) {
 		roleService.createOrUpdate(commands);
@@ -50,15 +53,17 @@ public class RoleCommandService {
 	/**
 	 * 更新角色資料
 	 * 
-	 * @param command
-	 * @return RoleInfoCreated
+	 * @param command {@link UpdateRoleCommand}
 	 */
 	public void update(UpdateRoleCommand command) {
+
+		RoleScope roleScope = RoleScope.of(command.getService(), command.getCode());
+		RoleProfile roleProfile = RoleProfile.of(command.getName(), command.getDescription());
 
 		Optional<RoleInfo> opt = roleInfoRepository.findById(command.getId());
 		if (opt.isPresent()) {
 			RoleInfo roleInfo = opt.get();
-			roleInfo.update(command);
+			roleInfo.update(roleScope, roleProfile, command.getType());
 			roleInfoRepository.save(roleInfo);
 		} else {
 			throw new ValidationException("VALIDATE_FAILED", "查無此角色資料 id，更新失敗");

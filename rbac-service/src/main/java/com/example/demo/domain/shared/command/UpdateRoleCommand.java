@@ -1,4 +1,4 @@
-package com.example.demo.domain.role.command;
+package com.example.demo.domain.shared.command;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

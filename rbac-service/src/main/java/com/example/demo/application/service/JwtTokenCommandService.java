@@ -76,7 +76,7 @@ public class JwtTokenCommandService {
 
 		// 查詢該使用者個人角色
 		List<RoleInfo> queryRoles = userRoleService.getUserRoles(command.getUsername(), service);
-		List<String> roles = queryRoles.stream().map(RoleInfo::getCode).collect(Collectors.toList());
+		List<String> roles = queryRoles.stream().map(r -> r.getScope().getCode()).collect(Collectors.toList());
 
 		// 取得該角色清單所具備的相關功能權限
 		Set<String> functionCodes = roleFunctionService.getFunctionsByRoleIds(service, roles).getFuncList().stream()
@@ -108,7 +108,7 @@ public class JwtTokenCommandService {
 
 			// 查詢該使用者相關角色資訊
 			List<RoleInfo> queryRoles = userService.queryRoles(userInfo.getUsername());
-			List<String> roles = queryRoles.stream().map(RoleInfo::getCode).collect(Collectors.toList());
+			List<String> roles = queryRoles.stream().map(r -> r.getScope().getCode()).collect(Collectors.toList());
 
 			// 取出相關 Service
 			String service = ContextHolder.getService();

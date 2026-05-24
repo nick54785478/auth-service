@@ -5,12 +5,13 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.demo.application.assembler.RoleAssembler;
 import com.example.demo.application.shared.dto.RoleInfoQueried;
 import com.example.demo.domain.role.aggregate.RoleInfo;
 import com.example.demo.domain.service.RoleService;
 import com.example.demo.domain.shared.summary.RoleInfoQueriedSummary;
 import com.example.demo.infra.repository.RoleInfoRepository;
-import com.example.demo.util.BaseDataTransformer;
+import com.example.demo.infra.spec.GetRolesSpecification;
 
 import lombok.AllArgsConstructor;
 
@@ -19,6 +20,7 @@ import lombok.AllArgsConstructor;
 public class RoleQueryService {
 
 	private RoleService roleService;
+	private RoleAssembler assembler;
 	private RoleInfoRepository roleInfoRepository;
 
 	/**
@@ -31,9 +33,11 @@ public class RoleQueryService {
 	 * @return List<RoleInfoQueried>
 	 */
 	@Transactional
-	public List<RoleInfoQueried> query(String service, String type, String name, String activeFlag) {
-		List<RoleInfo> roles = roleInfoRepository.findAllWithSpecification(service, type, name, activeFlag);
-		return BaseDataTransformer.transformData(roles, RoleInfoQueried.class);
+	public List<RoleInfoQueried> summary(String service, String type, String name, String activeFlag) {
+
+		GetRolesSpecification specification = new GetRolesSpecification(service, type, name, activeFlag);
+		List<RoleInfo> roles = roleInfoRepository.findAll(specification.toSpecification());
+		return assembler.transformList(roles);
 	}
 
 	/**

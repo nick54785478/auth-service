@@ -20,17 +20,23 @@ public interface RoleInfoRepository extends JpaRepository<RoleInfo, Long> {
 
 	List<RoleInfo> findByActiveFlag(YesNo activeFlag);
 
-	List<RoleInfo> findByServiceAndCodeInAndActiveFlag(String service, List<String> roles, YesNo activeFlag);
+	// 原本：findByServiceAndCodeInAndActiveFlag
+	// 修改：service -> scope.service, code -> scope.code
+	List<RoleInfo> findByScopeServiceAndScopeCodeInAndActiveFlag(String service, List<String> codes, YesNo activeFlag);
 
-	List<RoleInfo> findByServiceAndActiveFlag(String service, YesNo activeFlag);
+	// 原本：findByServiceAndActiveFlag
+	List<RoleInfo> findByScopeServiceAndActiveFlag(String service, YesNo activeFlag);
 
-	List<RoleInfo> findByIdInAndServiceAndActiveFlag(List<Long> ids, String service, YesNo activeFlag);
+	// 原本：findByIdInAndServiceAndActiveFlag
+	List<RoleInfo> findByIdInAndScopeServiceAndActiveFlag(List<Long> ids, String service, YesNo activeFlag);
 
-	List<RoleInfo> findByIdInAndServiceNot(List<Long> ids, String service);
+//	// 原本：findByIdInAndServiceNot
+//	List<RoleInfo> findByIdInAndScopeServiceNot(List<Long> ids, String service);
 
 	List<RoleInfo> findByIdInAndActiveFlag(List<Long> ids, YesNo activeFlag);
 
-	List<RoleInfo> findByServiceNotAndActiveFlag(String service, YesNo activeFlag);
+//	// 原本：findByServiceNotAndActiveFlag
+//	List<RoleInfo> findByScopeServiceNotAndActiveFlag(String service, YesNo activeFlag);
 
 	List<RoleInfo> findAll(Specification<RoleInfo> specification);
 
@@ -39,7 +45,7 @@ public interface RoleInfoRepository extends JpaRepository<RoleInfo, Long> {
 			List<Predicate> predicates = new ArrayList<>();
 
 			if (StringUtils.isNotBlank(service)) {
-				predicates.add(cb.equal(root.get("service"), service));
+				predicates.add(cb.equal(root.get("scope").get("service"), service));
 			}
 
 			if (StringUtils.isNotBlank(type)) {
@@ -47,8 +53,8 @@ public interface RoleInfoRepository extends JpaRepository<RoleInfo, Long> {
 			}
 
 			if (StringUtils.isNotBlank(name)) {
-				Predicate preName = cb.like(root.get("name"), "%" + name + "%");
-				Predicate preDesc = cb.like(root.get("description"), "%" + name + "%");
+				Predicate preName = cb.like(root.get("profile").get("name"), "%" + name + "%");
+				Predicate preDesc = cb.like(root.get("profile").get("description"), "%" + name + "%");
 				Predicate combinedPredicate = cb.or(preName, preDesc);
 				predicates.add(combinedPredicate);
 			}
@@ -70,11 +76,11 @@ public interface RoleInfoRepository extends JpaRepository<RoleInfo, Long> {
 		Specification<RoleInfo> specification = ((root, query, cb) -> {
 			List<Predicate> predicates = new ArrayList<>();
 			if (StringUtils.isNotBlank(service)) {
-				predicates.add(cb.equal(root.get("service"), service));
+				predicates.add(cb.equal(root.get("profile").get("service"), service));
 			}
 			if (StringUtils.isNotBlank(str)) {
-				Predicate predName = cb.like(root.get("name"), "%" + str + "%");
-				Predicate predCode = cb.like(root.get("code"), "%" + str + "%");
+				Predicate predName = cb.like(root.get("profile").get("name"), "%" + str + "%");
+				Predicate predCode = cb.like(root.get("scope").get("code"), "%" + str + "%");
 				Predicate combinedPredicate = cb.or(predName, predCode);
 				predicates.add(combinedPredicate);
 			}

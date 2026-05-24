@@ -76,7 +76,7 @@ public class OptionQueryService {
 	 * @return List<OptionQueried>
 	 */
 	public List<OptionQueried> getRoleOptions(String service) {
-		List<RoleInfo> roles = roleInfoRepository.findByServiceAndActiveFlag(service, YesNo.Y);
+		List<RoleInfo> roles = roleInfoRepository.findByScopeServiceAndActiveFlag(service, YesNo.Y);
 		return roles.stream().map(RoleInfo::getType).distinct().map(type -> new OptionQueried(type, type))
 				.collect(Collectors.toList());
 	}

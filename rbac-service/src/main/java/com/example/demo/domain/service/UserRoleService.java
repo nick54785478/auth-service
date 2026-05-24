@@ -42,7 +42,7 @@ public class UserRoleService {
 			List<Long> existingIds = userInfo.getRoles().stream().map(UserRole::getRoleId).collect(Collectors.toList());
 
 			// 查出該使用者在某服務的角色資料清單
-			List<RoleInfo> roles = roleInfoRepository.findByServiceAndActiveFlag(service, YesNo.Y);
+			List<RoleInfo> roles = roleInfoRepository.findByScopeServiceAndActiveFlag(service, YesNo.Y);
 
 			// 過濾出該使用者所沒有的角色資料
 			List<RoleInfo> filtered = roles.stream().filter(e -> !existingIds.contains(e.getId()))
@@ -104,7 +104,8 @@ public class UserRoleService {
 		List<RoleInfo> otherRoles = roleInfoRepository.findByIdInAndActiveFlag(currentRoleIds, YesNo.Y);
 
 		// 過濾出不屬於該服務的角色清單
-		List<RoleInfo> filtered = otherRoles.stream().filter(role -> !StringUtils.equals(role.getService(), service))
+		List<RoleInfo> filtered = otherRoles.stream()
+				.filter(role -> !StringUtils.equals(role.getScope().getService(), service))
 				.collect(Collectors.toList());
 
 		roleList.addAll(roles);
@@ -133,7 +134,7 @@ public class UserRoleService {
 				.filter(e -> StringUtils.equals(e.getActiveFlag().getValue(), YesNo.Y.getValue()))
 				.map(UserRole::getRoleId).collect(Collectors.toList());
 
-		return roleInfoRepository.findByIdInAndServiceAndActiveFlag(roleIds, service, YesNo.Y);
+		return roleInfoRepository.findByIdInAndScopeServiceAndActiveFlag(roleIds, service, YesNo.Y);
 
 	}
 }

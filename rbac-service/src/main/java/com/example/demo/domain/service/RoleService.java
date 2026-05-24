@@ -12,7 +12,9 @@ import org.springframework.stereotype.Service;
 import com.example.demo.domain.function.aggregate.FunctionInfo;
 import com.example.demo.domain.role.aggregate.RoleInfo;
 import com.example.demo.domain.role.aggregate.entity.RoleFunction;
-import com.example.demo.domain.role.command.CreateOrUpdateRoleCommand;
+import com.example.demo.domain.role.aggregate.vo.RoleProfile;
+import com.example.demo.domain.role.aggregate.vo.RoleScope;
+import com.example.demo.domain.shared.command.CreateOrUpdateRoleCommand;
 import com.example.demo.domain.shared.detail.RoleFunctionQueriedDetail;
 import com.example.demo.domain.shared.summary.RoleInfoQueriedSummary;
 import com.example.demo.infra.exception.ValidationException;
@@ -46,15 +48,18 @@ public class RoleService {
 		Map<Long, RoleInfo> map = roles.stream().collect(Collectors.toMap(RoleInfo::getId, Function.identity()));
 
 		List<RoleInfo> roleList = commands.stream().map(command -> {
+			// 建立 Role Scope 及 Role Profile
+			RoleScope scope = RoleScope.of(command.getService(), command.getCode());
+			RoleProfile profile = RoleProfile.of(command.getName(), command.getDescription());
 
 			// 修改
 			if (!Objects.isNull(command.getId()) && !Objects.isNull(map.get(command.getId()))) {
 				RoleInfo role = map.get(command.getId());
-				role.update(command);
+				role.update(scope, profile, command.getType());
 				return role;
 			} else {
 				// 新增
-				return RoleInfo.create(command);
+				return RoleInfo.create(scope, profile, command.getType());
 			}
 		}).collect(Collectors.toList());
 
@@ -82,9 +87,10 @@ public class RoleService {
 						roleFunction.getDescription(), roleFunction.getActiveFlag().name());
 			}).collect(Collectors.toList());
 
-			return RoleInfoQueriedSummary.builder().id(id).service(service).code(role.getCode())
-					.description(role.getDescription()).name(role.getName()).type(role.getType())
-					.functions(roleFunctionList).activeFlag(role.getActiveFlag().getValue()).build();
+			return RoleInfoQueriedSummary.builder().id(id).service(service).code(role.getScope().getCode())
+					.description(role.getProfile().getDescription()).name(role.getProfile().getName())
+					.type(role.getType()).functions(roleFunctionList).activeFlag(role.getActiveFlag().getValue())
+					.build();
 		} else {
 			throw new ValidationException("VALIDATE_FAILED", "該角色 ID 有誤，查詢失敗");
 		}

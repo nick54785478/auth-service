@@ -77,11 +77,12 @@ public class GroupService {
 			List<Long> roleIds = group.getRoles().stream().filter(e -> Objects.equals(e.getActiveFlag(), YesNo.Y))
 					.map(GroupRole::getRoleId).collect(Collectors.toList());
 
-			List<RoleInfo> roles = roleInfoRepository.findByIdInAndServiceAndActiveFlag(roleIds, service, YesNo.Y);
+			List<RoleInfo> roles = roleInfoRepository.findByIdInAndScopeServiceAndActiveFlag(roleIds, service, YesNo.Y);
 
 			List<GroupRoleQueriedDetail> groupRoles = roles.stream().map(role -> {
-				return GroupRoleQueriedDetail.builder().id(role.getId()).service(service).code(role.getCode())
-						.name(role.getName()).description(role.getDescription()).build();
+				return GroupRoleQueriedDetail.builder().id(role.getId()).service(service)
+						.code(role.getScope().getCode()).name(role.getProfile().getName())
+						.description(role.getProfile().getDescription()).build();
 			}).collect(Collectors.toList());
 
 			return GroupInfoQueriedSummary.builder().id(id).service(service).type(group.getType()).code(group.getCode())
