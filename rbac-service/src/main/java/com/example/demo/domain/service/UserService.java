@@ -122,7 +122,7 @@ public class UserService {
 				.map(UserRole::getRoleId).collect(Collectors.toList());
 
 		// 查詢群組資料
-		List<GroupInfo> groups = groupRepository.findByIdInAndServiceAndActiveFlag(groupIds, service, YesNo.Y);
+		List<GroupInfo> groups = groupRepository.findByIdInAndScopeServiceAndActiveFlag(groupIds, service, YesNo.Y);
 		// 查詢角色資料
 		List<RoleInfo> roles = roleRepository.findByIdInAndScopeServiceAndActiveFlag(roleIds, service, YesNo.Y);
 		// 放置個人功能權限清單

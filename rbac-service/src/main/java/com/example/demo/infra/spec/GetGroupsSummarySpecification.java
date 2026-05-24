@@ -16,10 +16,14 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class GetGroupsSpecification {
+public class GetGroupsSummarySpecification {
+	
 	private String service;
+	
 	private String type;
+	
 	private String name;
+	
 	private String activeFlag;
 	
 	/**
@@ -31,7 +35,7 @@ public class GetGroupsSpecification {
 			List<Predicate> predicates = new ArrayList<>();
 
 			if (StringUtils.isNotBlank(service)) {
-				predicates.add(cb.equal(root.get("service"), service));
+				predicates.add(cb.equal(root.get("scope").get("service"), service));
 			}
 
 			if (StringUtils.isNotBlank(type)) {
@@ -39,8 +43,8 @@ public class GetGroupsSpecification {
 			}
 
 			if (StringUtils.isNotBlank(name)) {
-				Predicate preName = cb.like(root.get("name"), "%" + name + "%");
-				Predicate preDesc = cb.like(root.get("description"), "%" + name + "%");
+				Predicate preName = cb.like(root.get("profile").get("name"), "%" + name + "%");
+				Predicate preDesc = cb.like(root.get("profile").get("description"), "%" + name + "%");
 				Predicate combinedPredicate = cb.or(preName, preDesc);
 				predicates.add(combinedPredicate);
 			}

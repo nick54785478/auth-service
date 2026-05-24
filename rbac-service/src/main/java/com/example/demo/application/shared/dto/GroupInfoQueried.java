@@ -26,9 +26,6 @@ public class GroupInfoQueried {
 
 	private String description; // 敘述
 
-//	@Default
-//	private List<RoleInfoQueried> roles = new ArrayList<>();
-
 	@Default
 	private YesNo activeFlag = YesNo.Y; // 是否有效
 }

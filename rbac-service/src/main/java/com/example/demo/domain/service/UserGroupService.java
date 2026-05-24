@@ -42,7 +42,7 @@ public class UserGroupService {
 			List<Long> existingIds = userInfo.getGroups().stream().map(UserGroup::getGroupId)
 					.collect(Collectors.toList());
 
-			List<GroupInfo> groups = groupInfoRepository.findByServiceAndActiveFlag(service, YesNo.Y);
+			List<GroupInfo> groups = groupInfoRepository.findByScopeServiceAndActiveFlag(service, YesNo.Y);
 
 			// 過濾出該使用者沒有的群組資料
 			List<GroupInfo> filtered = groups.stream().filter(e -> !existingIds.contains(e.getId()))
@@ -106,7 +106,8 @@ public class UserGroupService {
 
 		// 過濾出不屬於該服務的群組清單
 		List<GroupInfo> filtered = otherGroups.stream()
-				.filter(group -> !StringUtils.equals(group.getService(), service)).collect(Collectors.toList());
+				.filter(group -> !StringUtils.equals(group.getScope().getService(), service))
+				.collect(Collectors.toList());
 
 		groupList.addAll(groups);
 		groupList.addAll(filtered);
@@ -132,6 +133,6 @@ public class UserGroupService {
 		List<Long> groupIds = userInfo.getGroups().stream().filter(e -> e.getActiveFlag() != YesNo.Y)
 				.map(UserGroup::getGroupId).collect(Collectors.toList());
 		// 透過 ID 取得 Group 資料
-		return groupInfoRepository.findByIdInAndServiceAndActiveFlag(groupIds, service, YesNo.Y);
+		return groupInfoRepository.findByIdInAndScopeServiceAndActiveFlag(groupIds, service, YesNo.Y);
 	}
 }

@@ -11,7 +11,7 @@ import com.example.demo.domain.role.aggregate.RoleInfo;
 import com.example.demo.domain.service.RoleService;
 import com.example.demo.domain.shared.summary.RoleInfoQueriedSummary;
 import com.example.demo.infra.repository.RoleInfoRepository;
-import com.example.demo.infra.spec.GetRolesSpecification;
+import com.example.demo.infra.spec.GetRolesSummarySpecification;
 
 import lombok.AllArgsConstructor;
 
@@ -35,7 +35,7 @@ public class RoleQueryService {
 	@Transactional
 	public List<RoleInfoQueried> summary(String service, String type, String name, String activeFlag) {
 
-		GetRolesSpecification specification = new GetRolesSpecification(service, type, name, activeFlag);
+		GetRolesSummarySpecification specification = new GetRolesSummarySpecification(service, type, name, activeFlag);
 		List<RoleInfo> roles = roleInfoRepository.findAll(specification.toSpecification());
 		return assembler.transformList(roles);
 	}

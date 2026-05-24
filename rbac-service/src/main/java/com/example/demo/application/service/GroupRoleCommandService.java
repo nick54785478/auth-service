@@ -5,7 +5,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.demo.domain.group.command.UpdateGroupRolesCommand;
+import com.example.demo.application.shared.command.UpdateGroupRolesCommand;
 import com.example.demo.domain.service.GroupRoleService;
 
 import lombok.AllArgsConstructor;

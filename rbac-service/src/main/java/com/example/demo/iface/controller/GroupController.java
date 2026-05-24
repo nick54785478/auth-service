@@ -14,9 +14,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.application.service.GroupCommandService;
 import com.example.demo.application.service.GroupQueryService;
+import com.example.demo.application.shared.command.CreateGroupCommand;
+import com.example.demo.application.shared.command.CreateOrUpdateGroupCommand;
 import com.example.demo.application.shared.dto.GroupInfoQueried;
-import com.example.demo.domain.group.command.CreateGroupCommand;
-import com.example.demo.domain.group.command.CreateOrUpdateGroupCommand;
 import com.example.demo.iface.dto.request.CreateGroupResource;
 import com.example.demo.iface.dto.request.CreateOrUpdateGroupResource;
 import com.example.demo.iface.dto.response.response.GroupCreatedOrUpdatedResource;

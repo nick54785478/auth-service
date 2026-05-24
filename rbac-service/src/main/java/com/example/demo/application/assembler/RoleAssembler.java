@@ -11,7 +11,7 @@ import com.example.demo.domain.role.aggregate.vo.RoleProfile;
 import com.example.demo.domain.role.aggregate.vo.RoleScope;
 
 /**
- * 角色資料轉換器
+ * 角色資料轉換器 (Role Assembler)
  */
 @Component
 public class RoleAssembler {
@@ -30,7 +30,7 @@ public class RoleAssembler {
 		RoleScope scope = role.getScope();
 		RoleProfile profile = role.getProfile();
 
-		// 使用三元運算子或 Optional 防禦內嵌物件為空的情況 (視你的業務嚴格程度而定)
+		// 使用三元運算子或 Optional 防禦內嵌物件為空的情況 (視業務嚴格程度而定)
 		String service = scope != null ? scope.getService() : null;
 		String code = scope != null ? scope.getCode() : null;
 		String name = profile != null ? profile.getName() : null;

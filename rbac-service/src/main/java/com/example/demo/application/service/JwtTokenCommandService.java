@@ -72,7 +72,8 @@ public class JwtTokenCommandService {
 
 		// 查詢該使用者所在的群組
 		List<GroupInfo> queryGroups = userGroupService.queryGroups(command.getUsername(), service);
-		List<String> groups = queryGroups.stream().map(GroupInfo::getCode).collect(Collectors.toList());
+		List<String> groups = queryGroups.stream().map(group -> group.getScope().getCode())
+				.collect(Collectors.toList());
 
 		// 查詢該使用者個人角色
 		List<RoleInfo> queryRoles = userRoleService.getUserRoles(command.getUsername(), service);
@@ -104,7 +105,8 @@ public class JwtTokenCommandService {
 		if (!Objects.isNull(userInfo)) {
 			// 查詢該使用者群組資訊
 			List<GroupInfo> queryGroups = userService.queryGroups(userInfo.getUsername());
-			List<String> groups = queryGroups.stream().map(GroupInfo::getCode).collect(Collectors.toList());
+			List<String> groups = queryGroups.stream().map(group -> group.getScope().getCode())
+					.collect(Collectors.toList());
 
 			// 查詢該使用者相關角色資訊
 			List<RoleInfo> queryRoles = userService.queryRoles(userInfo.getUsername());

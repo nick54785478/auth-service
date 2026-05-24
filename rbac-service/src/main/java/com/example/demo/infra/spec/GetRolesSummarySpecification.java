@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class GetRolesSpecification {
+public class GetRolesSummarySpecification {
 
 	private String service;
 

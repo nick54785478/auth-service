@@ -9,9 +9,11 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.example.demo.application.shared.command.CreateOrUpdateGroupCommand;
 import com.example.demo.domain.group.aggregate.GroupInfo;
 import com.example.demo.domain.group.aggregate.entity.GroupRole;
-import com.example.demo.domain.group.command.CreateOrUpdateGroupCommand;
+import com.example.demo.domain.group.aggregate.vo.GroupProfile;
+import com.example.demo.domain.group.aggregate.vo.GroupScope;
 import com.example.demo.domain.role.aggregate.RoleInfo;
 import com.example.demo.domain.shared.detail.GroupRoleQueriedDetail;
 import com.example.demo.domain.shared.summary.GroupInfoQueriedSummary;
@@ -46,16 +48,18 @@ public class GroupService {
 		Map<Long, GroupInfo> map = roles.stream().collect(Collectors.toMap(GroupInfo::getId, Function.identity()));
 
 		List<GroupInfo> groupList = commands.stream().map(command -> {
+			// 建立 VO
+			GroupScope scope = GroupScope.of(command.getService(), command.getCode());
+			GroupProfile profile = GroupProfile.of(command.getName(), command.getDescription());
+
 			// 修改
 			if (!Objects.isNull(command.getId()) && !Objects.isNull(map.get(command.getId()))) {
 				GroupInfo group = map.get(command.getId());
-				group.update(command);
+				group.update(scope, profile, command.getType(), command.getActiveFlag());
 				return group;
 			} else {
 				// 新增
-				GroupInfo group = new GroupInfo();
-				group.create(command);
-				return group;
+				return GroupInfo.create(scope, profile, command.getType());
 			}
 		}).collect(Collectors.toList());
 
@@ -85,8 +89,9 @@ public class GroupService {
 						.description(role.getProfile().getDescription()).build();
 			}).collect(Collectors.toList());
 
-			return GroupInfoQueriedSummary.builder().id(id).service(service).type(group.getType()).code(group.getCode())
-					.name(group.getName()).description(group.getDescription()).roles(groupRoles)
+			return GroupInfoQueriedSummary.builder().id(id).service(service).type(group.getType())
+					.code(group.getScope().getCode()).name(group.getProfile().getName())
+					.description(group.getProfile().getDescription()).roles(groupRoles)
 					.activeFlag(group.getActiveFlag()).build();
 
 		} else {

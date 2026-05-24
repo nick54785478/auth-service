@@ -10,11 +10,13 @@ import java.util.stream.Collectors;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.example.demo.domain.group.aggregate.entity.GroupRole;
-import com.example.demo.domain.group.command.CreateGroupCommand;
-import com.example.demo.domain.group.command.CreateOrUpdateGroupCommand;
+import com.example.demo.domain.group.aggregate.vo.GroupProfile;
+import com.example.demo.domain.group.aggregate.vo.GroupScope;
 import com.example.demo.shared.enums.YesNo;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.EnumType;
@@ -26,6 +28,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -37,74 +41,64 @@ import lombok.ToString;
 @Entity
 @Getter
 @ToString
-@NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "group_info")
+@NoArgsConstructor(access = AccessLevel.PROTECTED) // 隱藏預設建構子，保護 Aggregate
+@Table(name = "group_info", uniqueConstraints = {
+		@UniqueConstraint(name = "uk_group_service_code", columnNames = { "service", "code" }) })
 @EntityListeners(AuditingEntityListener.class)
 public class GroupInfo {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	
-	private String service;
 
+	@Embedded
+	private GroupScope scope; // 替換原本的 service, code
+
+	@Embedded
+	private GroupProfile profile; // 替換原本的 name, description
+
+	@Column(name = "type")
 	private String type; // 群組種類
-
-	private String name; // 名稱
-
-	private String code; // 群組代號
 
 	// 使用懶加載，避免 N+1 query 效能問題
 	@OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
 	@JoinColumn(name = "group_id")
-	private List<GroupRole> roles = new ArrayList<>(); // 角色所屬群組
-
-	private String description; // 敘述
+	private List<GroupRole> roles = new ArrayList<>(); // 群組所屬角色
 
 	@Enumerated(EnumType.STRING)
 	private YesNo activeFlag = YesNo.Y; // 是否有效
 
 	/**
-	 * 建立一筆群組資料
+	 * 工廠方法: 新增一筆群組資料
 	 * 
-	 * @param command
+	 * @param scope   群組範圍
+	 * @param profile 群組描述
+	 * @param type    群組種類
+	 * @return 群組資料
 	 */
-	public void create(CreateGroupCommand command) {
-		this.service = command.getService();
-		this.type = command.getType();
-		this.name = command.getName();
-		this.code = command.getCode();
-		this.description = command.getDescription();
-		this.activeFlag = YesNo.Y;
-	}
-
-	/**
-	 * 建立一筆群組資料
-	 * 
-	 * @param command
-	 */
-	public void create(CreateOrUpdateGroupCommand command) {
-		this.service = command.getService();
-		this.type = command.getType();
-		this.name = command.getName();
-		this.code = command.getCode();
-		this.description = command.getDescription();
-		this.activeFlag = YesNo.Y;
+	public static GroupInfo create(GroupScope scope, GroupProfile profile, String type) {
+		GroupInfo group = new GroupInfo();
+		group.scope = scope;
+		group.profile = profile;
+		group.type = type;
+		group.activeFlag = YesNo.Y;
+		return group;
 	}
 
 	/**
 	 * 更新一筆群組資料
 	 * 
-	 * @param command
+	 * @param scope      群組範圍
+	 * @param profile    群組描述
+	 * @param type       群組種類
+	 * @param activeFlag 是否生效
 	 */
-	public void update(CreateOrUpdateGroupCommand command) {
-		this.service = command.getService();
-		this.name = command.getName();
-		this.type = command.getType();
-		this.code = command.getCode();
-		this.description = command.getDescription();
-		this.activeFlag = YesNo.valueOf(command.getActiveFlag());
+	public void update(GroupScope scope, GroupProfile profile, String type, String activeFlag) {
+		this.scope = scope;
+		this.profile = profile;
+		this.type = type;
+		this.activeFlag = YesNo.valueOf(activeFlag);
 	}
 
 	/**

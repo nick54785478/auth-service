@@ -7,9 +7,11 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.demo.application.shared.command.CreateGroupCommand;
+import com.example.demo.application.shared.command.CreateOrUpdateGroupCommand;
 import com.example.demo.domain.group.aggregate.GroupInfo;
-import com.example.demo.domain.group.command.CreateGroupCommand;
-import com.example.demo.domain.group.command.CreateOrUpdateGroupCommand;
+import com.example.demo.domain.group.aggregate.vo.GroupProfile;
+import com.example.demo.domain.group.aggregate.vo.GroupScope;
 import com.example.demo.domain.service.GroupService;
 import com.example.demo.infra.repository.GroupInfoRepository;
 
@@ -30,8 +32,9 @@ public class GroupCommandService {
 	 * @return GroupCreated
 	 */
 	public void create(CreateGroupCommand command) {
-		GroupInfo group = new GroupInfo();
-		group.create(command);
+		GroupScope scope = GroupScope.of(command.getService(), command.getCode());
+		GroupProfile profile = GroupProfile.of(command.getName(), command.getDescription());
+		GroupInfo group =  GroupInfo.create(scope, profile, command.getType());
 		groupInfoRepository.save(group);
 	}
 
