@@ -74,6 +74,7 @@ AuthService 是一個基於 RBAC (Role-Based Access Control) 模型開發的會�
 >* Spring Boot 3.3.5
 >* JDK 17
 >* Lombok & ModelMapper (簡化代碼與物件轉換)
+>* Maven 3.9.12
 
 **前端環境**
 >* Angular 18.2.0
