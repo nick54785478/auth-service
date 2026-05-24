@@ -18,7 +18,7 @@ public class AuthAssembler {
 	 * @param function 功能權限清單
 	 * @return 驗證及轉換後的資料
 	 */
-	public TokenValidatedAndParsed assembleTokenParsed(String username, List<String> roles, List<String> groups,
+	public TokenValidatedAndParsed assembleTokenParsedData(String username, List<String> roles, List<String> groups,
 			List<String> functions) {
 		return new TokenValidatedAndParsed(username, roles, groups, functions);
 	}

@@ -16,9 +16,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.application.service.SettingCommandService;
 import com.example.demo.application.service.SettingQueryService;
+import com.example.demo.application.shared.dto.CreateSettingCommand;
 import com.example.demo.application.shared.dto.SettingQueried;
-import com.example.demo.domain.setting.command.CreateSettingCommand;
-import com.example.demo.domain.setting.command.UpdateSettingCommand;
+import com.example.demo.application.shared.dto.UpdateSettingCommand;
 import com.example.demo.iface.dto.request.CreateSettingResource;
 import com.example.demo.iface.dto.request.UpdateSettingResource;
 import com.example.demo.iface.dto.response.response.SettingCreatedResource;
@@ -75,7 +75,7 @@ public class SettingController {
 	}
 
 	/**
-	 * 修改 設定
+	 * 修改設定
 	 * 
 	 * @param id
 	 * @param resource

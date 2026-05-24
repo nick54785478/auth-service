@@ -1,5 +1,7 @@
 package com.example.demo.application.shared.dto;
 
+import com.example.demo.shared.enums.YesNo;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -27,5 +29,5 @@ public class SettingQueried {
 
 	private Integer priorityNo; // 順序號(從 1 開始)
 
-	private String activeFlag; // 是否有效
+	private YesNo activeFlag; // 是否有效
 }

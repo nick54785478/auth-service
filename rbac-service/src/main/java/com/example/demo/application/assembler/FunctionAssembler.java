@@ -27,7 +27,7 @@ public class FunctionAssembler {
 		FunctionScope scope = function.getScope();
 		FunctionProfile profile = function.getProfile();
 		return new FunctionInfoQueried(function.getId(), scope.getService(), function.getType(), scope.getCode(),
-				profile.getName(), function.getActionType().getLabel(), profile.getDescription(),
+				profile.getName(), function.getActionType().getCode(), profile.getDescription(),
 				function.getActiveFlag());
 	}
 

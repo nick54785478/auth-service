@@ -21,14 +21,13 @@ public class AuthCommandService {
 	 * 
 	 * @param token  JWToken
 	 * @param 轉換後的資料
-	 * 
 	 */
 	public TokenValidatedAndParsed validateAndParseToken(String token) {
 		boolean validated = jwTokenManager.validateToken(token);
 		if (!validated) {
 			throw new ValidationException("VALIDATE_FAILED", "Token 驗證失敗，權限有問題");
 		}
-		return assembler.assembleTokenParsed(jwTokenManager.getUsername(token), jwTokenManager.getRoleList(token),
+		return assembler.assembleTokenParsedData(jwTokenManager.getUsername(token), jwTokenManager.getRoleList(token),
 				jwTokenManager.getGroupList(token), jwTokenManager.getFuncList(token));
 	}
 }

@@ -4,11 +4,11 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.example.demo.application.assembler.SettingAssembler;
 import com.example.demo.application.shared.dto.SettingQueried;
 import com.example.demo.domain.setting.aggregate.Setting;
 import com.example.demo.infra.repository.SettingRepository;
 import com.example.demo.infra.spec.GetSettingsSpecification;
-import com.example.demo.util.BaseDataTransformer;
 
 import lombok.AllArgsConstructor;
 
@@ -16,6 +16,7 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class SettingQueryService {
 
+	private SettingAssembler assembler;
 	private SettingRepository settingRepository;
 
 	/**
@@ -32,7 +33,7 @@ public class SettingQueryService {
 		GetSettingsSpecification specifiaction = new GetSettingsSpecification(service, dataType, type, name,
 				activeFlag);
 		List<Setting> settingList = settingRepository.findAll(specifiaction.toSpecification());
-		return BaseDataTransformer.transformData(settingList, SettingQueried.class);
+		return assembler.transformSettings(settingList);
 	}
 
 }

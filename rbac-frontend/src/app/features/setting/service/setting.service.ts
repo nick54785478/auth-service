@@ -5,7 +5,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs/internal/Observable';
 import { SettingQueried } from '../models/setting-query.model';
 import { BaseResponse } from '../../../shared/models/base-response.model';
-import { UpdateSetting } from '../models/update-setting-request.model';
+import { UpdateSettingResource } from '../models/update-setting-request.model';
 import { map } from 'rxjs';
 import { SettingSummaryGottenResoruce } from '../models/setting-summary-gotten-response.model';
 
@@ -32,7 +32,7 @@ export class SettingService {
    * @param request
    * @return Observable<any>
    */
-  update(id: number, request: UpdateSetting): Observable<any> {
+  update(id: number, request: UpdateSettingResource): Observable<any> {
     const url = this.baseApiUrl + '/settings/' + id;
     return this.http.put(url, request);
   }
@@ -56,7 +56,7 @@ export class SettingService {
       .set('dataType', dataType ? dataType : '')
       .set('type', type ? type : '')
       .set('name', name ? name : '')
-      .set('activeFlag', activeFlag ? activeFlag : '');
+      .set('activeFlag', activeFlag ? activeFlag : 'Y');
     return this.http.get<SettingSummaryGottenResoruce>(url, { params }).pipe(
       map((res) => {
         return res?.data;

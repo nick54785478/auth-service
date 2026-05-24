@@ -30,7 +30,7 @@ public class GetSettingsSpecification {
 			List<Predicate> predicates = new ArrayList<>();
 
 			if (StringUtils.isNotBlank(service)) {
-				predicates.add(cb.equal(root.get("service"), service));
+				predicates.add(cb.equal(root.get("scope").get("service"), service));
 			}
 
 			if (StringUtils.isNotBlank(dataType)) {
@@ -42,7 +42,7 @@ public class GetSettingsSpecification {
 			}
 
 			if (StringUtils.isNotBlank(name)) {
-				predicates.add(cb.like(root.get("name"), name));
+				predicates.add(cb.like(root.get("profile").get("name"), name));
 			}
 
 			if (StringUtils.isNotBlank(activeFlag)) {

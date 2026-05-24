@@ -14,9 +14,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.application.service.FunctionCommandService;
 import com.example.demo.application.service.FunctionQueryService;
+import com.example.demo.application.shared.command.CreateFunctionCommand;
+import com.example.demo.application.shared.command.UpsertFunctionCommand;
 import com.example.demo.application.shared.dto.FunctionInfoQueried;
-import com.example.demo.domain.function.command.CreateFunctionCommand;
-import com.example.demo.domain.function.command.UpsertFunctionCommand;
 import com.example.demo.iface.dto.request.CreateFunctionResource;
 import com.example.demo.iface.dto.request.UpsertFunctionResource;
 import com.example.demo.iface.dto.response.response.FunctionCreatedResource;

@@ -43,9 +43,11 @@ public class OptionQueryService {
 	 * @return List<OptionQueried>
 	 */
 	public List<OptionQueried> getSettingTypes(String service, String type) {
-		return settingRepository.findByServiceAndDataTypeAndActiveFlag(service, type, YesNo.Y).stream().map(setting -> {
-			return new OptionQueried(setting.getId(), setting.getName(), setting.getCode());
-		}).collect(Collectors.toList());
+		return settingRepository.findByScopeServiceAndDataTypeAndActiveFlag(service, type, YesNo.Y).stream()
+				.map(setting -> {
+					return new OptionQueried(setting.getId(), setting.getProfile().getName(),
+							setting.getScope().getCode());
+				}).collect(Collectors.toList());
 	}
 
 	/**

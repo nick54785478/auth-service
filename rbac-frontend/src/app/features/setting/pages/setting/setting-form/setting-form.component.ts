@@ -12,7 +12,7 @@ import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { BaseFormCompoent } from '../../../../../shared/component/base/base-form.component';
 import { finalize } from 'rxjs';
 import { SettingQueried } from '../../../models/setting-query.model';
-import { UpdateSetting } from '../../../models/update-setting-request.model';
+import { UpdateSettingResource } from '../../../models/update-setting-request.model';
 import { SettingType } from '../../../../../core/enums/setting-type.enum';
 import { CommonModule, Location } from '@angular/common';
 
@@ -37,7 +37,7 @@ export class SettingFormComponent
     public ref: DynamicDialogRef,
     private settingService: SettingService,
     private optionService: OptionService,
-    private systemMessageService: SystemMessageService
+    private systemMessageService: SystemMessageService,
   ) {
     super();
   }
@@ -130,7 +130,7 @@ export class SettingFormComponent
           // 無論成功或失敗都會執行
           this.clear();
           // this.loading = false;
-        })
+        }),
       )
       .subscribe({
         next: (res) => {
@@ -148,7 +148,7 @@ export class SettingFormComponent
    * 修改設定資料
    */
   onUpdateSetting() {
-    const request: UpdateSetting = { ...this.formGroup.value };
+    const request: UpdateSettingResource = { ...this.formGroup.value };
     console.log(request);
     let id = this.dialogConfig.data['data'].id;
     this.settingService
@@ -157,7 +157,7 @@ export class SettingFormComponent
         finalize(() => {
           // 無論成功或失敗都會執行
           this.clear();
-        })
+        }),
       )
       .subscribe({
         next: (res) => {

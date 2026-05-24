@@ -7,11 +7,11 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.demo.application.shared.command.CreateFunctionCommand;
+import com.example.demo.application.shared.command.UpsertFunctionCommand;
 import com.example.demo.domain.function.aggregate.FunctionInfo;
 import com.example.demo.domain.function.aggregate.vo.FunctionProfile;
 import com.example.demo.domain.function.aggregate.vo.FunctionScope;
-import com.example.demo.domain.function.command.CreateFunctionCommand;
-import com.example.demo.domain.function.command.UpsertFunctionCommand;
 import com.example.demo.domain.service.FunctionService;
 import com.example.demo.infra.repository.FunctionInfoRepository;
 

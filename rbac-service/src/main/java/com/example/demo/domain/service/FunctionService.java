@@ -8,10 +8,10 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.example.demo.application.shared.command.UpsertFunctionCommand;
 import com.example.demo.domain.function.aggregate.FunctionInfo;
 import com.example.demo.domain.function.aggregate.vo.FunctionProfile;
 import com.example.demo.domain.function.aggregate.vo.FunctionScope;
-import com.example.demo.domain.function.command.UpsertFunctionCommand;
 import com.example.demo.infra.repository.FunctionInfoRepository;
 
 import lombok.AllArgsConstructor;

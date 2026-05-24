@@ -3,9 +3,11 @@ package com.example.demo.domain.service;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
+import com.example.demo.application.shared.dto.CreateSettingCommand;
+import com.example.demo.application.shared.dto.UpdateSettingCommand;
 import com.example.demo.domain.setting.aggregate.Setting;
-import com.example.demo.domain.setting.command.CreateSettingCommand;
-import com.example.demo.domain.setting.command.UpdateSettingCommand;
+import com.example.demo.domain.setting.aggregate.vo.SettingProfile;
+import com.example.demo.domain.setting.aggregate.vo.SettingScope;
 import com.example.demo.infra.exception.ValidationException;
 import com.example.demo.infra.repository.SettingRepository;
 
@@ -28,9 +30,12 @@ public class SettingService {
 		// 領域檢核:
 		this.checkSetting(command.getType(), command.getPriorityNo());
 
+		SettingScope scope = SettingScope.of(command.getService(), command.getCode());
+		SettingProfile profile = SettingProfile.of(command.getName(), command.getDescription());
+
 		// 進行新增動作
-		Setting setting = new Setting();
-		setting.create(command);
+		Setting setting = Setting.create(scope, profile, command.getDataType(), command.getType(), command.getValue(),
+				command.getPriorityNo());
 		settingRepository.save(setting);
 	}
 
@@ -40,12 +45,13 @@ public class SettingService {
 	 * @param command {@link UpdateSettingCommand}
 	 */
 	public void update(UpdateSettingCommand command) {
-		// 領域檢核:
+		// 領域檢核: 檢查資料
 		this.checkSetting(command.getType(), command.getPriorityNo());
 
-		// 檢查資料
 		settingRepository.findById(command.getId()).ifPresentOrElse(setting -> {
-			setting.update(command);
+			SettingProfile profile = SettingProfile.of(command.getName(), command.getDescription());
+			setting.update(profile, command.getDataType(), command.getType(), command.getValue(),
+					command.getPriorityNo(), command.getActiveFlag());
 			settingRepository.save(setting);
 		}, () -> {
 			throw new ValidationException("VALIDATE_FAILED", "查無此資料，更新失敗");
