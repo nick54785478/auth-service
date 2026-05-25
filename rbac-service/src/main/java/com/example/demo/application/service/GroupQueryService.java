@@ -8,9 +8,9 @@ import org.springframework.transaction.annotation.Transactional;
 import com.example.demo.application.assembler.GroupAssembler;
 import com.example.demo.application.shared.dto.GroupInfoQueried;
 import com.example.demo.domain.group.aggregate.GroupInfo;
+import com.example.demo.domain.group.repository.GroupInfoRepository;
 import com.example.demo.domain.service.GroupService;
 import com.example.demo.domain.shared.summary.GroupInfoQueriedSummary;
-import com.example.demo.infra.repository.GroupInfoRepository;
 import com.example.demo.infra.spec.GetGroupsSummarySpecification;
 
 import lombok.AllArgsConstructor;
@@ -38,7 +38,7 @@ public class GroupQueryService {
 	public List<GroupInfoQueried> summary(String service, String type, String name, String activeFlag) {
 		GetGroupsSummarySpecification specification = new GetGroupsSummarySpecification(service, type, name,
 				activeFlag);
-		List<GroupInfo> groups = groupInfoRepository.findAll(specification.toSpecification());
+		List<GroupInfo> groups = groupInfoRepository.findAll(specification);
 		log.info("groups: {}", groups);
 		return assembler.transformGroups(groups);
 	}

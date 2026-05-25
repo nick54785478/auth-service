@@ -1,4 +1,4 @@
-package com.example.demo.infra.repository;
+package com.example.demo.infra.persistence;
 
 import java.util.List;
 
@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.example.demo.domain.user.aggregate.UserInfo;;
 
-public interface UserInfoRepository extends JpaRepository<UserInfo, Long> {
+public interface UserInfoPersistence extends JpaRepository<UserInfo, Long> {
 
 	List<UserInfo> findByIdIn(List<Long> ids);
 

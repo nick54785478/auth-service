@@ -9,12 +9,12 @@ import org.springframework.stereotype.Service;
 
 import com.example.demo.domain.group.aggregate.GroupInfo;
 import com.example.demo.domain.group.aggregate.entity.GroupRole;
+import com.example.demo.domain.group.repository.GroupInfoRepository;
 import com.example.demo.domain.role.aggregate.RoleInfo;
+import com.example.demo.domain.role.repository.RoleInfoRepository;
 import com.example.demo.domain.shared.detail.GroupRoleQueriedDetail;
 import com.example.demo.domain.shared.summary.GroupInfoQueriedSummary;
 import com.example.demo.infra.exception.ValidationException;
-import com.example.demo.infra.repository.GroupInfoRepository;
-import com.example.demo.infra.repository.RoleInfoRepository;
 import com.example.demo.shared.enums.YesNo;
 
 import lombok.AllArgsConstructor;

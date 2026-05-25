@@ -1,4 +1,4 @@
-package com.example.demo.infra.repository;
+package com.example.demo.infra.persistence;
 
 import java.util.List;
 
@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.example.demo.domain.setting.aggregate.Setting;
 import com.example.demo.shared.enums.YesNo;
 
-public interface SettingRepository extends JpaRepository<Setting, Long> {
+public interface SettingPersistence extends JpaRepository<Setting, Long> {
 
 	List<Setting> findByScopeServiceAndDataTypeAndActiveFlag(String service, String dataType, YesNo activeFlag);
 

@@ -17,11 +17,11 @@ import com.example.demo.domain.function.aggregate.FunctionInfo;
 import com.example.demo.domain.group.aggregate.GroupInfo;
 import com.example.demo.domain.role.aggregate.RoleInfo;
 import com.example.demo.domain.user.aggregate.UserInfo;
-import com.example.demo.infra.repository.FunctionInfoRepository;
-import com.example.demo.infra.repository.GroupInfoRepository;
-import com.example.demo.infra.repository.RoleInfoRepository;
-import com.example.demo.infra.repository.SettingRepository;
-import com.example.demo.infra.repository.UserInfoRepository;
+import com.example.demo.domain.user.repository.UserInfoRepository;
+import com.example.demo.infra.persistence.FunctionInfoPersistence;
+import com.example.demo.infra.persistence.GroupInfoPersistence;
+import com.example.demo.infra.persistence.RoleInfoPersistence;
+import com.example.demo.infra.persistence.SettingPersistence;
 import com.example.demo.infra.spec.GetGroupOptionsSpecification;
 import com.example.demo.infra.spec.GetRoleOptionsSpecification;
 import com.example.demo.shared.enums.YesNo;
@@ -35,11 +35,11 @@ public class OptionQueryService {
 	private UserAssembler userAssembler;
 	private RoleAssembler roleAssembler;
 	private GroupAssembler groupAssembler;
-	private RoleInfoRepository roleInfoRepository;
-	private SettingRepository settingRepository;
+	private RoleInfoPersistence roleInfoRepository;
+	private SettingPersistence settingRepository;
 	private UserInfoRepository userInfoRepository;
-	private GroupInfoRepository groupInfoRepository;
-	private FunctionInfoRepository functionInfoRepository;
+	private GroupInfoPersistence groupInfoRepository;
+	private FunctionInfoPersistence functionInfoRepository;
 
 	/**
 	 * 查詢相關的設定

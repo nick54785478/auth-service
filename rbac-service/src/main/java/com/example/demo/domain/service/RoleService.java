@@ -8,13 +8,13 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.domain.function.aggregate.FunctionInfo;
+import com.example.demo.domain.function.repository.FunctionInfoRepository;
 import com.example.demo.domain.role.aggregate.RoleInfo;
 import com.example.demo.domain.role.aggregate.entity.RoleFunction;
+import com.example.demo.domain.role.repository.RoleInfoRepository;
 import com.example.demo.domain.shared.detail.RoleFunctionQueriedDetail;
 import com.example.demo.domain.shared.summary.RoleInfoQueriedSummary;
 import com.example.demo.infra.exception.ValidationException;
-import com.example.demo.infra.repository.FunctionInfoRepository;
-import com.example.demo.infra.repository.RoleInfoRepository;
 import com.example.demo.shared.enums.YesNo;
 
 import lombok.AllArgsConstructor;

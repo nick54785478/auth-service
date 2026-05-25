@@ -5,10 +5,10 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.demo.application.shared.command.UpsertCustomisationCommand;
 import com.example.demo.domain.customisation.aggregate.Customisation;
 import com.example.demo.domain.customisation.aggregate.vo.CustomisationScope;
-import com.example.demo.domain.customisation.command.UpsertCustomisationCommand;
-import com.example.demo.infra.repository.CustomisationRepository;
+import com.example.demo.infra.persistence.CustomisationPersistence;
 import com.example.demo.util.JsonParseUtil;
 
 import lombok.AllArgsConstructor;
@@ -20,7 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, timeout = 36000, rollbackFor = Exception.class)
 public class CustomisationCommandService {
 
-	private CustomisationRepository customisationRepository;
+	private CustomisationPersistence customisationRepository;
 
 	/**
 	 * 更新個人客製化設置 (Upsert 機制)

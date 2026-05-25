@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.demo.application.shared.dto.FieldViewCustomisationQueried;
 import com.example.demo.domain.customisation.aggregate.Customisation;
-import com.example.demo.infra.repository.CustomisationRepository;
+import com.example.demo.infra.persistence.CustomisationPersistence;
 import com.example.demo.util.JsonParseUtil;
 
 import lombok.AllArgsConstructor;
@@ -18,7 +18,7 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class CustomisationQueryService {
 
-	private CustomisationRepository customisationRepository;
+	private CustomisationPersistence customisationRepository;
 
 	/**
 	 * 取得表格欄位顯示設定

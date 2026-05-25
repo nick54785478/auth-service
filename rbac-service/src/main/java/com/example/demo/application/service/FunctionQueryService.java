@@ -9,7 +9,7 @@ import com.example.demo.application.assembler.FunctionAssembler;
 import com.example.demo.application.shared.dto.FunctionInfoQueried;
 import com.example.demo.application.shared.dto.FunctionOptionQueried;
 import com.example.demo.domain.function.aggregate.FunctionInfo;
-import com.example.demo.infra.repository.FunctionInfoRepository;
+import com.example.demo.infra.persistence.FunctionInfoPersistence;
 import com.example.demo.infra.spec.GetFunctionsOptionsSpecification;
 import com.example.demo.infra.spec.GetFunctionsSummarySpecification;
 
@@ -20,7 +20,7 @@ import lombok.AllArgsConstructor;
 public class FunctionQueryService {
 
 	private FunctionAssembler assembler;
-	private FunctionInfoRepository functionInfoRepository;
+	private FunctionInfoPersistence functionInfoRepository;
 
 	/**
 	 * 查詢符合條件的功能資料

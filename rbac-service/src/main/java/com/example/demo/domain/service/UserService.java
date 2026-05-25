@@ -11,20 +11,20 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.domain.function.aggregate.FunctionInfo;
+import com.example.demo.domain.function.repository.FunctionInfoRepository;
 import com.example.demo.domain.group.aggregate.GroupInfo;
 import com.example.demo.domain.group.aggregate.entity.GroupRole;
+import com.example.demo.domain.group.repository.GroupInfoRepository;
 import com.example.demo.domain.role.aggregate.RoleInfo;
 import com.example.demo.domain.role.aggregate.entity.RoleFunction;
+import com.example.demo.domain.role.repository.RoleInfoRepository;
 import com.example.demo.domain.shared.detail.FunctionInfoDetailsQueriedDetail;
 import com.example.demo.domain.shared.summary.UserInfoDetailsQueriedSummary;
 import com.example.demo.domain.user.aggregate.UserInfo;
 import com.example.demo.domain.user.aggregate.entity.UserGroup;
 import com.example.demo.domain.user.aggregate.entity.UserRole;
+import com.example.demo.domain.user.repository.UserInfoRepository;
 import com.example.demo.infra.exception.ValidationException;
-import com.example.demo.infra.repository.FunctionInfoRepository;
-import com.example.demo.infra.repository.GroupInfoRepository;
-import com.example.demo.infra.repository.RoleInfoRepository;
-import com.example.demo.infra.repository.UserInfoRepository;
 import com.example.demo.shared.enums.YesNo;
 
 import lombok.AllArgsConstructor;

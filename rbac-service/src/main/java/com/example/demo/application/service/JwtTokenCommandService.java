@@ -23,7 +23,7 @@ import com.example.demo.domain.service.UserService;
 import com.example.demo.domain.user.aggregate.UserInfo;
 import com.example.demo.infra.context.ContextHolder;
 import com.example.demo.infra.exception.ValidationException;
-import com.example.demo.infra.repository.UserInfoRepository;
+import com.example.demo.infra.persistence.UserInfoPersistence;
 import com.example.demo.util.PasswordUtil;
 
 import lombok.RequiredArgsConstructor;
@@ -41,7 +41,7 @@ public class JwtTokenCommandService {
 	private final UserRoleService userRoleService;
 	private final JwTokenManagerPort jwTokenManager;
 	private final UserGroupService userGroupService;
-	private final UserInfoRepository userInfoRepository;
+	private final UserInfoPersistence userInfoRepository;
 	private final RoleFunctionService roleFunctionService;
 
 	/**

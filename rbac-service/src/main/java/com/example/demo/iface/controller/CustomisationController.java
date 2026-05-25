@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.application.service.CustomisationCommandService;
 import com.example.demo.application.service.CustomisationQueryService;
+import com.example.demo.application.shared.command.UpsertCustomisationCommand;
 import com.example.demo.application.shared.dto.FieldViewCustomisationQueried;
-import com.example.demo.domain.customisation.command.UpsertCustomisationCommand;
 import com.example.demo.iface.dto.request.UpsertCustomisationResource;
 import com.example.demo.iface.dto.response.response.CustomisationUpsertedResource;
 import com.example.demo.iface.dto.response.response.FieldViewCustomisationGottenResource;

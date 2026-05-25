@@ -10,11 +10,11 @@ import org.springframework.stereotype.Service;
 
 import com.example.demo.application.shared.command.UpdateUserRolesCommand;
 import com.example.demo.domain.role.aggregate.RoleInfo;
+import com.example.demo.domain.role.repository.RoleInfoRepository;
 import com.example.demo.domain.user.aggregate.UserInfo;
 import com.example.demo.domain.user.aggregate.entity.UserRole;
+import com.example.demo.domain.user.repository.UserInfoRepository;
 import com.example.demo.infra.exception.ValidationException;
-import com.example.demo.infra.repository.RoleInfoRepository;
-import com.example.demo.infra.repository.UserInfoRepository;
 import com.example.demo.shared.enums.YesNo;
 
 import lombok.AllArgsConstructor;

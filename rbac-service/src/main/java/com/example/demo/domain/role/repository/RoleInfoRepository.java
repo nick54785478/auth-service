@@ -1,14 +1,19 @@
-package com.example.demo.infra.repository;
+package com.example.demo.domain.role.repository;
 
 import java.util.List;
-
-import org.springframework.data.jpa.domain.Specification;
-import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.Optional;
 
 import com.example.demo.domain.role.aggregate.RoleInfo;
+import com.example.demo.infra.spec.GetRolesSummarySpecification;
 import com.example.demo.shared.enums.YesNo;
 
-public interface RoleInfoRepository extends JpaRepository<RoleInfo, Long> {
+public interface RoleInfoRepository {
+
+	Optional<RoleInfo> findById(Long id);
+
+	RoleInfo save(RoleInfo role);
+
+	List<RoleInfo> saveAll(List<RoleInfo> roles);
 
 	List<RoleInfo> findByIdIn(List<Long> ids);
 
@@ -22,6 +27,5 @@ public interface RoleInfoRepository extends JpaRepository<RoleInfo, Long> {
 
 	List<RoleInfo> findByIdInAndActiveFlag(List<Long> ids, YesNo activeFlag);
 
-	List<RoleInfo> findAll(Specification<RoleInfo> specification);
-
+	List<RoleInfo> findAll(GetRolesSummarySpecification specification);
 }

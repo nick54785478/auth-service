@@ -18,8 +18,8 @@ import com.example.demo.application.shared.command.UpsertRoleCommand;
 import com.example.demo.domain.role.aggregate.RoleInfo;
 import com.example.demo.domain.role.aggregate.vo.RoleProfile;
 import com.example.demo.domain.role.aggregate.vo.RoleScope;
+import com.example.demo.domain.role.repository.RoleInfoRepository;
 import com.example.demo.infra.exception.ValidationException;
-import com.example.demo.infra.repository.RoleInfoRepository;
 
 import lombok.AllArgsConstructor;
 

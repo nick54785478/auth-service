@@ -15,7 +15,7 @@ import com.example.demo.domain.role.aggregate.RoleInfo;
 import com.example.demo.domain.service.UserService;
 import com.example.demo.domain.shared.summary.UserInfoDetailsQueriedSummary;
 import com.example.demo.domain.user.aggregate.UserInfo;
-import com.example.demo.infra.repository.UserInfoRepository;
+import com.example.demo.infra.persistence.UserInfoPersistence;
 import com.example.demo.util.BaseDataTransformer;
 
 import lombok.AllArgsConstructor;
@@ -28,7 +28,7 @@ public class UserQueryService {
 
 	private UserAssembler assembler;
 	private UserService userService;
-	private UserInfoRepository userRepository;
+	private UserInfoPersistence userRepository;
 
 	/**
 	 * 取得特定使用者所在的 Group 資料

@@ -1,16 +1,20 @@
-package com.example.demo.infra.repository;
+package com.example.demo.domain.function.repository;
 
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.data.jpa.domain.Specification;
-import org.springframework.data.jpa.repository.JpaRepository;
-
 import com.example.demo.domain.function.aggregate.FunctionInfo;
 import com.example.demo.domain.function.aggregate.vo.FunctionScope;
+import com.example.demo.infra.spec.GetFunctionsSummarySpecification;
 import com.example.demo.shared.enums.YesNo;
 
-public interface FunctionInfoRepository extends JpaRepository<FunctionInfo, Long> {
+public interface FunctionInfoRepository {
+
+	Optional<FunctionInfo> findById(Long id);
+
+	FunctionInfo save(FunctionInfo function);
+
+	List<FunctionInfo> saveAll(List<FunctionInfo> functions);
 
 	List<FunctionInfo> findByIdIn(List<Long> ids);
 
@@ -30,6 +34,5 @@ public interface FunctionInfoRepository extends JpaRepository<FunctionInfo, Long
 
 	List<FunctionInfo> findByIdInAndTypeAndActiveFlag(List<Long> ids, String type, YesNo activeFlag);
 
-	List<FunctionInfo> findAll(Specification<FunctionInfo> specification);
-
+	List<FunctionInfo> findAll(GetFunctionsSummarySpecification specification);
 }

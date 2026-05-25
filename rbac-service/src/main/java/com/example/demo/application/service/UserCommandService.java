@@ -13,8 +13,8 @@ import com.example.demo.application.shared.command.UpdateUserRolesCommand;
 import com.example.demo.domain.service.UserService;
 import com.example.demo.domain.user.aggregate.UserInfo;
 import com.example.demo.domain.user.aggregate.vo.UserProfile;
+import com.example.demo.domain.user.repository.UserInfoRepository;
 import com.example.demo.infra.exception.ValidationException;
-import com.example.demo.infra.repository.UserInfoRepository;
 import com.example.demo.util.PasswordUtil;
 
 import lombok.AllArgsConstructor;

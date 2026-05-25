@@ -16,7 +16,7 @@ import com.example.demo.application.shared.command.UpsertFunctionCommand;
 import com.example.demo.domain.function.aggregate.FunctionInfo;
 import com.example.demo.domain.function.aggregate.vo.FunctionProfile;
 import com.example.demo.domain.function.aggregate.vo.FunctionScope;
-import com.example.demo.infra.repository.FunctionInfoRepository;
+import com.example.demo.infra.persistence.FunctionInfoPersistence;
 
 import lombok.AllArgsConstructor;
 
@@ -25,7 +25,7 @@ import lombok.AllArgsConstructor;
 @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, timeout = 36000, rollbackFor = Exception.class)
 public class FunctionCommandService {
 
-	private FunctionInfoRepository functionRepository;
+	private FunctionInfoPersistence functionRepository;
 
 	/**
 	 * 建立一筆功能資料

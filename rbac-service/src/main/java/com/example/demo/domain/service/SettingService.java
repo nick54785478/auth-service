@@ -8,8 +8,8 @@ import com.example.demo.application.shared.dto.UpdateSettingCommand;
 import com.example.demo.domain.setting.aggregate.Setting;
 import com.example.demo.domain.setting.aggregate.vo.SettingProfile;
 import com.example.demo.domain.setting.aggregate.vo.SettingScope;
+import com.example.demo.domain.setting.repository.SettingRepository;
 import com.example.demo.infra.exception.ValidationException;
-import com.example.demo.infra.repository.SettingRepository;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

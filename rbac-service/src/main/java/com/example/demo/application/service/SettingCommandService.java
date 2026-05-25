@@ -8,8 +8,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.example.demo.application.shared.dto.CreateSettingCommand;
 import com.example.demo.application.shared.dto.UpdateSettingCommand;
 import com.example.demo.domain.service.SettingService;
+import com.example.demo.domain.setting.repository.SettingRepository;
 import com.example.demo.infra.exception.ValidationException;
-import com.example.demo.infra.repository.SettingRepository;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

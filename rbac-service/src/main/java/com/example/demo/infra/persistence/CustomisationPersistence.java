@@ -1,4 +1,4 @@
-package com.example.demo.infra.repository;
+package com.example.demo.infra.persistence;
 
 import java.util.Optional;
 
@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import com.example.demo.domain.customisation.aggregate.Customisation;
 
 @Repository
-public interface CustomisationRepository extends JpaRepository<Customisation, Long> {
+public interface CustomisationPersistence extends JpaRepository<Customisation, Long> {
 
 	Optional<Customisation> findByScopeUsernameAndScopeComponentAndScopeType(String username, String component, String type);
 }

@@ -16,8 +16,8 @@ import com.example.demo.application.shared.command.UpsertGroupCommand;
 import com.example.demo.domain.group.aggregate.GroupInfo;
 import com.example.demo.domain.group.aggregate.vo.GroupProfile;
 import com.example.demo.domain.group.aggregate.vo.GroupScope;
+import com.example.demo.domain.group.repository.GroupInfoRepository;
 import com.example.demo.domain.service.GroupService;
-import com.example.demo.infra.repository.GroupInfoRepository;
 
 import lombok.AllArgsConstructor;
 

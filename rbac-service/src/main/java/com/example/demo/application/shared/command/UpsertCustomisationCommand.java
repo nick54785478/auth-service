@@ -1,4 +1,4 @@
-package com.example.demo.domain.customisation.command;
+package com.example.demo.application.shared.command;
 
 import java.util.ArrayList;
 import java.util.List;

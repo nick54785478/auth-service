@@ -9,12 +9,12 @@ import org.springframework.stereotype.Service;
 
 import com.example.demo.application.shared.command.UpdateRoleFunctionsCommand;
 import com.example.demo.domain.function.aggregate.FunctionInfo;
+import com.example.demo.domain.function.repository.FunctionInfoRepository;
 import com.example.demo.domain.role.aggregate.RoleInfo;
 import com.example.demo.domain.role.aggregate.entity.RoleFunction;
+import com.example.demo.domain.role.repository.RoleInfoRepository;
 import com.example.demo.domain.shared.summary.RolesFunctionsQueriedSummary;
 import com.example.demo.infra.exception.ValidationException;
-import com.example.demo.infra.repository.FunctionInfoRepository;
-import com.example.demo.infra.repository.RoleInfoRepository;
 import com.example.demo.shared.enums.YesNo;
 
 import lombok.AllArgsConstructor;
@@ -46,9 +46,9 @@ public class RoleFunctionService {
 	}
 
 	/**
-	 * 查詢該角色的功能 
+	 * 查詢該角色的功能
 	 * 
-	 * @param id Role id
+	 * @param id      Role id
 	 * @param service Service
 	 * @return List<FunctionInfo>
 	 */
