@@ -7,11 +7,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo.application.assembler.GroupAssembler;
 import com.example.demo.application.shared.dto.GroupInfoQueried;
+import com.example.demo.application.shared.query.GetGroupsSummaryQuery;
 import com.example.demo.domain.group.aggregate.GroupInfo;
 import com.example.demo.domain.group.repository.GroupInfoRepository;
 import com.example.demo.domain.service.GroupService;
 import com.example.demo.domain.shared.summary.GroupInfoQueriedSummary;
-import com.example.demo.infra.spec.GetGroupsSummarySpecification;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,9 +36,8 @@ public class GroupQueryService {
 	 */
 	@Transactional(readOnly = true)
 	public List<GroupInfoQueried> summary(String service, String type, String name, String activeFlag) {
-		GetGroupsSummarySpecification specification = new GetGroupsSummarySpecification(service, type, name,
-				activeFlag);
-		List<GroupInfo> groups = groupInfoRepository.findAll(specification);
+		GetGroupsSummaryQuery query = new GetGroupsSummaryQuery(service, type, name, activeFlag);
+		List<GroupInfo> groups = groupInfoRepository.findAll(query);
 		log.info("groups: {}", groups);
 		return assembler.transformGroups(groups);
 	}

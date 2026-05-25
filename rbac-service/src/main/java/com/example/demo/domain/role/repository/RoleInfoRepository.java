@@ -3,8 +3,9 @@ package com.example.demo.domain.role.repository;
 import java.util.List;
 import java.util.Optional;
 
+import com.example.demo.application.shared.query.GetRoleByServiceAndKeywordQuery;
+import com.example.demo.application.shared.query.GetRolesSummaryQuery;
 import com.example.demo.domain.role.aggregate.RoleInfo;
-import com.example.demo.infra.spec.GetRolesSummarySpecification;
 import com.example.demo.shared.enums.YesNo;
 
 public interface RoleInfoRepository {
@@ -27,5 +28,7 @@ public interface RoleInfoRepository {
 
 	List<RoleInfo> findByIdInAndActiveFlag(List<Long> ids, YesNo activeFlag);
 
-	List<RoleInfo> findAll(GetRolesSummarySpecification specification);
+	List<RoleInfo> findAll(GetRolesSummaryQuery specification);
+	
+	List<RoleInfo> findByServiceAndKeyword(GetRoleByServiceAndKeywordQuery query);
 }

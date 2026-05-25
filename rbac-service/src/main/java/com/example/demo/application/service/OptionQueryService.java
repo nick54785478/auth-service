@@ -13,17 +13,17 @@ import com.example.demo.application.shared.dto.GroupOptionQueried;
 import com.example.demo.application.shared.dto.OptionQueried;
 import com.example.demo.application.shared.dto.RoleOptionQueried;
 import com.example.demo.application.shared.dto.UserOptionQueried;
+import com.example.demo.application.shared.query.GetGroupByServiceAndKeywordQuery;
+import com.example.demo.application.shared.query.GetRoleByServiceAndKeywordQuery;
 import com.example.demo.domain.function.aggregate.FunctionInfo;
+import com.example.demo.domain.function.repository.FunctionInfoRepository;
 import com.example.demo.domain.group.aggregate.GroupInfo;
+import com.example.demo.domain.group.repository.GroupInfoRepository;
 import com.example.demo.domain.role.aggregate.RoleInfo;
+import com.example.demo.domain.role.repository.RoleInfoRepository;
+import com.example.demo.domain.setting.repository.SettingRepository;
 import com.example.demo.domain.user.aggregate.UserInfo;
 import com.example.demo.domain.user.repository.UserInfoRepository;
-import com.example.demo.infra.persistence.FunctionInfoPersistence;
-import com.example.demo.infra.persistence.GroupInfoPersistence;
-import com.example.demo.infra.persistence.RoleInfoPersistence;
-import com.example.demo.infra.persistence.SettingPersistence;
-import com.example.demo.infra.spec.GetGroupOptionsSpecification;
-import com.example.demo.infra.spec.GetRoleOptionsSpecification;
 import com.example.demo.shared.enums.YesNo;
 
 import lombok.AllArgsConstructor;
@@ -35,11 +35,11 @@ public class OptionQueryService {
 	private UserAssembler userAssembler;
 	private RoleAssembler roleAssembler;
 	private GroupAssembler groupAssembler;
-	private RoleInfoPersistence roleInfoRepository;
-	private SettingPersistence settingRepository;
+	private RoleInfoRepository roleInfoRepository;
+	private SettingRepository settingRepository;
 	private UserInfoRepository userInfoRepository;
-	private GroupInfoPersistence groupInfoRepository;
-	private FunctionInfoPersistence functionInfoRepository;
+	private GroupInfoRepository groupInfoRepository;
+	private FunctionInfoRepository functionInfoRepository;
 
 	/**
 	 * 查詢相關的設定
@@ -76,8 +76,8 @@ public class OptionQueryService {
 	 * @return List<RoleOptionQueried>
 	 */
 	public List<RoleOptionQueried> getRoleOptions(String service, String keyword) {
-		GetRoleOptionsSpecification specification = new GetRoleOptionsSpecification(service, keyword);
-		List<RoleInfo> roles = roleInfoRepository.findAll(specification.toSpecification());
+		GetRoleByServiceAndKeywordQuery query = new GetRoleByServiceAndKeywordQuery(service, keyword);
+		List<RoleInfo> roles = roleInfoRepository.findByServiceAndKeyword(query);
 		return roleAssembler.transformRoleOptions(roles);
 	}
 
@@ -101,8 +101,8 @@ public class OptionQueryService {
 	 * @return List<GroupOptionQueried>
 	 */
 	public List<GroupOptionQueried> getGroupOptions(String service, String keyword) {
-		GetGroupOptionsSpecification specification = new GetGroupOptionsSpecification(service, keyword);
-		List<GroupInfo> groups = groupInfoRepository.findAll(specification.toSpecification());
+		GetGroupByServiceAndKeywordQuery query = new GetGroupByServiceAndKeywordQuery(service, keyword);
+		List<GroupInfo> groups = groupInfoRepository.findByServiceAndKeyword(query);
 		return groupAssembler.transformGroupOptions(groups);
 	}
 
