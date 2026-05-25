@@ -9,12 +9,12 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum ActionType {
 
-	B("BROWSE", "B"), // 瀏覽（Browse， 回傳多筆資料的 READ)
-	R("READ", "R"), // 讀取（Read）
-	E("EDIT", "E"), // 編輯（Edit）
-	A("ADD", "A"), // 建立（Add）
-	D("DELETE", "D"), // 刪除（Delete）
-	S("SEARCH", "S"), // 搜尋（Search）
+	B("BROWSE", "BROWSE"), // 瀏覽（Browse， 回傳多筆資料的 READ)
+	R("READ", "READ"), // 讀取（Read）
+	E("EDIT", "EDIT"), // 編輯（Edit）
+	A("ADD", "ADD"), // 建立（Add）
+	D("DELETE", "DELETE"), // 刪除（Delete）
+	S("SEARCH", "SEARCH"), // 搜尋（Search）
 	ALL("ALL", "ALL"); // 所有權限
 
 	@Getter

@@ -107,7 +107,7 @@ public class OptionQueryService {
 	}
 
 	/**
-	 * 查詢群組資料 (DropDown)
+	 * 查詢群組種類資料 (DropDown)
 	 * 
 	 * @param service 服務
 	 * @return List<OptionQueried>
@@ -119,7 +119,7 @@ public class OptionQueryService {
 	}
 
 	/**
-	 * 查詢功能資料 (DropDown)
+	 * 查詢功能種類資料 (DropDown)
 	 * 
 	 * @param service 服務
 	 * @return List<OptionQueried>

@@ -143,7 +143,7 @@ export class FunctionsConfigComponent
   }
 
   /**
-   * 提交資料，查詢角色相關資料
+   * 查詢角色相關資料
    */
   query(id: number, service: string) {
     this.loadMaskService.show();
@@ -153,8 +153,8 @@ export class FunctionsConfigComponent
       return;
     }
 
-    this.roleService
-      .queryByIdAndService(id, service)
+    this.roleFunctionsService
+      .getRoleFunctionsByIdAndService(id, service)
       .pipe(
         finalize(() => {
           this.loadMaskService.hide();
@@ -163,7 +163,7 @@ export class FunctionsConfigComponent
       )
       .subscribe((res) => {
         console.log(res);
-        let funcList = res.functions;
+        let funcList = res;
         if (funcList) {
           this.targetList = funcList.map((func: any) => ({
             id: func.id,

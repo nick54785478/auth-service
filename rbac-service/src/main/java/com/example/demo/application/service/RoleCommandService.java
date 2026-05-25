@@ -1,7 +1,11 @@
 package com.example.demo.application.service;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -14,7 +18,6 @@ import com.example.demo.application.shared.command.UpsertRoleCommand;
 import com.example.demo.domain.role.aggregate.RoleInfo;
 import com.example.demo.domain.role.aggregate.vo.RoleProfile;
 import com.example.demo.domain.role.aggregate.vo.RoleScope;
-import com.example.demo.domain.service.RoleService;
 import com.example.demo.infra.exception.ValidationException;
 import com.example.demo.infra.repository.RoleInfoRepository;
 
@@ -25,7 +28,6 @@ import lombok.AllArgsConstructor;
 @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, timeout = 36000, rollbackFor = Exception.class)
 public class RoleCommandService {
 
-	private RoleService roleService;
 	private RoleInfoRepository roleInfoRepository;
 
 	/**
@@ -47,7 +49,33 @@ public class RoleCommandService {
 	 * @param command {@link UpsertRoleCommand} 清單
 	 */
 	public void upsert(List<UpsertRoleCommand> commands) {
-		roleService.upsert(commands);
+
+		// 取得 id 清單
+		List<Long> ids = commands.stream().filter(command -> command.getId() != null).map(UpsertRoleCommand::getId)
+				.collect(Collectors.toList());
+
+		// 取出清單相對應資料
+		List<RoleInfo> roles = roleInfoRepository.findByIdIn(ids);
+
+		Map<Long, RoleInfo> map = roles.stream().collect(Collectors.toMap(RoleInfo::getId, Function.identity()));
+
+		List<RoleInfo> roleList = commands.stream().map(command -> {
+			// 建立 Role Scope 及 Role Profile
+			RoleScope scope = RoleScope.of(command.getService(), command.getCode());
+			RoleProfile profile = RoleProfile.of(command.getName(), command.getDescription());
+
+			// 修改
+			if (!Objects.isNull(command.getId()) && !Objects.isNull(map.get(command.getId()))) {
+				RoleInfo role = map.get(command.getId());
+				role.update(scope, profile, command.getType());
+				return role;
+			} else {
+				// 新增
+				return RoleInfo.create(scope, profile, command.getType());
+			}
+		}).collect(Collectors.toList());
+
+		roleInfoRepository.saveAll(roleList);
 	}
 
 	/**

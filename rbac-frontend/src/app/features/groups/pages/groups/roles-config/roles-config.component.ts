@@ -142,7 +142,7 @@ export class RolesConfigComponent
   query(id: number, service: string) {
     this.loadMaskService.show();
 
-    this.groupService
+    this.groupRolesService
       .queryByIdAndService(id, service)
       .pipe(
         finalize(() => {
@@ -151,7 +151,7 @@ export class RolesConfigComponent
         }),
       )
       .subscribe((res) => {
-        let roleList = res.roles;
+        let roleList = res;
         if (roleList) {
           this.targetList = roleList.map((role: any) => ({
             id: role.id,
