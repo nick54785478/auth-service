@@ -59,16 +59,15 @@ export class RegisterComponent extends BaseFormCompoent implements OnInit {
             finalize(() => {
               this.loadMaskService.hide();
               this.submitted = false;
-              location.reload();
             }),
           )
           .subscribe({
             next: (res) => {
               if (res.code === 'VALIDATE_FAILED') {
                 this.systemMessageService.error(res?.message);
-                location.reload;
               } else {
                 this.systemMessageService.success(res?.message);
+                location.reload();
               }
             },
             error: (error) => {
