@@ -58,7 +58,8 @@ public class Setting {
 	/**
 	 * 純粹的工廠方法
 	 * 
-	 * @param profile    設定範圍
+	 * @param scope      設定範圍
+	 * @param profile    設定資料
 	 * @param dataType   資料種類
 	 * @param type       種類
 	 * @param value      值
@@ -80,7 +81,7 @@ public class Setting {
 	/**
 	 * 修改一筆 Setting
 	 * 
-	 * @param profile    設定範圍
+	 * @param profile    設定資料
 	 * @param dataType   資料種類
 	 * @param type       種類
 	 * @param value      值

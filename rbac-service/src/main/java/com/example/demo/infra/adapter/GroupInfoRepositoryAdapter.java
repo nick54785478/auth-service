@@ -5,8 +5,6 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Component;
 
-import com.example.demo.application.shared.query.GetGroupByServiceAndKeywordQuery;
-import com.example.demo.application.shared.query.GetGroupsSummaryQuery;
 import com.example.demo.domain.group.aggregate.GroupInfo;
 import com.example.demo.domain.group.repository.GroupInfoRepository;
 import com.example.demo.infra.persistence.GroupInfoPersistence;
@@ -63,16 +61,15 @@ class GroupInfoRepositoryAdapter implements GroupInfoRepository {
 	}
 
 	@Override
-	public List<GroupInfo> findAll(GetGroupsSummaryQuery query) {
-		GetGroupsSummarySpecification specification = new GetGroupsSummarySpecification(query.getService(),
-				query.getType(), query.getName(), query.getActiveFlag());
+	public List<GroupInfo> summary(String service, String type, String name, String activeFlag) {
+		GetGroupsSummarySpecification specification = new GetGroupsSummarySpecification(service, type, name,
+				activeFlag);
 		return persistence.findAll(specification.toSpecification());
 	}
 
 	@Override
-	public List<GroupInfo> findByServiceAndKeyword(GetGroupByServiceAndKeywordQuery query) {
-		GetGroupOptionsSpecification specification = new GetGroupOptionsSpecification(query.getService(),
-				query.getKeyword());
+	public List<GroupInfo> findByServiceAndKeyword(String service, String keyword) {
+		GetGroupOptionsSpecification specification = new GetGroupOptionsSpecification(service, keyword);
 		return persistence.findAll(specification.toSpecification());
 	}
 

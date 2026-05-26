@@ -50,21 +50,13 @@ class UserInfoRepositoryAdapter implements UserInfoRepository {
 	}
 
 	@Override
-	public List<UserInfo> findAll(Specification<UserInfo> specification) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public UserInfo findByRefreshToken(String refreshToken) {
-		// TODO Auto-generated method stub
-		return null;
+		return persistence.findByRefreshToken(refreshToken);
 	}
 
 	@Override
 	public List<UserInfo> findByUsernameContaining(String username) {
-		// TODO Auto-generated method stub
-		return null;
+		return persistence.findByUsernameContaining(username);
 	}
 
 }

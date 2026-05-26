@@ -6,7 +6,6 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
-import com.example.demo.application.shared.command.UpdateGroupRolesCommand;
 import com.example.demo.domain.group.aggregate.GroupInfo;
 import com.example.demo.domain.group.aggregate.entity.GroupRole;
 import com.example.demo.domain.group.repository.GroupInfoRepository;
@@ -74,13 +73,14 @@ public class GroupRoleService {
 	/**
 	 * 更新群組角色
 	 * 
-	 * @param command {@link UpdateGroupRolesCommand}
+	 * @param groupId 群組 ID
+	 * @param roleIds 角色 ID 清單
 	 */
-	public void update(UpdateGroupRolesCommand command) {
+	public void update(Long groupId, List<Long> roleIds) {
 		// 透過 Role id 清單找出 Role 資料
-		List<RoleInfo> roleList = roleInfoRepository.findByIdInAndActiveFlag(command.getRoleIds(), YesNo.Y);
+		List<RoleInfo> roleList = roleInfoRepository.findByIdInAndActiveFlag(roleIds, YesNo.Y);
 		// 透過 group id 找到 Group 資料
-		groupInfoRepository.findById(command.getGroupId()).ifPresent(group -> {
+		groupInfoRepository.findById(groupId).ifPresent(group -> {
 			List<GroupRole> groupRoles = roleList.stream().map(role -> {
 				GroupRole groupRole = new GroupRole();
 				groupRole.create(group.getId(), role.getId());

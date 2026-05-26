@@ -75,9 +75,8 @@ public class OptionQueryService {
 	 * @param keyword 關鍵字
 	 * @return List<RoleOptionQueried>
 	 */
-	public List<RoleOptionQueried> getRoleOptions(String service, String keyword) {
-		GetRoleByServiceAndKeywordQuery query = new GetRoleByServiceAndKeywordQuery(service, keyword);
-		List<RoleInfo> roles = roleInfoRepository.findByServiceAndKeyword(query);
+	public List<RoleOptionQueried> getRoleOptions(GetRoleByServiceAndKeywordQuery query) {
+		List<RoleInfo> roles = roleInfoRepository.findByServiceAndKeyword(query.getService(), query.getKeyword());
 		return roleAssembler.transformRoleOptions(roles);
 	}
 
@@ -100,9 +99,8 @@ public class OptionQueryService {
 	 * @param keyword 關鍵字(用於模糊查詢)
 	 * @return List<GroupOptionQueried>
 	 */
-	public List<GroupOptionQueried> getGroupOptions(String service, String keyword) {
-		GetGroupByServiceAndKeywordQuery query = new GetGroupByServiceAndKeywordQuery(service, keyword);
-		List<GroupInfo> groups = groupInfoRepository.findByServiceAndKeyword(query);
+	public List<GroupOptionQueried> getGroupOptions(GetGroupByServiceAndKeywordQuery query) {
+		List<GroupInfo> groups = groupInfoRepository.findByServiceAndKeyword(query.getService(), query.getKeyword());
 		return groupAssembler.transformGroupOptions(groups);
 	}
 

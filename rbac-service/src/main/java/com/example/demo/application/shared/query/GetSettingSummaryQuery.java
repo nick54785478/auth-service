@@ -7,9 +7,10 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class GetFunctionsOptionsQuery {
-
+public class GetSettingSummaryQuery {
 	private String service;
-
-	private String keyword;
+	private String dataType;
+	private String type;
+	private String name;
+	private String activeFlag;
 }

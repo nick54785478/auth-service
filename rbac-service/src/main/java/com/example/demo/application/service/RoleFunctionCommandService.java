@@ -24,6 +24,6 @@ public class RoleFunctionCommandService {
 	 * @return RoleFunctionsUpdated
 	 */
 	public void updateFunctions(UpdateRoleFunctionsCommand command) {
-		roleFunctionService.update(command);
+		roleFunctionService.update(command.getRoleId(), command.getFunctions());
 	}
 }

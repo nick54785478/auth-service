@@ -20,6 +20,7 @@ import com.example.demo.application.shared.command.CreateRoleCommand;
 import com.example.demo.application.shared.command.UpdateRoleCommand;
 import com.example.demo.application.shared.command.UpsertRoleCommand;
 import com.example.demo.application.shared.dto.RoleInfoQueried;
+import com.example.demo.application.shared.query.GetRolesSummaryQuery;
 import com.example.demo.iface.dto.request.CreateRoleResource;
 import com.example.demo.iface.dto.request.UpdateRoleResource;
 import com.example.demo.iface.dto.request.UpsertRoleResource;
@@ -98,15 +99,18 @@ public class RoleController {
 	/**
 	 * 查詢角色資料
 	 * 
-	 * @param type
-	 * @param name
+	 * @param service    服務
+	 * @param type       角色種類
+	 * @param name       角色名稱
+	 * @param activeFlag 是否生效
 	 * @return ResponseEntity<List<RoleQueriedResource>>
 	 */
 	@GetMapping("/summary")
 	public ResponseEntity<RolesSummaryGottenResource> summary(@RequestParam String service,
 			@RequestParam(required = false) String type, @RequestParam(required = false) String name,
 			@RequestParam(required = false) String activeFlag) {
-		List<RoleInfoQueried> data = roleQueryService.summary(service, type, name, activeFlag);
+		GetRolesSummaryQuery query = new GetRolesSummaryQuery(service, type, name, activeFlag);
+		List<RoleInfoQueried> data = roleQueryService.summary(query);
 		return new ResponseEntity<>(new RolesSummaryGottenResource("200", "查詢成功", data), HttpStatus.OK);
 	}
 

@@ -20,9 +20,9 @@ public class UserGroupCommandService {
 	/**
 	 * 將使用者們加入特定群組
 	 * 
-	 * @param command
+	 * @param command {@link UpdateUserGroupsCommand}
 	 */
 	public void update(UpdateUserGroupsCommand command) {
-		userGroupService.update(command);
+		userGroupService.update(command.getService(), command.getUsername(), command.getGroupIds());
 	}
 }

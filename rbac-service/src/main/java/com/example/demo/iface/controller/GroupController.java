@@ -17,6 +17,7 @@ import com.example.demo.application.service.GroupQueryService;
 import com.example.demo.application.shared.command.CreateGroupCommand;
 import com.example.demo.application.shared.command.UpsertGroupCommand;
 import com.example.demo.application.shared.dto.GroupInfoQueried;
+import com.example.demo.application.shared.query.GetGroupsSummaryQuery;
 import com.example.demo.iface.dto.request.CreateGroupResource;
 import com.example.demo.iface.dto.request.UpsertGroupResource;
 import com.example.demo.iface.dto.response.response.GroupCreatedResource;
@@ -76,7 +77,8 @@ public class GroupController {
 	public ResponseEntity<GroupsSummaryGottenResource> summary(@RequestParam String service,
 			@RequestParam(required = false) String type, @RequestParam(required = false) String name,
 			@RequestParam(required = false) String activeFlag) {
-		List<GroupInfoQueried> data = groupQueryService.summary(service, type, name, activeFlag);
+		GetGroupsSummaryQuery query = new GetGroupsSummaryQuery(service, type, name, activeFlag);
+		List<GroupInfoQueried> data = groupQueryService.summary(query);
 		return new ResponseEntity<>(new GroupsSummaryGottenResource("200", "查詢成功", data), HttpStatus.OK);
 	}
 

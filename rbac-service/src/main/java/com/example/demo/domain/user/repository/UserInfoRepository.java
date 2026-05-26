@@ -3,8 +3,6 @@ package com.example.demo.domain.user.repository;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.data.jpa.domain.Specification;
-
 import com.example.demo.domain.user.aggregate.UserInfo;
 
 public interface UserInfoRepository {
@@ -21,8 +19,6 @@ public interface UserInfoRepository {
 
 	List<UserInfo> findByUsernameOrProfileNationalIdNoOrProfileEmail(String username, String nationalIdNo,
 			String email);
-
-	List<UserInfo> findAll(Specification<UserInfo> specification);
 
 	UserInfo findByRefreshToken(String refreshToken);
 

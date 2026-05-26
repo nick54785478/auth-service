@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
-import com.example.demo.application.shared.command.UpdateRoleFunctionsCommand;
 import com.example.demo.domain.function.aggregate.FunctionInfo;
 import com.example.demo.domain.function.repository.FunctionInfoRepository;
 import com.example.demo.domain.role.aggregate.RoleInfo;
@@ -96,21 +95,22 @@ public class RoleFunctionService {
 	/**
 	 * 賦予角色相關功能權限
 	 * 
-	 * @param command {@link UpdateRoleFunctionsCommand}
+	 * @param roleId  角色 ID
+	 * @param funcIds 角色 ID 清單
 	 */
-	public void update(UpdateRoleFunctionsCommand command) {
+	public void update(Long roleId, List<Long> funcIds) {
 		// 透過功能 ID 清單取得功能
-		List<FunctionInfo> functions = functionInfoRepository.findByIdInAndActiveFlag(command.getFunctions(), YesNo.Y);
+		List<FunctionInfo> functions = functionInfoRepository.findByIdInAndActiveFlag(funcIds, YesNo.Y);
 
 		// 建立 Role Function 資料清單
 		List<RoleFunction> roleFunctions = functions.stream().map(function -> {
 			RoleFunction roleFunction = new RoleFunction();
-			roleFunction.create(command.getRoleId(), function.getId());
+			roleFunction.create(roleId, function.getId());
 			return roleFunction;
 		}).collect(Collectors.toList());
 
 		// 透過 Role Id 取得 角色資料
-		roleInfoRepository.findById(command.getRoleId()).ifPresent(role -> {
+		roleInfoRepository.findById(roleId).ifPresent(role -> {
 			role.updateFunctions(roleFunctions);
 			roleInfoRepository.save(role);
 		});

@@ -40,7 +40,9 @@ class SettingRepositoryAdapter implements SettingRepository {
 	}
 
 	@Override
-	public List<Setting> findAll(GetSettingsSpecification specification) {
+	public List<Setting> summary(String service, String dataType, String type, String name, String activeFlag) {
+		GetSettingsSpecification specification = new GetSettingsSpecification(service, dataType, type, name,
+				activeFlag);
 		return persistence.findAll(specification.toSpecification());
 	}
 

@@ -5,7 +5,6 @@ import java.util.Optional;
 
 import com.example.demo.domain.function.aggregate.FunctionInfo;
 import com.example.demo.domain.function.aggregate.vo.FunctionScope;
-import com.example.demo.infra.spec.GetFunctionsSummarySpecification;
 import com.example.demo.shared.enums.YesNo;
 
 public interface FunctionInfoRepository {
@@ -34,5 +33,8 @@ public interface FunctionInfoRepository {
 
 	List<FunctionInfo> findByIdInAndTypeAndActiveFlag(List<Long> ids, String type, YesNo activeFlag);
 
-	List<FunctionInfo> findAll(GetFunctionsSummarySpecification specification);
+	List<FunctionInfo> summary(String service, String type, String actionType, String name, String activeFlag);
+
+	List<FunctionInfo> findByServiceAndKeyword(String service, String keyword);
+
 }

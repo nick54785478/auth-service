@@ -17,6 +17,7 @@ import com.example.demo.application.service.FunctionQueryService;
 import com.example.demo.application.shared.command.CreateFunctionCommand;
 import com.example.demo.application.shared.command.UpsertFunctionCommand;
 import com.example.demo.application.shared.dto.FunctionInfoQueried;
+import com.example.demo.application.shared.query.GetFunctionsSummaryQuery;
 import com.example.demo.iface.dto.request.CreateFunctionResource;
 import com.example.demo.iface.dto.request.UpsertFunctionResource;
 import com.example.demo.iface.dto.response.response.FunctionCreatedResource;
@@ -77,20 +78,21 @@ public class FunctionController {
 	}
 
 	/**
-	 * 查詢功能資料
+	 * 查詢功能資料總覽
 	 * 
-	 * @param service
-	 * @param actionType
-	 * @param type
-	 * @param name
-	 * @param actionFlag
+	 * @param service    服務
+	 * @param actionType 動作種類
+	 * @param type       種類
+	 * @param name       名稱
+	 * @param activeFlag 是否生效
 	 * @return ResponseEntity<List<RoleQueriedResource>>
 	 */
 	@GetMapping("/summary")
 	public ResponseEntity<FunctionsSummaryGottenResource> summary(@RequestParam String service,
 			@RequestParam(required = false) String actionType, @RequestParam(required = false) String type,
 			@RequestParam(required = false) String name, @RequestParam(required = false) String activeFlag) {
-		List<FunctionInfoQueried> data = functionQueryService.summary(service, actionType, type, name, activeFlag);
+		GetFunctionsSummaryQuery query = new GetFunctionsSummaryQuery(service, type, actionType, name, activeFlag);
+		List<FunctionInfoQueried> data = functionQueryService.summary(query);
 		return new ResponseEntity<>(new FunctionsSummaryGottenResource("200", "查詢成功", data), HttpStatus.OK);
 	}
 }

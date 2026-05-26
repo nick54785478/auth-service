@@ -8,10 +8,9 @@ import org.springframework.transaction.annotation.Transactional;
 import com.example.demo.application.assembler.FunctionAssembler;
 import com.example.demo.application.shared.dto.FunctionInfoQueried;
 import com.example.demo.application.shared.dto.FunctionOptionQueried;
+import com.example.demo.application.shared.query.GetFunctionsSummaryQuery;
 import com.example.demo.domain.function.aggregate.FunctionInfo;
-import com.example.demo.infra.persistence.FunctionInfoPersistence;
-import com.example.demo.infra.spec.GetFunctionsOptionsSpecification;
-import com.example.demo.infra.spec.GetFunctionsSummarySpecification;
+import com.example.demo.domain.function.repository.FunctionInfoRepository;
 
 import lombok.AllArgsConstructor;
 
@@ -20,24 +19,18 @@ import lombok.AllArgsConstructor;
 public class FunctionQueryService {
 
 	private FunctionAssembler assembler;
-	private FunctionInfoPersistence functionInfoRepository;
+	private FunctionInfoRepository functionInfoRepository;
 
 	/**
 	 * 查詢符合條件的功能資料
 	 * 
-	 * @param service    服務
-	 * @param actionType 動作種類
-	 * @param type       種類
-	 * @param name       名稱
-	 * @param activeFlag 是否生效
+	 * @param query {@link GetFunctionsSummaryQuery}
 	 * @return List<GroupInfoQueried>
 	 */
 	@Transactional(readOnly = true)
-	public List<FunctionInfoQueried> summary(String service, String actionType, String type, String name,
-			String activeFlag) {
-		GetFunctionsSummarySpecification specification = new GetFunctionsSummarySpecification(service, type, actionType,
-				name, activeFlag);
-		List<FunctionInfo> functions = functionInfoRepository.findAll(specification.toSpecification());
+	public List<FunctionInfoQueried> summary(GetFunctionsSummaryQuery query) {
+		List<FunctionInfo> functions = functionInfoRepository.summary(query.getService(), query.getType(),
+				query.getActionType(), query.getName(), query.getActiveFlag());
 		return assembler.transformFunctions(functions);
 	}
 
@@ -49,8 +42,7 @@ public class FunctionQueryService {
 	 * @return List<FunctionInfoQueried>
 	 */
 	public List<FunctionOptionQueried> query(String service, String keyword) {
-		GetFunctionsOptionsSpecification specification = new GetFunctionsOptionsSpecification(service, keyword);
-		List<FunctionInfo> functions = functionInfoRepository.findAll(specification.toSpecification());
+		List<FunctionInfo> functions = functionInfoRepository.findByServiceAndKeyword(service, keyword);
 		return assembler.transformFunctionOptions(functions);
 	}
 }

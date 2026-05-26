@@ -8,7 +8,6 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
-import com.example.demo.application.shared.command.UpdateUserRolesCommand;
 import com.example.demo.domain.role.aggregate.RoleInfo;
 import com.example.demo.domain.role.repository.RoleInfoRepository;
 import com.example.demo.domain.user.aggregate.UserInfo;
@@ -30,7 +29,7 @@ public class UserRoleService {
 	 * 取得特定使用者的角色資料
 	 * 
 	 * @param username 使用者帳號
-	 * @param service  Service
+	 * @param service  服務
 	 * @return List<RoleInfo>
 	 */
 	public List<RoleInfo> getUserRoles(String username, String service) {
@@ -82,15 +81,17 @@ public class UserRoleService {
 	/**
 	 * 更新使用者角色權限
 	 * 
-	 * @param command {@link UpdateUserRolesCommand}
+	 * @param service  服務
+	 * @param username 使用者帳號
+	 * @param roleIds  角色 ID 清單
 	 */
-	public void update(UpdateUserRolesCommand command) {
-		UserInfo userInfo = userInfoRepository.findByUsername(command.getUsername());
+	public void update(String service, String username, List<Long> roleIds) {
+		UserInfo userInfo = userInfoRepository.findByUsername(username);
 
 		// 取出所有要被更新的角色
-		List<RoleInfo> roles = roleInfoRepository.findByIdInAndActiveFlag(command.getRoleIds(), YesNo.Y);
+		List<RoleInfo> roles = roleInfoRepository.findByIdInAndActiveFlag(roleIds, YesNo.Y);
 
-		List<UserRole> userRoles = this.processUpdatedRoleData(command.getService(), userInfo, roles);
+		List<UserRole> userRoles = this.processUpdatedRoleData(service, userInfo, roles);
 
 		// 更新群組資料
 		userInfo.updateRoles(userRoles);
@@ -100,7 +101,7 @@ public class UserRoleService {
 	/**
 	 * 處理要被更新的 Role 資料
 	 * 
-	 * @param service  Service
+	 * @param service  服務
 	 * @param userInfo 使用者資料
 	 * @param roles    要被更新的角色清單
 	 */

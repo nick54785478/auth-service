@@ -26,16 +26,13 @@ public class RoleQueryService {
 	/**
 	 * 查詢符合條件的角色資料
 	 * 
-	 * @param service    服務
-	 * @param type       角色種類
-	 * @param name       角色名稱
-	 * @param activeFlag 是否生效
+	 * @param query {@link GetRolesSummaryQuery}
 	 * @return List<RoleInfoQueried>
 	 */
 	@Transactional
-	public List<RoleInfoQueried> summary(String service, String type, String name, String activeFlag) {
-		GetRolesSummaryQuery query = new GetRolesSummaryQuery(service, type, name, activeFlag);
-		List<RoleInfo> roles = roleInfoRepository.findAll(query);
+	public List<RoleInfoQueried> summary(GetRolesSummaryQuery query) {
+		List<RoleInfo> roles = roleInfoRepository.summary(query.getService(), query.getType(), query.getName(),
+				query.getActiveFlag());
 		return assembler.transformRoles(roles);
 	}
 

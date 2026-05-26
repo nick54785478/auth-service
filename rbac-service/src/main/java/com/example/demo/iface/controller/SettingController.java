@@ -19,6 +19,7 @@ import com.example.demo.application.service.SettingQueryService;
 import com.example.demo.application.shared.dto.CreateSettingCommand;
 import com.example.demo.application.shared.dto.SettingQueried;
 import com.example.demo.application.shared.dto.UpdateSettingCommand;
+import com.example.demo.application.shared.query.GetSettingSummaryQuery;
 import com.example.demo.iface.dto.request.CreateSettingResource;
 import com.example.demo.iface.dto.request.UpdateSettingResource;
 import com.example.demo.iface.dto.response.response.SettingCreatedResource;
@@ -68,10 +69,9 @@ public class SettingController {
 	public ResponseEntity<SettingsSummaryGottenResource> summary(@RequestParam String service,
 			@RequestParam(required = false) String dataType, @RequestParam(required = false) String type,
 			@RequestParam(required = false) String name, @RequestParam(required = false) String activeFlag) {
-		List<SettingQueried> data = settingQueryService.summary(service, dataType, type, name, activeFlag);
-		return new ResponseEntity<>(
-				new SettingsSummaryGottenResource("200", "查詢成功", data),
-				HttpStatus.OK);
+		GetSettingSummaryQuery query = new GetSettingSummaryQuery(service, dataType, type, name, activeFlag);
+		List<SettingQueried> data = settingQueryService.summary(query);
+		return new ResponseEntity<>(new SettingsSummaryGottenResource("200", "查詢成功", data), HttpStatus.OK);
 	}
 
 	/**

@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Optional;
 
 import com.example.demo.domain.setting.aggregate.Setting;
-import com.example.demo.infra.spec.GetSettingsSpecification;
 import com.example.demo.shared.enums.YesNo;
 
 public interface SettingRepository {
@@ -17,5 +16,5 @@ public interface SettingRepository {
 
 	List<Setting> findByScopeServiceAndDataTypeAndActiveFlag(String service, String dataType, YesNo activeFlag);
 
-	List<Setting> findAll(GetSettingsSpecification specification);
+	List<Setting> summary(String service, String dataType, String type, String name, String activeFlag);
 }

@@ -20,9 +20,9 @@ public class UserRoleCommandService {
 	/**
 	 * 將使用者們加入特定群組
 	 * 
-	 * @param command
+	 * @param command {@link UpdateUserRolesCommand}
 	 */
 	public void update(UpdateUserRolesCommand command) {
-		userRoleService.update(command);
+		userRoleService.update(command.getService(), command.getUsername(), command.getRoleIds());
 	}
 }

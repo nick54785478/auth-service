@@ -14,6 +14,8 @@ import com.example.demo.application.shared.dto.GroupOptionQueried;
 import com.example.demo.application.shared.dto.OptionQueried;
 import com.example.demo.application.shared.dto.RoleOptionQueried;
 import com.example.demo.application.shared.dto.UserOptionQueried;
+import com.example.demo.application.shared.query.GetGroupByServiceAndKeywordQuery;
+import com.example.demo.application.shared.query.GetRoleByServiceAndKeywordQuery;
 import com.example.demo.iface.dto.response.response.GroupOptionsGottenResource;
 import com.example.demo.iface.dto.response.response.OptionGottenResource;
 import com.example.demo.iface.dto.response.response.RoleOptionsGottenResource;
@@ -55,13 +57,14 @@ public class OptionController {
 	 * 查詢角色相關的 AutoComplete 資料
 	 * 
 	 * @param service 服務
-	 * @param str     角色相關字串 return ResponseEntity<List<RoleOptionQueriedResource>>
+	 * @param keyword 角色相關字串
 	 * @return ResponseEntity<RoleOptionsGottenResource>
 	 */
 	@GetMapping("/roles")
 	public ResponseEntity<RoleOptionsGottenResource> getRoleOptions(@RequestParam String service,
-			@RequestParam("queryStr") String str) {
-		List<RoleOptionQueried> data = optionQueryService.getRoleOptions(service, str);
+			@RequestParam("queryStr") String keyword) {
+		GetRoleByServiceAndKeywordQuery query = new GetRoleByServiceAndKeywordQuery(service, keyword);
+		List<RoleOptionQueried> data = optionQueryService.getRoleOptions(query);
 		return new ResponseEntity<>(new RoleOptionsGottenResource("200", "查詢成功", data), HttpStatus.OK);
 	}
 
@@ -81,13 +84,14 @@ public class OptionController {
 	 * 查詢群組相關的 AutoComplete 資料
 	 * 
 	 * @param service 服務
-	 * @param str     群組相關字串
+	 * @param keyword 群組相關字串
 	 * @return ResponseEntity<GroupOptionsGottenResource>
 	 */
 	@GetMapping("/groups")
 	public ResponseEntity<GroupOptionsGottenResource> getGroupOptions(@RequestParam String service,
-			@RequestParam("queryStr") String str) {
-		List<GroupOptionQueried> data = optionQueryService.getGroupOptions(service, str);
+			@RequestParam("queryStr") String keyword) {
+		GetGroupByServiceAndKeywordQuery query = new GetGroupByServiceAndKeywordQuery(service, keyword);
+		List<GroupOptionQueried> data = optionQueryService.getGroupOptions(query);
 		return new ResponseEntity<>(new GroupOptionsGottenResource("200", "查詢成功", data), HttpStatus.OK);
 	}
 

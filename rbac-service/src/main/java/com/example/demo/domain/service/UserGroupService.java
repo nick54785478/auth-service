@@ -8,7 +8,6 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
-import com.example.demo.application.shared.command.UpdateUserGroupsCommand;
 import com.example.demo.domain.group.aggregate.GroupInfo;
 import com.example.demo.domain.group.repository.GroupInfoRepository;
 import com.example.demo.domain.user.aggregate.UserInfo;
@@ -83,16 +82,17 @@ public class UserGroupService {
 	/**
 	 * 將使用者加入特定群組
 	 * 
-	 * @param command
-	 * @return UserGroupAdded
+	 * @param service  服務
+	 * @param username 使用者帳號
+	 * @param groupIds 群組 ID 清單
 	 */
-	public void update(UpdateUserGroupsCommand command) {
-		UserInfo userInfo = userInfoRepository.findByUsername(command.getUsername());
+	public void update(String service, String username, List<Long> groupIds) {
+		UserInfo userInfo = userInfoRepository.findByUsername(username);
 
-		List<GroupInfo> groups = groupInfoRepository.findByIdInAndActiveFlag(command.getGroupIds(), YesNo.Y);
+		List<GroupInfo> groups = groupInfoRepository.findByIdInAndActiveFlag(groupIds, YesNo.Y);
 
 		// 處理要被更新的 Group 資料
-		List<UserGroup> userGroups = this.processUpdatedGroupData(command.getService(), userInfo, groups);
+		List<UserGroup> userGroups = this.processUpdatedGroupData(service, userInfo, groups);
 
 		// 更新群組資料
 		userInfo.updateGroups(userGroups);

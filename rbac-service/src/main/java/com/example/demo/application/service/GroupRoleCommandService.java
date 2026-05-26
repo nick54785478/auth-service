@@ -20,9 +20,9 @@ public class GroupRoleCommandService {
 	/**
 	 * 將角色加入特定群組
 	 * 
-	 * @param command
+	 * @param command {@link UpdateGroupRolesCommand}
 	 */
 	public void update(UpdateGroupRolesCommand command) {
-		groupRoleService.update(command);
+		groupRoleService.update(command.getGroupId(), command.getRoleIds());
 	}
 }

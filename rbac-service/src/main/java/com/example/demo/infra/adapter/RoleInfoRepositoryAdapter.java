@@ -5,8 +5,6 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Component;
 
-import com.example.demo.application.shared.query.GetRoleByServiceAndKeywordQuery;
-import com.example.demo.application.shared.query.GetRolesSummaryQuery;
 import com.example.demo.domain.role.aggregate.RoleInfo;
 import com.example.demo.domain.role.repository.RoleInfoRepository;
 import com.example.demo.infra.persistence.RoleInfoPersistence;
@@ -69,16 +67,14 @@ class RoleInfoRepositoryAdapter implements RoleInfoRepository {
 	}
 
 	@Override
-	public List<RoleInfo> findAll(GetRolesSummaryQuery query) {
-		GetRolesSummarySpecification specification = new GetRolesSummarySpecification(query.getService(),
-				query.getType(), query.getName(), query.getActiveFlag());
+	public List<RoleInfo> summary(String service, String type, String name, String activeFlag) {
+		GetRolesSummarySpecification specification = new GetRolesSummarySpecification(service, type, name, activeFlag);
 		return persistence.findAll(specification.toSpecification());
 	}
 
 	@Override
-	public List<RoleInfo> findByServiceAndKeyword(GetRoleByServiceAndKeywordQuery query) {
-		GetRoleOptionsSpecification specification = new GetRoleOptionsSpecification(query.getService(),
-				query.getService());
+	public List<RoleInfo> findByServiceAndKeyword(String service, String keyword) {
+		GetRoleOptionsSpecification specification = new GetRoleOptionsSpecification(service, keyword);
 		return persistence.findAll(specification.toSpecification());
 	}
 }

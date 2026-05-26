@@ -9,6 +9,7 @@ import com.example.demo.domain.function.aggregate.FunctionInfo;
 import com.example.demo.domain.function.aggregate.vo.FunctionScope;
 import com.example.demo.domain.function.repository.FunctionInfoRepository;
 import com.example.demo.infra.persistence.FunctionInfoPersistence;
+import com.example.demo.infra.spec.GetFunctionsOptionsSpecification;
 import com.example.demo.infra.spec.GetFunctionsSummarySpecification;
 import com.example.demo.shared.enums.YesNo;
 
@@ -81,7 +82,15 @@ class FunctionInfoRepositoryAdapter implements FunctionInfoRepository {
 	}
 
 	@Override
-	public List<FunctionInfo> findAll(GetFunctionsSummarySpecification specification) {
+	public List<FunctionInfo> summary(String service, String type, String actionType, String name, String activeFlag) {
+		GetFunctionsSummarySpecification specification = new GetFunctionsSummarySpecification(service, type, actionType,
+				name, activeFlag);
+		return persistence.findAll(specification.toSpecification());
+	}
+
+	@Override
+	public List<FunctionInfo> findByServiceAndKeyword(String service, String keyword) {
+		GetFunctionsOptionsSpecification specification = new GetFunctionsOptionsSpecification(service, keyword);
 		return persistence.findAll(specification.toSpecification());
 	}
 

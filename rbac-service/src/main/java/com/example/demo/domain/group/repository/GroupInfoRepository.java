@@ -3,8 +3,6 @@ package com.example.demo.domain.group.repository;
 import java.util.List;
 import java.util.Optional;
 
-import com.example.demo.application.shared.query.GetGroupByServiceAndKeywordQuery;
-import com.example.demo.application.shared.query.GetGroupsSummaryQuery;
 import com.example.demo.domain.group.aggregate.GroupInfo;
 import com.example.demo.shared.enums.YesNo;
 
@@ -26,7 +24,7 @@ public interface GroupInfoRepository {
 
 	List<GroupInfo> findByScopeServiceAndActiveFlag(String service, YesNo activeFlag);
 
-	List<GroupInfo> findAll(GetGroupsSummaryQuery query);
+	List<GroupInfo> summary(String service, String type, String name, String activeFlag);
 
-	List<GroupInfo> findByServiceAndKeyword(GetGroupByServiceAndKeywordQuery query);
+	List<GroupInfo> findByServiceAndKeyword(String service, String keyword);
 }

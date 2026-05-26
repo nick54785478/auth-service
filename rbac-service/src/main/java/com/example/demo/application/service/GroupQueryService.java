@@ -28,16 +28,13 @@ public class GroupQueryService {
 	/**
 	 * 查詢符合條件的群組資料
 	 * 
-	 * @param service    服務
-	 * @param type       群組種類
-	 * @param name       群組名稱
-	 * @param activeFlag 是否生效
+	 * @param query {@link GetGroupsSummaryQuery}
 	 * @return List<GroupInfoQueried>
 	 */
 	@Transactional(readOnly = true)
-	public List<GroupInfoQueried> summary(String service, String type, String name, String activeFlag) {
-		GetGroupsSummaryQuery query = new GetGroupsSummaryQuery(service, type, name, activeFlag);
-		List<GroupInfo> groups = groupInfoRepository.findAll(query);
+	public List<GroupInfoQueried> summary(GetGroupsSummaryQuery query) {
+		List<GroupInfo> groups = groupInfoRepository.summary(query.getService(), query.getType(), query.getName(),
+				query.getActiveFlag());
 		log.info("groups: {}", groups);
 		return assembler.transformGroups(groups);
 	}
