@@ -70,7 +70,7 @@ public class UserService {
 	 * 取得特定使用者所在的群組資料
 	 * 
 	 * @param username 使用者帳號
-	 * @return List<UserGroupQueried>
+	 * @return List<GroupInfo>
 	 */
 	public List<GroupInfo> queryGroups(String username) {
 		UserInfo userInfo = userRepository.findByUsername(username);
@@ -86,7 +86,7 @@ public class UserService {
 	 * 取得特定使用者的角色資料
 	 * 
 	 * @param username 使用者帳號
-	 * @return List<UserRoleQueried>
+	 * @return List<RoleInfo>
 	 */
 	public List<RoleInfo> queryRoles(String username) {
 		UserInfo user = userRepository.findByUsername(username);
@@ -105,7 +105,7 @@ public class UserService {
 	 * 
 	 * @param username 使用者名稱
 	 * @param service  服務
-	 * @return UserInfoDetailQueried
+	 * @return UserInfoDetailsQueriedSummary
 	 */
 	public UserInfoDetailsQueriedSummary getUserDetails(String username, String service) {
 		Map<String, List<FunctionInfoDetailsQueriedDetail>> funcMap = new HashMap<>();
@@ -151,7 +151,7 @@ public class UserService {
 	 * 
 	 * @param label 角色類別，群組角色/個人角色
 	 * @param roles 角色清單
-	 * @return List<FunctionInfo>
+	 * @return List<FunctionInfoDetailsQueriedDetail>
 	 */
 	private List<FunctionInfoDetailsQueriedDetail> getFuncListByRoleIds(String label, List<RoleInfo> roles) {
 		// 個人角色權限 ID 清單

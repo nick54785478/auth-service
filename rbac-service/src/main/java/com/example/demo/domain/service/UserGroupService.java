@@ -105,6 +105,7 @@ public class UserGroupService {
 	 * @param service  服務
 	 * @param userInfo 使用者資料
 	 * @param roles    要被更新的群組清單
+	 * @return {@link UserGroup} 清單
 	 */
 	private List<UserGroup> processUpdatedGroupData(String service, UserInfo userInfo, List<GroupInfo> groups) {
 		List<GroupInfo> groupList = new ArrayList<>();

@@ -30,7 +30,7 @@ public class RoleFunctionService {
 	 * 
 	 * @param service  服務
 	 * @param roleList 角色清單
-	 * @return RolesFunctionsQueried
+	 * @return RolesFunctionsQueriedSummary
 	 */
 	public RolesFunctionsQueriedSummary getFunctionsByRoleIds(String service, List<String> rolesList) {
 		List<RoleInfo> roles = roleInfoRepository.findByScopeServiceAndScopeCodeInAndActiveFlag(service, rolesList,

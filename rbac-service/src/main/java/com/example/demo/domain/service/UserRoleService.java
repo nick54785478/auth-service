@@ -104,6 +104,7 @@ public class UserRoleService {
 	 * @param service  服務
 	 * @param userInfo 使用者資料
 	 * @param roles    要被更新的角色清單
+	 * @return {@link UserRole} 清單
 	 */
 	private List<UserRole> processUpdatedRoleData(String service, UserInfo userInfo, List<RoleInfo> roles) {
 		List<RoleInfo> roleList = new ArrayList<>();
