@@ -30,6 +30,9 @@ import { StorageService } from '../../../../core/services/storage.service';
 import { CustomisationService } from '../../../../shared/services/customisation.service';
 import { SystemStorageKey } from '../../../../core/enums/system-storage.enum';
 import { UpdateCustomisation } from '../../../../shared/models/update-customisation-request.model';
+import { catchError } from 'rxjs/internal/operators/catchError';
+import { of } from 'rxjs/internal/observable/of';
+import { GroupAddingComponent } from './group-adding/group-adding.component';
 
 @Component({
   selector: 'app-groups',
@@ -202,16 +205,25 @@ export class GroupsComponent
   initTabs() {
     this.detailTabs = [
       {
+        label: '新增群組',
+        icon: 'pi pi-plus',
+        command: () => {
+          this.openAddingGroupDialog();
+        },
+        disabled: false,
+      },
+      {
+        label: '新增列',
+        icon: 'pi pi-plus-circle',
+        disabled: !this.formGroup?.value?.service, // 初始狀態
+        command: () => this.addNewRow(),
+      },
+      {
         label: '欄位',
         icon: 'pi pi-filter',
         command: () => this.fieldPanel.toggle(event),
       },
-      {
-        label: '新增',
-        icon: 'pi pi-plus',
-        disabled: !this.formGroup?.value?.service, // 初始狀態
-        command: () => this.addNewRow(),
-      },
+
       { label: '提交', icon: 'pi pi-save', command: () => this.submit() },
       { label: '放棄', icon: 'pi pi-times', command: () => this.cancelAll() },
     ];
@@ -275,7 +287,7 @@ export class GroupsComponent
     this.loadMaskService.show();
 
     this.groupService
-      .submit(requestData)
+      .upsert(requestData)
       .pipe(
         finalize(() => {
           // 無論成功或失敗都會執行
@@ -596,5 +608,45 @@ export class GroupsComponent
       this.dataTable.scrollTo({ top: 0, behavior: 'auto' });
       this.dataTable.editingRowKeys = {};
     }
+  }
+
+  /**
+   * 開啟 Dialog 表單 (新增一筆角色資料)
+   * @returns DynamicDialogRef
+   */
+  openAddingGroupDialog(): DynamicDialogRef {
+    this.dialogOpened = true;
+
+    const ref = this.dialogService.open(DialogFormComponent, {
+      header: '新增一筆群組資料',
+      width: '70%',
+      contentStyle: { overflow: 'auto' },
+      baseZIndex: 10000,
+      maximizable: true,
+      templates: {
+        content: GroupAddingComponent,
+      },
+    });
+    // Dialog 關閉後要做的事情
+    ref?.onClose
+      .pipe(takeUntil(this._destroying$))
+      .subscribe((returnData: any) => {
+        console.log('關閉 Dialog');
+        this.dialogOpened = false;
+        console.log(returnData);
+
+        const serviceValue = this.formGroup.value.service;
+        this.optionService.getGroupDropdownOptions(serviceValue).pipe(
+          // 關鍵防護：把錯誤攔截寫在 switchMap 內部，這樣 API 報錯才不會把整個 valueChanges 監聽器殺死
+          catchError((error) => {
+            // this.messageService.error('取得資料發生錯誤', error.message);
+            console.error('取得角色種類發生錯誤:', error);
+            return of([]); // 報錯時給空陣列，維持 RxJS 管線存活
+          }),
+        );
+
+        this.query();
+      });
+    return ref;
   }
 }

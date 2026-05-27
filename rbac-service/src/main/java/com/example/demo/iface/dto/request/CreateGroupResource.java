@@ -10,6 +10,8 @@ import lombok.NoArgsConstructor;
 public class CreateGroupResource {
 	
 	private String service;
+	
+	private String type; // 種類
 
 	private String name; // 名稱
 	

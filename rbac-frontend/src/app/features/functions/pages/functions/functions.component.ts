@@ -23,7 +23,6 @@ import { SettingType } from '../../../../core/enums/setting-type.enum';
 import { CoreModule } from '../../../../core/core.module';
 import { finalize } from 'rxjs/internal/operators/finalize';
 import { LoadingMaskService } from '../../../../core/services/loading-mask.service';
-import { SaveFunction } from '../../models/save-functions-request.model';
 import { forkJoin } from 'rxjs/internal/observable/forkJoin';
 import { OverlayPanel } from 'primeng/overlaypanel';
 import { CustomisationService } from '../../../../shared/services/customisation.service';
@@ -34,12 +33,18 @@ import { catchError } from 'rxjs/internal/operators/catchError';
 import { of } from 'rxjs/internal/observable/of';
 import { switchMap } from 'rxjs/internal/operators/switchMap';
 import { tap } from 'rxjs/internal/operators/tap';
+import { SaveFunctionResource } from '../../models/save-functions-request.model';
+import { takeUntil } from 'rxjs/internal/operators/takeUntil';
+import { FunctionAddingComponent } from './function-adding/function-adding.component';
+import { DialogFormComponent } from '../../../../shared/component/dialog-form/dialog-form.component';
+import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { Subject } from 'rxjs/internal/Subject';
 
 @Component({
   selector: 'app-functions',
   standalone: true,
   imports: [CommonModule, SharedModule, CoreModule],
-  providers: [SystemMessageService, OptionService],
+  providers: [SystemMessageService, OptionService, DialogService],
   templateUrl: './functions.component.html',
   styleUrl: './functions.component.scss',
 })
@@ -52,6 +57,7 @@ export class FunctionsComponent
   types: Option[] = []; // 配置種類的下拉式選單
   actionTypes: Option[] = []; // ActionTypes 的下拉式選單
   services: Option[] = [];
+  dialogOpened: boolean = false; //  Dialog 狀態
 
   // 控制 OverlayPanel
   @ViewChild('fieldPanel') fieldPanel!: OverlayPanel;
@@ -61,6 +67,7 @@ export class FunctionsComponent
   selectedFields: any[] = []; // 被選中的欄位
   fieldViews: any[] = [];
   filteredCols: any[] = [];
+  readonly _destroying$ = new Subject<void>(); // 用來取消訂閱
 
   constructor(
     private storageService: StorageService,
@@ -69,6 +76,7 @@ export class FunctionsComponent
     private optionService: OptionService,
     private functionService: FunctionsService,
     private messageService: SystemMessageService,
+    private dialogService: DialogService,
   ) {
     super();
   }
@@ -244,20 +252,28 @@ export class FunctionsComponent
   initTabs() {
     this.detailTabs = [
       {
+        label: '新增功能',
+        icon: 'pi pi-plus',
+        command: () => {
+          this.openAddingGroupDialog();
+        },
+        disabled: false,
+      },
+      {
+        label: '新增列',
+        icon: 'pi pi-plus-circle',
+        command: () => {
+          this.addNewRow();
+        },
+        disabled: !this.formGroup?.value?.service,
+      },
+      {
         label: '欄位',
         icon: 'pi pi-filter',
         command: () => {
           this.fieldPanel.toggle(event);
         },
         disabled: false,
-      },
-      {
-        label: '新增',
-        icon: 'pi pi-plus',
-        command: () => {
-          this.addNewRow();
-        },
-        disabled: !this.formGroup?.value?.service,
       },
       {
         label: '提交',
@@ -304,7 +320,7 @@ export class FunctionsComponent
   override submit() {
     console.log(this.tableData);
     this.submitted = true;
-    const requestData: SaveFunction[] = this.tableData.map((data) => {
+    const requestData: SaveFunctionResource[] = this.tableData.map((data) => {
       return {
         id: data.id,
         service: data.service,
@@ -634,5 +650,45 @@ export class FunctionsComponent
         );
       });
     this.closePanel();
+  }
+
+  /**
+   * 開啟 Dialog 表單 (新增一筆角色資料)
+   * @returns DynamicDialogRef
+   */
+  openAddingGroupDialog(): DynamicDialogRef {
+    this.dialogOpened = true;
+
+    const ref = this.dialogService.open(DialogFormComponent, {
+      header: '新增一筆功能資料',
+      width: '70%',
+      contentStyle: { overflow: 'auto' },
+      baseZIndex: 10000,
+      maximizable: true,
+      templates: {
+        content: FunctionAddingComponent,
+      },
+    });
+    // Dialog 關閉後要做的事情
+    ref?.onClose
+      .pipe(takeUntil(this._destroying$))
+      .subscribe((returnData: any) => {
+        console.log('關閉 Dialog');
+        this.dialogOpened = false;
+        console.log(returnData);
+
+        const serviceValue = this.formGroup.value.service;
+        this.optionService.getGroupDropdownOptions(serviceValue).pipe(
+          // 關鍵防護：把錯誤攔截寫在 switchMap 內部，這樣 API 報錯才不會把整個 valueChanges 監聽器殺死
+          catchError((error) => {
+            // this.messageService.error('取得資料發生錯誤', error.message);
+            console.error('取得角色種類發生錯誤:', error);
+            return of([]); // 報錯時給空陣列，維持 RxJS 管線存活
+          }),
+        );
+
+        this.query();
+      });
+    return ref;
   }
 }

@@ -9,7 +9,6 @@ import { SystemMessageService } from '../../../../core/services/system-message.s
 import { OptionService } from '../../../../shared/services/option.service';
 import { SettingType } from '../../../../core/enums/setting-type.enum';
 import { CoreModule } from '../../../../core/core.module';
-import { SaveRole } from '../../models/save-role-request.model';
 import { finalize } from 'rxjs/internal/operators/finalize';
 import { LoadingMaskService } from '../../../../core/services/loading-mask.service';
 import { takeUntil } from 'rxjs/internal/operators/takeUntil';
@@ -29,6 +28,8 @@ import { catchError } from 'rxjs/internal/operators/catchError';
 import { of } from 'rxjs/internal/observable/of';
 import { switchMap } from 'rxjs/internal/operators/switchMap';
 import { tap } from 'rxjs/internal/operators/tap';
+import { RoleAddingComponent } from './role-adding/role-adding.component';
+import { UpsertRoleResource } from '../../models/upsert-role-request.model';
 
 @Component({
   selector: 'app-roles',
@@ -239,16 +240,16 @@ export class RolesComponent
   initTabs() {
     this.detailTabs = [
       {
-        label: '欄位',
-        icon: 'pi pi-filter',
+        label: '新增角色',
+        icon: 'pi pi-plus',
         command: () => {
-          this.fieldPanel.toggle(event);
+          this.openAddingRoleDialog();
         },
         disabled: false,
       },
       {
-        label: '新增',
-        icon: 'pi pi-plus',
+        label: '新增列',
+        icon: 'pi pi-plus-circle',
         command: () => {
           this.addNewRow();
         },
@@ -267,6 +268,14 @@ export class RolesComponent
         icon: 'pi pi-times',
         command: () => {
           this.cancelAll();
+        },
+        disabled: false,
+      },
+      {
+        label: '欄位',
+        icon: 'pi pi-filter',
+        command: () => {
+          this.fieldPanel.toggle(event);
         },
         disabled: false,
       },
@@ -331,7 +340,7 @@ export class RolesComponent
     }
 
     console.log(this.tableData);
-    const requestData: SaveRole[] = this.tableData.map((data) => {
+    const requestData: UpsertRoleResource[] = this.tableData.map((data) => {
       return {
         id: data?.id,
         service: data.service,
@@ -687,5 +696,45 @@ export class RolesComponent
         );
       });
     this.closePanel();
+  }
+
+  /**
+   * 開啟 Dialog 表單 (新增一筆角色資料)
+   * @returns DynamicDialogRef
+   */
+  openAddingRoleDialog(): DynamicDialogRef {
+    this.dialogOpened = true;
+
+    const ref = this.dialogService.open(DialogFormComponent, {
+      header: '新增一筆角色資料',
+      width: '70%',
+      contentStyle: { overflow: 'auto' },
+      baseZIndex: 10000,
+      maximizable: true,
+      templates: {
+        content: RoleAddingComponent,
+      },
+    });
+    // Dialog 關閉後要做的事情
+    ref?.onClose
+      .pipe(takeUntil(this._destroying$))
+      .subscribe((returnData: any) => {
+        console.log('關閉 Dialog');
+        this.dialogOpened = false;
+        console.log(returnData);
+
+        const serviceValue = this.formGroup.value.service;
+        this.optionService.getRoleDropdownOptions(serviceValue).pipe(
+          // 關鍵防護：把錯誤攔截寫在 switchMap 內部，這樣 API 報錯才不會把整個 valueChanges 監聽器殺死
+          catchError((error) => {
+            // this.messageService.error('取得資料發生錯誤', error.message);
+            console.error('取得角色種類發生錯誤:', error);
+            return of([]); // 報錯時給空陣列，維持 RxJS 管線存活
+          }),
+        );
+
+        this.query();
+      });
+    return ref;
   }
 }

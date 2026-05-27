@@ -9,8 +9,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class CreateRoleResource {
 
-	private Long id;
-
 	private String service;
 
 	private String code;

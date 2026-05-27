@@ -4,9 +4,11 @@ import { environment } from '../../../../environments/environment';
 import { Observable } from 'rxjs/internal/Observable';
 import { BaseResponse } from '../../../shared/models/base-response.model';
 import { FunctionQueried } from '../models/function-query.model';
-import { SaveFunction } from '../models/save-functions-request.model';
 import { FunctionsSummaryQueriedResource } from '../models/function-summary-queried.response.model';
 import { map } from 'rxjs';
+import { CreateGroupResource } from '../../groups/models/create-groups-request.model';
+import { CreateFunctionResource } from '../models/create-function-request.model';
+import { SaveFunctionResource } from '../models/save-functions-request.model';
 
 @Injectable({
   providedIn: 'root',
@@ -15,6 +17,15 @@ export class FunctionsService {
   private readonly baseApiUrl = environment.apiEndpoint;
 
   constructor(private http: HttpClient) {}
+
+  /**
+   * 新增一筆功能資料
+   * @param requestData
+   */
+  createGroup(requestData: CreateFunctionResource) {
+    const url = this.baseApiUrl + '/functions';
+    return this.http.post<BaseResponse>(url, requestData);
+  }
 
   /**
    * 查詢功能資料
@@ -49,7 +60,7 @@ export class FunctionsService {
    * 提交更新或新增功能資料
    * @param requestData
    */
-  submit(requestData: SaveFunction[]): Observable<BaseResponse> {
+  submit(requestData: SaveFunctionResource[]): Observable<BaseResponse> {
     const url = this.baseApiUrl + '/functions/saveList';
     return this.http.post<BaseResponse>(url, requestData);
   }

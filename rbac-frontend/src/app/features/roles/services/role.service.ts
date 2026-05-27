@@ -3,10 +3,11 @@ import { Observable } from 'rxjs/internal/Observable';
 import { RoleQueried } from '../models/role-query.model';
 import { environment } from '../../../../environments/environment';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { SaveRole } from '../models/save-role-request.model';
+import { UpsertRoleResource } from '../models/upsert-role-request.model';
 import { BaseResponse } from '../../../shared/models/base-response.model';
 import { RoleQueriedResource } from '../models/role-gotten-response.model';
 import { map } from 'rxjs';
+import { CreateRoleResource } from '../models/create-role-request.model';
 
 @Injectable({
   providedIn: 'root',
@@ -15,6 +16,15 @@ export class RoleService {
   private readonly baseApiUrl = environment.apiEndpoint;
 
   constructor(private http: HttpClient) {}
+
+  /**
+   * 新增一筆角色
+   * @param requestData
+   */
+  createRole(requestData: CreateRoleResource) {
+    const url = this.baseApiUrl + '/roles';
+    return this.http.post<BaseResponse>(url, requestData);
+  }
 
   /**
    * 查詢角色資料
@@ -55,7 +65,7 @@ export class RoleService {
    * 提交更新或新增角色資料
    * @param requestData
    */
-  submit(requestData: SaveRole[]): Observable<BaseResponse> {
+  submit(requestData: UpsertRoleResource[]): Observable<BaseResponse> {
     const url = this.baseApiUrl + '/roles/saveList';
     return this.http.post<BaseResponse>(url, requestData);
   }

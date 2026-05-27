@@ -8,6 +8,7 @@ import { SaveGroupResource } from '../models/save-groups-request.model';
 import { map } from 'rxjs/internal/operators/map';
 import { GroupInfoQueried } from '../models/group-info-query.model';
 import { GroupSummaryQueriedResource } from '../models/group-info-summary-gotten.model';
+import { CreateGroupResource } from '../models/create-groups-request.model';
 
 @Injectable({
   providedIn: 'root',
@@ -16,6 +17,15 @@ export class GroupsService {
   private readonly baseApiUrl = environment.apiEndpoint;
 
   constructor(private http: HttpClient) {}
+
+  /**
+   * 新增一筆群組資料
+   * @param requestData
+   */
+  createGroup(requestData: CreateGroupResource) {
+    const url = this.baseApiUrl + '/groups';
+    return this.http.post<BaseResponse>(url, requestData);
+  }
 
   /**
    * 查詢群組資料
@@ -47,7 +57,7 @@ export class GroupsService {
    * 提交更新或新增群組資料
    * @param requestData
    */
-  submit(requestData: SaveGroupResource[]): Observable<BaseResponse> {
+  upsert(requestData: SaveGroupResource[]): Observable<BaseResponse> {
     const url = this.baseApiUrl + '/groups/saveList';
     return this.http.post<BaseResponse>(url, requestData);
   }
