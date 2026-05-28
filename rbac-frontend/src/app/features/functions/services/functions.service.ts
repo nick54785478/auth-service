@@ -22,7 +22,7 @@ export class FunctionsService {
    * 新增一筆功能資料
    * @param requestData
    */
-  createGroup(requestData: CreateFunctionResource) {
+  createFunction(requestData: CreateFunctionResource) {
     const url = this.baseApiUrl + '/functions';
     return this.http.post<BaseResponse>(url, requestData);
   }

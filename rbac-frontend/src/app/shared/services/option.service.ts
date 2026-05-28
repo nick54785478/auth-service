@@ -64,12 +64,12 @@ export class OptionService {
 
   /**
    * 取得 UserInfo AutoComplete 資料
-   * @param queryStr
+   * @param keyword
    * @returns
    */
-  public getUserOptions(queryStr: string): Observable<UserInfoOption[]> {
+  public getUserOptions(keyword: string): Observable<UserInfoOption[]> {
     const url = this.baseApiUrl + '/options/getUserOptions';
-    let params = new HttpParams().set('queryStr', queryStr ? queryStr : '');
+    let params = new HttpParams().set('keyword', keyword ? keyword : '');
     return this.http.get<UserOptionGottenResource>(url, { params }).pipe(
       map((response) => {
         return response?.data;
@@ -79,17 +79,17 @@ export class OptionService {
 
   /**
    * 取得 RoleInfo AutoComplete 資料
-   * @param queryStr
+   * @param keyword
    * @returns
    */
   public getRoleOptions(
     service: string,
-    queryStr: string,
+    keyword: string,
   ): Observable<RoleInfoOption[]> {
     const url = this.baseApiUrl + '/options/roles';
     let params = new HttpParams()
       .set('service', service ? service : '')
-      .set('queryStr', queryStr ? queryStr : '');
+      .set('keyword', keyword ? keyword : '');
     return this.http.get<RoleInfoOptionGottenResource>(url, { params }).pipe(
       map((response) => {
         return response?.data;
@@ -99,17 +99,17 @@ export class OptionService {
 
   /**
    * 取得 Group AutoComplete 資料
-   * @param queryStr
+   * @param keyword
    * @returns
    */
   public getGroupOptions(
     service: string,
-    queryStr: string,
+    keyword: string,
   ): Observable<GroupInfoOption[]> {
     const url = this.baseApiUrl + '/options/groups';
     let params = new HttpParams()
       .set('service', service ? service : '')
-      .set('queryStr', queryStr ? queryStr : '');
+      .set('keyword', keyword ? keyword : '');
     return this.http.get<GroupInfoOptionGottenResource>(url, { params }).pipe(
       map((response) => {
         return response?.data;

@@ -109,7 +109,7 @@ export class FunctionAddingComponent
           }
 
           return this.optionService
-            .getSettingTypes(serviceValue, SettingType.GROUP)
+            .getSettingTypes(serviceValue, SettingType.FUNCTION)
             .pipe(
               // 關鍵防護：錯誤攔截寫在內部，維持管線存活
               catchError((error) => {
@@ -158,7 +158,7 @@ export class FunctionAddingComponent
     const requestData = this.formGroup.value;
     console.log(requestData);
     this.functionService
-      .createGroup(requestData)
+      .createFunction(requestData)
       .pipe(
         finalize(() => {
           this.submitted = false;

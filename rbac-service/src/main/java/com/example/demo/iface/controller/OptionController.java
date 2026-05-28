@@ -48,7 +48,7 @@ public class OptionController {
 	 * @param str 使用者相關字串 return ResponseEntity<List<UserOptionQueriedResource>>
 	 */
 	@GetMapping("/getUserOptions")
-	public ResponseEntity<UserOptionGottenResource> getUserOptions(@RequestParam("queryStr") String str) {
+	public ResponseEntity<UserOptionGottenResource> getUserOptions(@RequestParam("keyword") String str) {
 		List<UserOptionQueried> data = optionQueryService.getUserOptions(str);
 		return new ResponseEntity<>(new UserOptionGottenResource("200", "查詢成功", data), HttpStatus.OK);
 	}
@@ -62,7 +62,7 @@ public class OptionController {
 	 */
 	@GetMapping("/roles")
 	public ResponseEntity<RoleOptionsGottenResource> getRoleOptions(@RequestParam String service,
-			@RequestParam("queryStr") String keyword) {
+			@RequestParam("keyword") String keyword) {
 		GetRoleByServiceAndKeywordQuery query = new GetRoleByServiceAndKeywordQuery(service, keyword);
 		List<RoleOptionQueried> data = optionQueryService.getRoleOptions(query);
 		return new ResponseEntity<>(new RoleOptionsGottenResource("200", "查詢成功", data), HttpStatus.OK);
@@ -89,7 +89,7 @@ public class OptionController {
 	 */
 	@GetMapping("/groups")
 	public ResponseEntity<GroupOptionsGottenResource> getGroupOptions(@RequestParam String service,
-			@RequestParam("queryStr") String keyword) {
+			@RequestParam("keyword") String keyword) {
 		GetGroupByServiceAndKeywordQuery query = new GetGroupByServiceAndKeywordQuery(service, keyword);
 		List<GroupOptionQueried> data = optionQueryService.getGroupOptions(query);
 		return new ResponseEntity<>(new GroupOptionsGottenResource("200", "查詢成功", data), HttpStatus.OK);
