@@ -5,8 +5,8 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.demo.application.shared.dto.CreateSettingCommand;
-import com.example.demo.application.shared.dto.UpdateSettingCommand;
+import com.example.demo.application.shared.command.CreateSettingCommand;
+import com.example.demo.application.shared.command.UpdateSettingCommand;
 import com.example.demo.domain.setting.aggregate.Setting;
 import com.example.demo.domain.setting.aggregate.vo.SettingProfile;
 import com.example.demo.domain.setting.aggregate.vo.SettingScope;

@@ -16,9 +16,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.application.service.SettingCommandService;
 import com.example.demo.application.service.SettingQueryService;
-import com.example.demo.application.shared.dto.CreateSettingCommand;
+import com.example.demo.application.shared.command.CreateSettingCommand;
+import com.example.demo.application.shared.command.UpdateSettingCommand;
 import com.example.demo.application.shared.dto.SettingQueried;
-import com.example.demo.application.shared.dto.UpdateSettingCommand;
 import com.example.demo.application.shared.query.GetSettingSummaryQuery;
 import com.example.demo.iface.dto.request.CreateSettingResource;
 import com.example.demo.iface.dto.request.UpdateSettingResource;

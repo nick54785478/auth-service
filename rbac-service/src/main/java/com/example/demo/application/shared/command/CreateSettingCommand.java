@@ -1,4 +1,4 @@
-package com.example.demo.application.shared.dto;
+package com.example.demo.application.shared.command;
 
 import com.example.demo.shared.enums.YesNo;
 
